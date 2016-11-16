@@ -1,0 +1,648 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Misc Notes</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">Misc Notes</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h4>ASCII 码表</h4>
+
+<p>
+<a href="./repository/ascii.html">here</a>
+
+</p>
+
+<h4>程序员能力矩阵</h4>
+
+<p>
+<a href="./repository/Programmer_Competency_Matrix.htm">here</a>
+
+</p>
+
+<h4>Base64 编码</h4>
+
+<p>
+Base64编码要求把3个8位字节（3*8=24）转化为4个6位的字节（4*6=24），之后在6位的前面补两个0，形成8位一个字节的形式。 如果剩下的字符不足3个字节，则用0填充，输出字符使用'='，因此编码后输出的文本末尾可能会出现1或2个'='。
+
+</p>
+
+<p>
+为了保证所输出的编码位可读字符，Base64制定了一个编码表，以便进行统一转换。编码表的大小为2^6=64，这也是Base64名称的由来。
+
+</p>
+
+<h4>inetd.conf</h4>
+reference /etc/services
+<table class="ewiki-table" border="2" cellpadding="5">
+<thead>
+<tr>
+<th>Service</th><th>Port</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>discard</td><td>9</td>
+</tr>
+<tr>
+<td>daytime</td><td>13</td>
+</tr>
+<tr>
+<td>chargen</td><td>19</td>
+</tr>
+<tr>
+<td>echo</td><td>7</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td>time</td><td>37</td>
+</tr>
+</tfoot>
+</table>
+
+<h4>Ruby on Rails</h4>
+
+<p>
+homepage:
+
+</p>
+
+<p>
+<a href="http://www.rubyonrails.com/">http://www.rubyonrails.com/</a>
+
+</p>
+
+<p>
+a tutorial:
+
+</p>
+
+<p>
+<a href="http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html?page=1">http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html?page=1</a>
+
+</p>
+
+<p>
+<strong>AJAX on Rails</strong>
+
+</p>
+
+<p>
+<a href="http://www.onlamp.com/pub/a/onlamp/2005/06/09/rails_ajax.html">http://www.onlamp.com/pub/a/onlamp/2005/06/09/rails_ajax.html</a>
+
+</p>
+
+<h4>Raid Notes</h4>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<thead>
+<tr>
+<th>RAID级别</th><th>相对优点</th><th>相对缺点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAID 0</td><td>存取速度最快</td><td>没有容错</td>
+</tr>
+<tr>
+<td>RAID 1</td><td>完全容错</td><td>成本高</td>
+</tr>
+<tr>
+<td>RAID 3</td><td>写入性能最好</td><td>没有多任务功能</td>
+</tr>
+<tr>
+<td>RAID 4</td><td>具备多任务及容错功能</td><td>Parity磁盘驱动器造成性能瓶颈</td>
+</tr>
+<tr>
+<td>RAID 5</td><td>具备多任务及容错功能</td><td>写入时有overhead</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td>RAID 0+1/RAID 10</td><td>速度快、完成容错</td><td>成本高</td>
+</tr>
+</tfoot>
+</table>
+
+<h4>用PPPoe在家上网</h4>
+
+<p>
+设置命令用pppoeconf。
+
+</p>
+
+<p>
+上网命令如下：
+
+</p>
+
+<pre class="example">pon dsl-provider
+poff
+plog
+</pre>
+
+<h4>用PPPoe在家上VPN</h4>
+
+<p>
+安装Cisco适用的vpn客户端 vpnc 
+
+</p>
+
+<pre class="example">sudo apt-get install vpnc
+</pre>
+
+<p>
+连接参数如下： 
+
+</p>
+
+<pre class="example">IPSec gateway 219.239.44.2
+IPSec ID 2006
+IKE Authmode psk
+IPSec secret cma2006vpn
+Xauth username chenzuan
+Xauth password mypassword
+</pre>
+
+<p>
+默认可接受配置文件为 /etc/vpnc/default.conf 或 /etc/vpnc.conf，可按样例修改。
+
+</p>
+
+<p>
+启动vpnc:
+
+</p>
+
+<pre class="example">sudo vpnc
+</pre>
+
+<p>
+关闭vpnc:
+
+</p>
+
+<pre class="example">sudo vpnc-disconnect
+</pre>
+
+<h4>CDMA无线上网卡上网</h4>
+
+<p>
+编辑/etc/wvdial.conf
+
+</p>
+
+<pre class="example">[Modem0]
+Modem = /dev/ttyUSB0
+Baud = 460800
+SetVolumn = 0
+Dial Command = ATDT
+Init1 = ATZ
+FlowControl = Hardware (CRTSCTS)
+
+[Dialer cdma]
+Username = card
+Password = card
+Phone = #777
+Stupid Mode = 1
+Inherits = Modem0
+</pre>
+
+<p>
+制作上网脚本cdma-dialer.sh
+
+</p>
+
+<pre class="example">sudo wvdial cdma &amp;
+sudo route del default
+sudo route add default dev ppp0
+</pre>
+
+<h4>同步时间服务器</h4>
+
+<pre class="example">/usr/sbin/ntpdate time.windows.com
+</pre>
+
+<p>
+可以加入crontab：
+<pre class="example">0 1,13 * * * usr/sbin/ntpdate time.windows.com
+</pre>
+
+<h4>网络分析工具</h4>
+
+<p>
+ethereal
+iftop
+tcpdump
+ngrep
+netcat (nc)
+snort
+
+</p>
+
+<h4>wget整个目录或网站</h4>
+
+<pre class="example">wget -r -p -np -k http://www.whatever.com/whatever/
+</pre>
+
+<p>
+可以制作一个快捷命令。
+alias wgetwhole="wget -r -p -np -k"
+
+</p>
+
+<p>
+下载https内容，可使用参数 --no-check-certificate
+
+</p>
+
+<h4>使用和创建补丁</h4>
+
+<p>
+创建补丁：
+
+</p>
+
+<pre class="example">diff -Naur 旧的目录 新的目录 &gt; patch文件
+或者
+diff -Naur 旧的文件 新的文件 &gt; patch文件
+</pre>
+
+<p>
+打补丁：
+
+</p>
+
+<pre class="example">patch -p0 &lt; new-patch
+</pre>
+
+<p>
+其中-pn, n表示目录层数。
+
+</p>
+
+<h4>查看ext2/ext3文件系统情况</h4>
+
+<pre class="example">tune2fs -l /dev/sda7
+</pre>
+
+<h4>查看网络设备状态的几种方法</h4>
+
+<ul>
+<li>每隔1秒，共5次监测网络流量
+</li>
+</ul>
+
+<pre class="example">sar -n DEV 1 5
+</pre>
+
+<ul>
+<li>监测所有网络设备的流量情况
+</li>
+</ul>
+
+<pre class="example">ifstat -a
+</pre>
+
+<ul>
+<li>查看网络设备的状态
+</li>
+</ul>
+
+<pre class="example">ethtool eth0
+</pre>
+
+<h4>查看系统IO状态</h4>
+
+<ul>
+<li>查看系统的多种指标，包括网络
+</li>
+</ul>
+
+<pre class="example">dstat
+</pre>
+
+<ul>
+<li>查看IO状态
+</li>
+</ul>
+
+<pre class="example">iostat -x
+</pre>
+
+<ul>
+<li>查看CPU状态
+</li>
+</ul>
+
+<pre class="example">sar -u 1 5
+</pre>
+
+<ul>
+<li>查看内存状态
+</li>
+</ul>
+
+<pre class="example">vmstat 1
+</pre>
+
+<h4>查看rootkit是否被更改</h4>
+
+<p>
+使用工具chkrootkit，rkhunter
+
+</p>
+
+<h4>mount /etc/fstab中指定分区</h4>
+
+<pre class="example">mount -a
+</pre>
+
+<h4>修改hostname</h4>
+
+<pre class="example">hostname NEW_HOSTNAME
+</pre>
+
+<p>
+重登录时就已更改hostname，当然直接修改/etc/hostname也可以。
+
+</p>
+
+<h4>查看系统中注册的RPC程序</h4>
+
+<pre class="example">rpcinfo -p
+</pre>
+
+<p>
+显示注册到某一主机的RPC程序
+
+</p>
+
+<pre class="example">rpcinfo -p hostname
+</pre>
+
+<h4>lsof使用方法</h4>
+
+<ul>
+<li>lsof abc.txt 显示开启文件abc.txt的进程
+</li>
+<li>lsof -i :22 知道22端口现在运行什么程序
+</li>
+<li>lsof -c nsd 显示nsd进程现在打开的文件
+</li>
+<li>lsof -g gid 显示归属gid的进程情况
+</li>
+<li>lsof +d /usr/local/ 显示目录下被进程开启的文件
+</li>
+<li>lsof +D /usr/local/ 同上，但是会搜索目录下的目录，时间较长
+</li>
+<li>lsof -d 4 显示使用fd为4的进程
+</li>
+<li>lsof -i [i] 用以显示符合条件的进程情况
+</li>
+<li>语法: 
+<pre class="example">lsof -i[46] [protocol][@hostname|hostaddr][:service|port]
+</pre>
+</li>
+</ul>
+
+<h4>ssh 文件系统</h4>
+
+<p>
+使用ssh作为文件系统挂载的协议：
+
+</p>
+
+<pre class="example">sshfs username@hostname:/directory mount-point
+</pre>
+
+<h4>sftp://  in Firefox or fish:// in Konqueror</h4>
+
+<pre class="example">sftp://username:passwd@hostname
+or
+fish://username:passwd@hostname
+</pre>
+
+<h4>SOCKS代理与PAC文件</h4>
+
+<p>
+SOCKS代理
+
+</p>
+
+<pre class="example">ssh -D 7777 username@proxyserver.com
+</pre>
+
+<p>
+PAC文件样例
+
+</p>
+
+<pre class="example">function FindProxyForURL(url, host) {
+	if (shExpMatch(url, &quot;*.wikipedia.org/*&quot;)) { return &quot;SOCKS 127.0.0.1:7777&quot;; }
+	if (shExpMatch(url, &quot;*.apple.com/*&quot;)) { return &quot;SOCKS 127.0.0.1:7777&quot;; }
+	if (shExpMatch(url, &quot;*.tumblr.com/*&quot;)) { return &quot;SOCKS 127.0.0.1:7777&quot;; }
+	if (shExpMatch(url, &quot;*.wikimedia.org/*&quot;)) { return &quot;SOCKS 127.0.0.1:7777&quot;; }
+	if (shExpMatch(url, &quot;*.flickr.com/*&quot;)) { return &quot;SOCKS 127.0.0.1:7777&quot;; }
+	if (shExpMatch(url, &quot;*.youtube.com/*&quot;)) { return &quot;SOCKS 127.0.0.1:7777&quot;; }
+	return &quot;DIRECT&quot;;
+}
+</pre>
+
+<h4>netcat</h4>
+
+<p>
+所谓的swiss knife. hehe
+
+</p>
+
+<p>
+打开监听端口
+
+</p>
+
+<pre class="example">netcat -l -p PORT
+or
+nc -l -p PORT
+</pre>
+
+<p>
+向某主机的某一端口发包
+
+</p>
+
+<pre class="example">cat FILE | netcat HOSTNAME PORT
+</pre>
+
+<h4>mkfifo</h4>
+
+<p>
+创建有名管道
+
+</p>
+
+<pre class="example">mkfifo -m 777 fifo
+cat &lt; fifo
+cat /dev/urandom &gt; fifo
+</pre>
+
+<h4>获取某一页面的HTTP头</h4>
+
+<p>
+curl -I <a href="http://www.google.com">http://www.google.com</a>
+
+</p>
+
+<h4>SecureCRT Tips    </h4>
+
+<ul>
+<li>如果不能彩色加亮，在登录前确认Terminal选择Linux。
+</li>
+<li>如果方向键乱七八糟，将Emulation->Modes中Cursor key mode勾掉
+</li>
+</ul>
+
+<h4>FMS management</h4>
+
+<p>
+fmsmgr server fms start
+fmsmgr adminserver start
+
+</p>
+
+<h4>Yum Usage</h4>
+
+<p>
+yum update 
+
+</p>
+
+<p>
+yum list package_name*
+
+</p>
+
+<p>
+yum install package_name
+
+</p>
+
+<p>
+yum remove package_name  
+
+</p>
+
+<h4>F5 web portal deadlock problem</h4>
+
+<p>
+ssh登录F5设备，执行 bigstart restart tomcat4
+
+</p>
+
+<h4>ANSI Escape sequences</h4>
+
+<p>
+ESC[1;5;34;47m WHATEVER ESC[0m
+
+</p>
+
+<h4>OCR Softwares</h4>
+
+<p>
+Tesseract
+
+</p>
+
+<p>
+Usage: tesseract picture.tiff text_file -l chi_sim
+
+</p>
+
+<h4>SCons</h4>
+
+<p>
+SCons is a computer software construction tool that automatically analyzes source code file dependencies and operating system adaptation requirements from a software project description and generates final binary executables for installation on the target operating system platform. Its function is analogous to the traditional GNU build system based on the make utility and the autoconf tools.
+
+</p>
+
+<p>
+Scons uses the Python general purpose programming language as a foundation, so that all software project configurations and build process implementations are Python scripts.
+
+</p>
+
+<h4>Redis</h4>
+
+<p>
+redis-server /opt/local/etc/redis.conf
+
+</p>
+
+<h4>pdfcrop</h4>
+
+<p>
+pdfcrop XXX.pdf,   用于把pdf文件的白边切除。
+</p><!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

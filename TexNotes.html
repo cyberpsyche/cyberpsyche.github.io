@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>TeX and Latex  wiki</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">TeX and Latex  wiki</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<hr />
+<h2>Texlive安装</h2>
+
+<h3>install-tl</h3>
+
+<h4>tlmgr</h4>
+
+<p>
+查看配置：  tlmgr conf
+
+</p>
+
+<p>
+查看安装的包：  tlmgr list
+
+</p>
+
+<p>
+安装包：  tlmgr install PKGNAME
+
+</p>
+
+<p>
+图形模式： tlmgr -gui
+
+</p>
+
+<h4>xetex</h4>
+
+<p>
+使用系统字体，可以制作~/.fonts.conf指定字体目录。 用fc-cache -fv来刷新字体文件。 用 fc-list :lang=zh-cn 可查看系统支持的中文字体。
+
+</p>
+
+<p>
+~/.fonts.conf 可以拷贝自 /usr/local/texlive/2011/texmf-var/fonts/conf/texlive-fontconfig.conf
+
+</p>
+
+<p>
+或直接把字体放入/usr/share/fonts，然后运行两次 mkfontscale mkfontdir。
+
+</p>
+
+<p>
+xetex可直接生成pdf文件。
+
+</p>
+
+<h4>macTeX 2011下的字体设置</h4>
+
+<p>
+Lion下，将sim*.ttf拷入 /Libaray/Fonts 目录，执行 fc-cache -fv
+
+</p>
+
+<p>
+将simsun.ttf, simhei.ttf, simfang.ttf等文件拷入  /usr/local/texlive/2011/texmf-dist/fonts/truetype/,  然后执行 fc-cache -fv
+
+</p>
+
+<p>
+注：执行dvipdfmx filename.dvi命令产生 ** ERROR ** Failed to read UCS2/UCS4 <a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TrueType</a> cmap... 错误的原因是没有把 simsun.ttc 文件放入 /usr/local/texlive/2011/texmf-dist/fonts/truetype/ 。 这个问题困扰了我整整两天！一直搞不清ttc与ttf的区别。
+
+</p>
+
+<p>
+然后修改 /usr/local/texlive/2011/texmf-dist/tex/latex/ctex/fontset/ctex-xecjk-winfonts.def 内容为：
+
+</p>
+
+<pre class="example">% ctex-xecjk-winfonts.def: Windows 的 xeCJK 字体设置，默认为六种中易字体
+% vim:ft=tex
+
+\setCJKmainfont[BoldFont={SimHei},ItalicFont={[simkai.ttf]}]
+  {SimSun}
+\setCJKsansfont{SimHei}
+\setCJKmonofont{[SIMFANG.TTF]}
+
+\setCJKfamilyfont{zhsong}{SimSun}
+\setCJKfamilyfont{zhhei}{SimHei}
+\setCJKfamilyfont{zhkai}{[simkai.ttf]}
+\setCJKfamilyfont{zhfs}{[simfang.ttf]}
+% \setCJKfamilyfont{zhli}{LiSu}
+% \setCJKfamilyfont{zhyou}{YouYuan}
+
+\newcommand*{\songti}{\CJKfamily{zhsong}} % 宋体
+\newcommand*{\heiti}{\CJKfamily{zhhei}}   % 黑体
+\newcommand*{\kaishu}{\CJKfamily{zhkai}}  % 楷书
+\newcommand*{\fangsong}{\CJKfamily{zhfs}} % 仿宋
+% \newcommand*{\lishu}{\CJKfamily{zhli}}    % 隶书
+% \newcommand*{\youyuan}{\CJKfamily{zhyou}} % 幼圆
+
+\endinput
+</pre>
+
+<p>
+执行 mktexlsr,  updmap
+
+</p>
+
+<h4>ctex</h4>
+
+<p>
+可把ctex宏包放入$TEXMFHOME （默认为$HOME/texmf），然后将documentclass{article}改为{ctexart}， {book}改为{ctexbook}，即可。
+
+</p>
+
+<pre class="example">\documentclass[UTF8]{ctexart}
+\begin{document}
+\songti
+你好，TeX Live 2009！
+
+\zihao{3}\kaishu
+你好，TeX Live 2009！
+
+\zihao{1}\heiti
+你好，TeX Live 2009！
+\end{document}
+</pre>
+
+<h4>CJK</h4>
+
+<p>
+使用Texlive 2010的CJK系统：
+
+</p>
+
+<pre class="example">\documentclass{article}
+\usepackage{CJKutf8}
+\newcommand{\sihao}{\fontsize{14pt}{\baselineskip}\selectfont}      % 字号设置
+\newcommand{\xiaosihao}{\fontsize{12pt}{\baselineskip}\selectfont} % 字号设置
+\newcommand{\wuhao}{\fontsize{10.5pt}{\baselineskip}\selectfont}    % 字号设置
+\newcommand{\xiaowuhao}{\fontsize{9pt}{\baselineskip}\selectfont}   % 字号设置
+\newcommand{\liuhao}{\fontsize{7.875pt}{\baselineskip}\selectfont} % 字号设置
+\newcommand{\qihao}{\fontsize{5.25pt}{\baselineskip}\selectfont}    % 字号设置
+\begin{document}
+\begin{CJK}{UTF8}{gbsn}
+你好！这里是Ubuntu下的TexLive+CJK环境！HEI
+\end{CJK}
+
+\begin{CJK}{UTF8}{gkai}
+\sihao
+你好！这里是Ubuntu下的TexLive+CJK环境！
+\end{CJK}
+\end{document}
+</pre>
+
+<h3>teTex / texlive  on ubuntu</h3>
+ubuntu 8.04下安装：
+
+</p>
+
+<pre class="example">sudo apt-get install texlive texlive-math-extra texlive-latex-base texlive-latex-extra texlive-latex-recommended texlive-pictures texlive-science texlive-bibtex-extra texlive-metapost texlive-common latex-beamer dvipdfmx 
+</pre>
+
+<p>
+也可以直接用：
+
+</p>
+
+<pre class="example">sudo apt-get install texlive-full dvipdfmx
+</pre>
+
+<p>
+安装latex-cjk-chinese:
+
+</p>
+
+<pre class="example">sudo apt-get install latex-cjk-chinese
+</pre>
+
+<h3>中文字体安装</h3>
+
+<p>
+以下方法在ubuntu 6.06(dapper)下测试通过：
+
+</p>
+
+<p>
+在/etc/texmf/texmf.cnf中修改或加入
+
+</p>
+
+<pre class="example">TEXMFLOCAL = $HOME/TeX/TeX/texmf-local
+TEXMFHOME = $HOME/TeX/TeX/texmf
+</pre>
+
+<p>
+用gbkfonts程序生成字体文件
+
+</p>
+
+<pre class="example">gbkfonts /mnt/windows/c/Fonts/simsun.ttf song
+gbkfonts /mnt/windows/c/Fonts/simkai.ttf kai
+gbkfonts /mnt/windows/c/Fonts/simhei.ttf hei
+</pre>
+
+<p>
+在当前路径下可生成dvips, pdftex, fonts, 等多个目录，将这些目录都拷入$HOME/TeX/TeX/texmf-local，然后用mktexlsr刷新文件名数据库。
+
+</p>
+
+<p>
+在pdftex.cnf文件中加入：
+
+</p>
+
+<pre class="example">map +gbksong.map
+map +gbkhei.map
+map +gbkkai.map
+</pre>
+
+<h3>auctex</h3>
+
+<ul>
+<li>c-c c-c 进行编译
+</li>
+<li>c-c c-r 进行block编译和显示，第一次 c-c c-r 进行编译， 第二次 c-c c-r 进行显示。
+</li>
+<li>c-c `  显示编译错误
+</li>
+<li>c-c c-s 插入Section
+</li>
+<li>c-c c-e 插入环境，如figure, enumerate, itemize等
+</li>
+<li>c-c c-j 插入item
+</li>
+</ul>
+
+<h3>Latax 语法</h3>
+
+<h4>引用文本块</h4>
+
+<pre class="example">\begin{verbatim}
+....
+\end{verbatim}
+</pre>
+
+<h4>脚注</h4>
+
+<pre class="example">\footnote{TEXT_HERE}
+</pre>
+
+<h4>浮动体位置</h4>
+
+<p>
+如 \begin{figure}[!htbp]， 其中，h 表示放在浮动体的当前所在位置，如果当前位置放不下则不放; t 表示放在浮动体所在页面的顶部; b 表示放在浮动体所在页面的底部; p 表示将浮动体放在只允许包含浮动体的浮动页上; ! 放在最前面时，表示取消对浮动体的大多数限制。 参数的顺序不重要，但Latex总是按h t b p来摆放。
+
+</p>
+
+<h3>Bibtex 语法</h3>
+
+<h4>cite</h4>
+
+<p>
+\citep{}  ---------- (Authors, 20XX)
+
+</p>
+
+<p>
+\cite{} ore \citet{} ----------- Authors(20XX)
+
+</p>
+
+<h3>Math</h3>
+
+<h4>matrix</h4>
+
+<p>
+默认情况下，基本上所有matrix一类的东西的行数和列数都不能超过10, 这个最大值是由<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">MaxMatrixCols</a>这个counter决定的，但是我们可以使用如下代码：
+
+</p>
+
+<p>
+\addtocounter{<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">MaxMatrixCols</a>}{10}
+
+</p>
+
+<p>
+就可以把最大值暂时定为20。
+</p><!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

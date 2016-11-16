@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Shell Script Notes</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">Shell Script Notes</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h3>Sed & Awk</h3>
+<h4>Sed as UNIX command</h4>
+<pre class="example">cat            |  sed ':'
+cat -s         |  sed '/./,/^$/!d'
+tac            |  sed '1!G;h;$!d'
+grep           |  sed '/patt/!d'
+grep -v        |  sed '/patt/d'
+head           |  sed '10q'
+head -1        |  sed 'q'
+tail           |  sed -e ':a' -e '$q;N;11,$D;ba'
+tail -1        |  sed '$!d'
+tail -f        |  sed -u '/./!d'
+cut -c 10      |  sed 's/\(.\)\{10\}.*/\1/'
+cut -d: -f4    |  sed 's/\(\([^:]*\):\)\{4\}.*/\2/'
+tr A-Z a-z     |  sed 'y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/'
+tr a-z A-Z     |  sed 'y/abcdefghijklmnopqrstuvwxyz/ABCDEFGHIJKLMNOPQRSTUVWXYZ/'
+tr -s ' '      |  sed 's/ \+/ /g'
+tr -d '\012'   |  sed 'H;$!d;g;s/\n//g'
+wc -l          |  sed -n '$='
+uniq           |  sed 'N;/^\(.*\)\n\1$/!P;D'
+rev            |  sed '/\n/!G;s/\(.\)\(.*\n\)/&amp;\2\1/;//D;s/.//'
+basename       |  sed 's,.*/,,'
+dirname        |  sed 's,[^/]*$,,'
+xargs          |  sed -e ':a' -e '$!N;s/\n/ /;ta'
+paste -sd:     |  sed -e ':a' -e '$!N;s/\n/:/;ta'
+cat -n         |  sed '=' | sed '$!N;s/\n/ /'
+grep -n        |  sed -n '/patt/{=;p;}' | sed '$!N;s/\n/:/'
+cp orig new    |  sed 'w new' orig[/code:1:739eb4cef5]
+</pre>
+
+<h4>Awk as UNIX command</h4>
+<pre class="example">cat            |awk '{print}'
+cat -s         |awk '{blank = NF == 0 ? ++blank : 0; if (blank &lt;= 1) print;}'
+tac            |awk '{t[NR] = $0;}END{for (i = NR; i &gt;= 1; i--) print t[i];}'
+grep patten    |awk '/patten/{print}'
+grep -v patten |awk '! /patten/{print}'
+head           |awk 'NR &lt;= 10 {print}' 24.sh
+head -1        |awk '{print; exit; }' 24.sh
+tail           |awk '{t[n++ % 10] = $0}END{for (i = 0; i &lt; 10; i++) print t[n++ % 10];}'
+tail -1        |awk '{t = $0}END{print t}'
+cut -c 10      |awk '{print substr($0, 10, 1)}'
+cut -d: -f4    |awk -F: '{if (NF &gt; 1) print $4; else print;}'
+tr A-Z a-z     |awk '{print tolower($0);}' se.sh
+tr a-z A-Z     |awk '{print toupper($0);}' se.sh
+tr -s ' '      |awk '{print gensub(&quot; +&quot;, &quot; &quot;, &quot;g&quot;)}'
+tr -d '\012'   |awk '{printf &quot;%s&quot;, $0}'
+wc -l          |awk 'END{printf &quot;% 7d\n&quot;, NR-1}'
+uniq           |awk '{if (NR == 1 || ln != $0) print; ln = $0;}'
+rev            |awk '{l = &quot;&quot;; for (i = length($0); i &gt; 0; i--) printf &quot;%c&quot;, substr($0, i, 1); print &quot;&quot;;}'
+basename       |awk -F'/' '{print $NF}'
+dirname        |awk -F'/' '{if (NF &lt;= 1) printf &quot;.&quot;; else {OFS=&quot;/&quot;; $NF=&quot;&quot;; printf &quot;%s&quot;, substr($0, 1, length($0) - 1);}}'
+xargs          |awk '{printf &quot;%s &quot;, $0}END{print}'
+paste -sd:     |awk 'NR &gt; 1{printf &quot;:%s&quot;, $0}'
+cat -n         |awk '{printf &quot;% 6d  %s\n&quot;, NR, $0}'
+grep -n        |awk '/ss/{print NR&quot;:&quot;$0}'
+cp orig new    |awk '{print &gt; &quot;new&quot;}' orig
+</pre>
+
+<h3>Bash shell scripts</h3>
+<h4>Self print script</h4>
+<pre class="example">#!/bin/bash
+cat `basename $0`
+</pre>
+
+<p>
+画蛇添足一下:
+<pre class="example">#!/bin/bash
+cat `basename $0` | while read line;
+do echo $line;
+done
+</pre>
+
+<h4>Checking numbers</h4>
+<pre class="example">  n1 -eq n2      Check to see if n1 equals n2.
+  n1 -ne n2      Check to see if n1 is not equal to n2.
+  n1 -lt n2      Check to see if n1 &lt; n2.
+  n1 -le n2      Check to see if n1 &lt;= n2.
+  n1 -gt n2      Check to see if n1 &gt; n2.
+  n1 -ge n2      Check to see if n1 &gt;= n2.
+</pre>
+
+<h4>Compare Strings</h4>
+<pre class="example">if [ &quot;$a&quot; = &quot;$b&quot; ]   # is equal to
+if [ &quot;$a&quot; == &quot;$b&quot; ]  # is equal to
+if [ &quot;$a&quot; != &quot;$b&quot; ]  # is not equal to
+if [[ &quot;$a&quot; &gt; &quot;$b&quot; ]] # is greater than
+if [ &quot;$a&quot; \&gt; &quot;$b&quot; ]  # is greater than
+if [[ &quot;$a&quot; &lt; &quot;$b&quot; ]] # is less than
+if [ &quot;$a&quot; \&lt; &quot;$b&quot; ]  # is less than
+</pre>
+
+<h4>Boolean operators</h4>
+<pre class="example">  !     not
+  -a    and
+  -o    or
+</pre>
+
+<p>
+Example:
+<pre class="example">     if [ $num -lt 10 -o $num -gt 100 ]
+     then
+        echo &quot;Number $num is out of range&quot;
+     elif [ ! -w $filename ]
+     then
+        echo &quot;Cannot write to $filename&quot;
+     fi
+</pre>
+
+<h4>Quoting</h4>
+<pre class="example">  \c             Take character c literally.
+  `cmd`          Run cmd and replace it in the line of code with its output.
+  &quot;whatever&quot;     Take whatever literally, after first interpreting $, `...`, \
+  'whatever'     Take whatever absolutely literally.
+  ${var}abc      Example: value of shell variable var with string abc appended.
+</pre>
+
+<pre class="example">  Example:
+     match=`ls *.bak`        #Puts names of .bak files into shell variable match.
+     echo \*                 #Echos * to screen, not all filename as in:  echo *
+     echo '$1$2hello'        #Writes literally $1$2hello on screen.
+     echo &quot;$1$2hello&quot;        #Writes value of parameters 1 and 2 and string hello.
+</pre>
+
+<p>
+$var 等价于 ${var}， ${var}2 是为了与 $var2 作区分。
+
+</p>
+
+<p>
+$(var) 等价于 `var`， 用于获取命令 var 的返回值。 
+
+</p>
+
+<h4>Wild Match</h4>
+
+<pre class="example">ls *.aa?.b[0-9].{&quot;jpg&quot;, &quot;gif&quot;}
+</pre>
+
+<h4>Grouping</h4>
+<pre class="example">  if test \( -r $file1 -a -r $file2 \) -o \( -r $1 -a -r $2 \)
+  then
+     do whatever
+  fi
+</pre>
+
+<h4>Case Statement</h4>
+<pre class="example">  case &quot;$1&quot; in
+     a) cmd1 ;;
+     b) cmd2 ;;
+     c) cmd3 ;;
+     *) cmd4 ;;
+  esac
+</pre>
+
+<h4>Shell Arithmetic</h4>
+<pre class="example">Example:
+   result=$[$1+3]
+or:
+   result=$(($1+3))
+</pre>
+
+<h4>Shell Array</h4>
+
+<p>
+数据赋值：
+
+</p>
+
+<pre class="example">方法一： array=(var1 var2 var3 ... varN)
+方法二： array=([0]=var1 [1]=var2 [2]=var3 ... [n]=varN)
+方法三： array[0]=var1
+        arrya[1]=var2
+        ...
+        array[n]=varN
+</pre>
+
+<p>
+计算数组元素个数：
+
+</p>
+
+<pre class="example">${#array[@]}  或者  ${#array[*]}
+</pre>
+
+<p>
+注：BASH的特殊参数 @ 和 * 都表示“扩展位置参数，从1开始”，但形式稍有差异，但在数组里使用好像是可以通用的
+
+</p>
+
+<p>
+引用数组：
+
+</p>
+
+<pre class="example">echo ${array[n]}
+</pre>
+
+<p>
+遍历数组：
+
+</p>
+
+<pre class="example">filename=(`ls`)
+for var in ${filename[@]};do
+echo $var
+done
+</pre>
+
+<h4>Bash 内部字符串处理</h4>
+
+<p>
+# 定义几个变量用于测试目的
+FILE_NAME="/usr/local/app/world.txt"
+TIME_NOW="`date +"%Y%m%d%H%M%S"`"
+
+</p>
+
+<p>
+取字符串的子串
+<pre class="example"># 取子串，比如说从TIME_NOW分别取出日期和时间
+DATE_TODAY=&quot;${TIME_NOW:0:8}&quot;    # ${var:beg_pos:sub_str_length}， beg_pos是子串的起始位置（从0开始）， sub_str_length为子串长度
+TIME_TODAY=&quot;${TIME_NOW:8:6}&quot;
+# 或者
+TIME_TODAY=&quot;${TIME_NOW:8}&quot;      # sub_str_length为0表示到源字符串的结尾
+
+# 取FILE_NAME中的文件名world.txt（不包括路径）， 很多童鞋会马上想到basename， 或者一些类似于正则匹配的操作
+${FILE_NAME##*/}                # 相当于basename ${FILE_NAME}，即删除按从左至右，匹配一直到最后一个/之间的子串
+${FILE_NAME%/*}                 # 相当与dirname， 即删除按从右至左方向开始，匹配到第一个/之间的子串
+${FILE_NAME#*/}                 # 从左至右， 删除第一个/及左边的子串
+${FILE_NAME%%/*}                # 从右至左， 删除至最后一个/及右边的子串
+</pre>
+
+<p>
+字符串替换
+<pre class="example">${FILE_NAME/world.txt/hello.txt}    # 把第一个world.txt替换成hello.txt
+${FILE_NAME//a/A}                   # 把所有的a替换成A
+</pre>
+
+<p>
+计算字符串长度
+<pre class="example">${#FILE_NAME}                   # 计算FILE_NAME的长度
+ARRAY=(abc defg hijklmn)
+${#ARRAY}                       # 计算这个数组的维数
+${#ARRAY[2]}                    # 计算这个数组第三个元素的长度
+</pre>
+
+<h4>Shell command running</h4>
+<pre class="example">  cmd1 &amp;&amp; cmd2   Run cmd1, then if cmd1 successful run cmd2, otherwise skip.
+  cmd1 || cmd2   Run cmd1, then if cmd1 not successful run cmd2, otherwise skip.
+  cmd1; cmd2     Do cmd1 and then cmd2.
+  cmd1 &amp; cmd2    Do cmd1, start cmd2 without waiting for cmd1 to finish.
+  (cmds)         Run cmds (commands) in a subshell.
+</pre>
+
+<h4>get file content as another commands' input parameters</h4>
+
+<p>
+for example, you have a file contains process' PID named /var/run/my.pid, you can handle it like this.
+
+</p>
+
+<pre class="example">kill $(&lt;/var/run/my.pid)
+</pre>
+
+<p>
+the my.pid file maybe like this:
+
+</p>
+
+<pre class="example">1111
+2222 3333
+4444
+...
+whatever
+</pre>
+
+<p>
+the output of $(&lt;/var/run/my.pid) will be:
+
+</p>
+
+<pre class="example">1111 2222 3333 4444
+</pre>
+
+<h4>Get the LAST shell script argument</h4>
+
+<pre class="example">eval last_arg=\${$#}
+echo $last_arg
+</pre>
+
+<h4>Get the number of arguments</h4>
+
+<p>
+$#
+
+</p>
+
+<h4>Get the list of arguments</h4>
+
+<p>
+$*  or   $@ 
+
+</p>
+
+<h4>echo options</h4>
+
+<p>
+-n     do not output the trailing newline
+
+</p>
+
+<p>
+-e     enable interpretation of backslash escapes
+
+</p>
+
+<h4>Get system's SIGNALS list</h4>
+
+<pre class="example">kill -l
+</pre>
+
+<h4>Kill procs</h4>
+
+<pre class="example">ps aux | grep &quot;procname&quot; | grep -v &quot;grep&quot; | awk '{print $2}' | xargs -i sudo kill -9 \{};
+</pre>
+
+<h4>日期操作</h4>
+
+<p>
+查找若干天之前（之后）的操作
+
+</p>
+
+<pre class="example">date +%Y%m%d --date=&quot;100 days&quot;
+date +%Y%m%d --date=&quot;100 days ago&quot;
+date +%Y%m%d --date=&quot;19781012 10000 days&quot;
+date +%Y%m%d --date=&quot;19781012 10000 days ago&quot;
+</pre>
+
+<p>
+显示今日距某日多少天
+
+</p>
+
+<pre class="example">echo &quot;$(( ($(date +%s) - $(date +%s -d1978-10-12)) / (24 * 3600) )) &quot;
+</pre>
+
+<h4>一次生成100个大小为10K的文件</h4>
+
+<pre class="example">for i in `seq 100`; do dd if=/dev/zero of=$i.file bs=1024 count=10; done
+</pre>
+
+<h4>查看系统硬件之王道</h4>
+
+<p>
+lshw
+
+</p>
+
+<p>
+例如查看CPU，可以用
+
+</p>
+
+<pre class="example">lshw -C cpu
+</pre>
+
+<p>
+这比 cat /proc/cpuinfo 获得的信息要全面的多。
+
+</p>
+
+<h4>删除/添加内核模块</h4>
+
+<pre class="example">rmmod ipw3945
+modprobe -r ipw3945
+</pre>
+
+<p>
+其中 modprobe -r 似乎更强大一些。
+
+</p>
+
+<p>
+同样的，modprobe -i mod_name 也比 insmod 更加强大一些。
+
+</p>
+
+<h4>查看文件系统类型、版本等信息</h4>
+
+<pre class="example">file -s /dev/sda1
+</pre>
+
+<h4>查看网卡连接速率</h4>
+
+<pre class="example">mii-tool eth0
+</pre>
+
+<p>
+mii-tool工具属于net-tools包。
+
+</p>
+
+<h4>测试网络带宽状况</h4>
+
+<p>
+iperf
+
+</p>
+
+<p>
+开启服务器 iperf -s
+
+</p>
+
+<p>
+开户测试客户端 iperf -c [server_ip]
+
+</p>
+
+<p>
+参数：
+
+</p>
+
+<p>
+-i sec 以秒为单位报告结果
+
+</p>
+
+<p>
+-d 同时进行双向传输模式
+
+</p>
+
+<p>
+-t sec 测试时间，默认为10秒
+
+</p>
+
+<p>
+-F 指定需要传输的文件
+
+</p>
+
+<h4>文件分割与合并</h4>
+
+<pre class="example">split -b1440k a_whopping_big_file chunk
+cat chunk* &gt; a_whopping_big_file
+</pre>
+
+<h4>合并多个pdf文件</h4>
+
+<pre class="example">gs -q -dNOPAUSE -dBATCH -sDEVICE=pdfwrite -sOutputFile=out.pdf f1.pdf f2.pdf f3.pdf
+</pre>
+
+<h4>制作grub splash图</h4>
+
+<pre class="example">convert -geometry 640×480 -colors 14 XXX.png XXX.xpm &amp;&amp; gzip XXX.xpm 
+</pre>
+
+<h4>进行mplayer mp3列表播放</h4>
+
+<pre class="example">ls *.mp3 | while read line; do echo $line | sed 's/ /\\ /g' | xargs mplayer; done
+</pre>
+
+<p>
+可制作bash alias:
+
+</p>
+
+<pre class="example">alias play=&quot;ls *.mp3 | while read line; do echo $line | sed 's/ /\\ /g' | xargs mplayer; done&quot;
+</pre>
+
+<p>
+调用方法为：
+
+</p>
+
+<pre class="example">play '0[12]*.mp3'
+</pre>
+
+<h4>mplayer 显示 .srt 字幕文件</h4>
+
+<p>
+若字幕文件转为utf-8：
+
+</p>
+
+<pre class="example">mplayer moviename.avi -sub moviename.srt -font /usr/local/texlive/simsun.ttf -utf8
+</pre>
+
+<p>
+若字幕文件为GB码：
+
+</p>
+
+<pre class="example">mplayer moviename.avi -sub moviename.srt -font /usr/local/texlive/simsun.ttf -subcp cp936
+</pre>
+
+<h4>抓取网页内面到标准输出</h4>
+
+<pre class="example">wget -O - http://www.google.com
+</pre>
+
+<h4>端口扫描</h4>
+
+<p>
+nmap, Unicornscan，Zenmap，nast
+
+</p>
+
+<h4>文本按行反向输出</h4>
+
+<pre class="example">tac filename
+</pre>
+
+<h4>查看文件的mtime, ctime, atime</h4>
+
+<p>
+mtime -- modified time, ls -l filename
+
+</p>
+
+<p>
+ctime -- create time, ls lc filename
+
+</p>
+
+<p>
+atime -- access time, ls -lu filename 
+
+</p>
+
+<h4>lsof</h4>
+
+<p>
+lsof -- List opened files 列出打开的文件符
+
+</p>
+
+<p>
+例如，列出打开的TCP端口。
+
+</p>
+
+<pre class="example">lsof -i TCP:80 -n
+lsof -i UDP:10080 -n
+</pre>
+
+<h4>pgrep </h4>
+
+<p>
+比如，可以使用 pgrep -u root 来代替 
+
+</p>
+
+<pre class="example">ps -ef | egrep '^root ' | awk '{print $2}'
+</pre>
+
+<p>
+以便抓取属于 root 的 PID。
+
+</p>
+
+<h4>pstree</h4>
+
+<p>
+列出树状结构的进程表。
+
+</p>
+
+<h4>查看服务器设备型号</h4>
+
+<pre class="example">dmidecode | more
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">lshw | more
+</pre>
+
+<h4>nl</h4>
+
+<p>
+列出行号：
+
+</p>
+
+<pre class="example">nl source.c | head
+</pre>
+
+<h4>获取文件大小</h4>
+
+<p>
+stat -c %s filename
+
+</p>
+
+<h4>获取中文字体</h4>
+
+<pre class="example">fc-list :lang=zh-cn
+</pre>
+
+<h4>skill</h4>
+
+<p>
+-c参数，后面跟command,类似killall
+
+</p>
+
+<p>
+-t参数，可以踢一个tty或者pty，免得要踢一个用户的时候先ps找到他的shell了
+
+</p>
+
+<p>
+-u参数，kill一个user的进程
+
+</p>
+
+<p>
+-p参数，kill一个pid，类似kill
+
+</p>
+
+<h4>curl</h4>
+
+<p>
+获取url的内容
+
+</p>
+
+<pre class="example">curl -s http://www.google.com/ &gt; google.html
+</pre>
+
+<h4>用curl发布twitter</h4>
+
+<pre class="example">curl -u username:password -d status=&quot;Message here...&quot; http://twitter.com/statuses/update.xml
+</pre>
+
+<p>
+写了一个脚本"twitter"：
+
+</p>
+
+<pre class="example">#!/bin/bash
+
+i=$#
+status=&quot;&quot;
+for j in `seq 1 $i`; do 
+eval msg=\${$j}
+status=${status}${msg}&quot; &quot;
+done
+echo ${status}
+curl -u cyberpsyche:****** -d status=&quot;${status}&quot; http://twitter.com/statuses/update.xml
+</pre>
+
+<p>
+使用方法为 "twitter 我想 说的 东东，whatever."
+
+</p>
+
+<h4>制作iso文件</h4>
+
+<pre class="example">dd if=/dev/cdrom of=/root/cdrom.iso
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">mkisofs -r -o name.iso /dir/name
+</pre>
+
+<h4>bash_profile中的LSCOLORS设置</h4>
+
+<pre class="example">export CLICOLOR=1
+export LSCOLORS=gxfxaxdxcxegedabagacad
+alias ls=”ls -G”
+</pre>
+
+<p>
+CLICOLOR是用来设置是否进行颜色的显示。CLI是Command Line Interface的缩写。
+
+</p>
+
+<p>
+LSCOLORS是用来设置当CLICOLOR被启用后，各种文件类型的颜色。LSCOLORS的值中每两个字母为一组，分别设置某个文件类型的文字颜色和背景颜色。LSCOLORS中一共11组颜色设置，按照先后顺序，分别对以下的文件类型进行设置：
+
+</p>
+
+<pre class="example">directory
+symbolic link
+socket
+pipe
+executable
+block special
+character special
+executable with setuid bit set
+executable with setgid bit set
+directory writable to others, with sticky bit
+directory writable to others, without sticky bit
+</pre>
+
+<p>
+LSCOLORS中，字母代表的颜色如下：
+<pre class="example">a 黑色
+b 红色
+c 绿色
+d 棕色
+e 蓝色
+f 洋红色
+g 青色
+h 浅灰色
+A 黑色粗体
+B 红色粗体
+C 绿色粗体
+D 棕色粗体
+E 蓝色粗体
+F 洋红色粗体
+G 青色粗体
+H 浅灰色粗体
+x 系统默认颜色
+</pre>
+
+<h4>grep 技巧</h4>
+
+<p>
+grep -l "TERM" *   查找包含匹配字符串的文件名
+
+</p>
+
+<p>
+grep -s "TERM" *   查找包含匹配字符串的文件名和"TERM"出现的次数，注意，此时不包括该字符串的文件名后会有:0表示无匹配情况，因此可以排除之，外加排序功能：
+
+</p>
+
+<pre class="example">grep -s &quot;TERM&quot; * | grep -v &quot;:0&quot; | sort -t : -k 2 -r 
+</pre>
+
+<h4>rename file</h4>
+
+<pre class="example">rename 's/abc(.*).txt/abc$1_bak.txt/' abc*.txt
+rename 's/\.bak$//' *.bak
+</pre>
+
+<h4>清空文件</h4>
+
+<pre class="example">:&gt; $FILENAME
+</pre>
+
+<p>
+: 表示空指令， > 表示重定向
+
+</p>
+
+<h4>expect</h4>
+
+<pre class="example">/usr/bin/expect -f scp.ex
+</pre>
+
+<p>
+scp.ex content:
+
+</p>
+
+<pre class="example">spawn /usr/bin/scp  -P 2222 ./lianbo.flv  sam@11.22.33.44:/home/sam/www/htdocs/v/c/xwlb/xwlb.flv
+expect &quot;*:*&quot;
+send &quot;password\r&quot;
+expect eof
+</pre>
+
+<h4>rsync</h4>
+
+<pre class="example">rsync -v -a -l -z '-e ssh -p 2222' --stats --progress --exclude 'weather/10115*.*' --exclude 'weather/10127*.*' --exclude 'weather/10108*.*' /home/sam/www/htdocs/html/ sam@61.4.185.12:/home/sam/www/weather/www/htdocs/html/
+</pre>
+
+<h4>ssh 远程登录设置的问题</h4>
+
+<p>
+/root directory should be in 755 mode, .ssh directory should be in 700 mode, authorized_keys2 file should be in 644 mode.
+
+</p>
+
+<h4>Make sure ssh is running when you behind a firewall</h4>
+
+<p>
+ssh -f -N proxy
+
+</p>
+
+<h4>passphrase of ssh</h4>
+
+<p>
+A host can only use the empty passphrase
+
+</p>
+
+<p>
+# change passphrase
+
+</p>
+
+<p>
+ssh-keygen -p
+
+</p>
+
+<p>
+# ssh with identity file
+
+</p>
+
+<p>
+ssh user@server -i ~/.ssh/id_rsa_passphrase_file
+
+</p>
+
+<h4>history</h4>
+
+<p>
+bash的history存在buffer中，当退出时写入.bash_history文件。可用 history -w 强制写入。
+
+</p>
+
+<p>
+用 history -c 立即删除记录。
+
+</p>
+
+<p>
+在/etc/profile中修改HISTSIZE值定义history记录数。
+
+</p>
+
+<p>
+export HISTTIMEFORMAT="%F %T "， 使history命令显示时间。
+
+</p>
+
+<h4>在用户退出后进程仍执行</h4>
+
+<pre class="example">nohup wget http://1.1.1.1/2.gz
+</pre>
+
+<p>
+或
+
+</p>
+
+<pre class="example">$ &lt;cmd&gt;
+$ disown
+</pre>
+
+<h4>查看进程的内存使用情况</h4>
+
+<p>
+pmap <PID>
+
+</p>
+
+<h4>Run a program as another user</h4>
+
+<p>
+su -l user -c your_cmd 
+
+</p>
+
+<h4>查看非标准manual文件</h4>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>nroff -man /usr/man/man1/cscope.1</td><td>more </td>
+</tr>
+</tbody>
+</table>
+
+<h4>Welcome info</h4>
+
+<p>
+本地登录前 /etc/issue
+
+</p>
+
+<p>
+网络登录前 /etc/issue.net
+
+</p>
+
+<p>
+登录后 /etc/motd 
+
+</p>
+
+<h3>Imagemagick</h3>
+
+<h4>mogrify</h4>
+
+<p>
+图像处理软件
+
+</p>
+
+<h4>convert</h4>
+
+<p>
+格式转换与图片加工
+
+</p>
+
+<h3>Mplayer</h3>
+
+<h4>mencoder example</h4>
+
+<pre class="example">mencoder lianbo.mpg -of lavf -lavfopts format=flv -ovc lavc -lavcopts vcodec=flv:vmax_b_frames=0:vbitrate=250:mbd=2:cmp=2:subcmp=2:trell -vf scale=480:360 -oac mp3lame -lameopts abr:br=56 -o lianbo.flv -srate 22050
+</pre>
+
+<h3>GNU/Linux</h3>
+
+<h4>Binutils</h4>
+
+<ul>
+<li>ld - the GNU linker.
+</li>
+<li>as - the GNU assembler.
+</li>
+<li>addr2line - Converts addresses into filenames and line numbers.
+</li>
+<li>ar - A utility for creating, modifying and extracting from archives.
+</li>
+<li>c++filt - Filter to demangle encoded C++ symbols.
+</li>
+<li>gprof - Displays profiling information.
+</li>
+<li>nlmconv - Converts object code into an NLM.
+</li>
+<li>nm - Lists symbols from object files.
+</li>
+<li>objcopy - Copys and translates object files.
+</li>
+<li>objdump - Displays information from object files.
+</li>
+<li>ranlib - Generates an index to the contents of an archive.
+</li>
+<li>readelf - Displays information from any ELF format object file.
+</li>
+<li>size - Lists the section sizes of an object or archive file.
+</li>
+<li>strings - Lists printable strings from files.
+</li>
+<li>strip - Discards symbols.
+</li>
+<li>windres - A compiler for Windows resource files.
+</li>
+<li>ldd - Print shared library dependencies.
+</li>
+</ul>
+
+<h3>优化内核参数</h3>
+
+<pre class="example">vi /etc/sysctl.conf
+</pre>
+
+<p>
+在末尾增加以下内容：
+
+</p>
+
+<pre class="example">net.ipv4.tcp_fin_timeout = 30
+net.ipv4.tcp_keepalive_time = 300
+net.ipv4.tcp_syncookies = 1
+net.ipv4.tcp_tw_reuse = 1
+net.ipv4.tcp_tw_recycle = 1
+net.ipv4.ip_local_port_range = 5000    65000
+</pre>
+
+<p>
+使配置立即生效：
+
+</p>
+
+<pre class="example">/sbin/sysctl -p
+</pre>
+<!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

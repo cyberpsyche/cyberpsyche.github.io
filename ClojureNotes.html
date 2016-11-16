@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Clojure Notes</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="../workwiki/WelcomePage.html">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">Clojure Notes</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h3>General</h3>
+
+<h4>Clojure API</h4>
+
+<p>
+<a href="http://clojure.github.io/clojure/">http://clojure.github.io/clojure/</a>
+
+</p>
+
+<h4>执行clojure脚本</h4>
+
+<pre class="example">java -cp /path/to/clojure-1.x.0.jar clojure.main filename.clj
+</pre>
+
+<h4>执行clojure jar文件</h4>
+
+<pre class="example">java -jar /path/to/filename_clojure_standalone.jar
+</pre>
+
+<h4>run REPL</h4>
+
+<pre class="example">java -cp clojure-1.6.0.jar  clojure.main
+</pre>
+
+<p>
+退出REPL
+
+</p>
+
+<pre class="example">(. System exit 0)
+</pre>
+
+<h4>repl 中重要加载库</h4>
+
+<p>
+==> (require 'testapp.core :reload)
+
+</p>
+
+<p>
+==> (-main)
+
+</p>
+
+<h4>see the docstring of func_name</h4>
+
+<p>
+==> (doc func_name)
+
+</p>
+
+<h4>see what is available in a given library</h4>
+
+<p>
+==> (dir testapp.core)
+
+</p>
+
+<h4>search for doc</h4>
+
+<p>
+==> (find-doc #"doc string in regex style")
+
+</p>
+
+<h4>search the source for a func_name in repl</h4>
+
+<p>
+==> (source func_name)
+
+</p>
+
+<h4>预先定义函数</h4>
+
+<p>
+(declare function-names)
+
+</p>
+
+<h4>执行脚本</h4>
+
+<pre class="example">java -jar clojure-1.7.0.jar test.clj
+</pre>
+
+<h3>Tips</h3>
+
+<h4>require 与 use 的区别</h4>
+
+<p>
+require引用的包在使用时须带namespace, use比require多做了一些工作，在使用时可以不带namespace。
+
+</p>
+
+<h4>加载clojure代码</h4>
+
+<p>
+(load-file "/path/to/file")
+
+</p>
+
+<h4>用#()创建匿名函数</h4>
+
+<p>
+(map #(+ % 3) [2 4 7]) ; -> (5 7 10)
+
+</p>
+
+<h4>集合</h4>
+
+<pre class="example">(def stooges [&quot;Moe&quot; &quot;Larry&quot; &quot;Curly&quot; &quot;Shemp&quot;])
+(first stooges) ; -&gt; &quot;Moe&quot;
+(second stooges) ; -&gt; &quot;Larry&quot;
+(last stooges) ; -&gt; &quot;Shemp&quot;
+(nth stooges 2) ; indexes start at 0 -&gt; &quot;Curly&quot;
+(next stooges) ; -&gt; (&quot;Larry&quot; &quot;Curly&quot; &quot;Shemp&quot;)
+(butlast stooges) ; -&gt; (&quot;Moe&quot; &quot;Larry&quot; &quot;Curly&quot;)
+(drop-last 2 stooges) ; -&gt; (&quot;Moe&quot; &quot;Larry&quot;)
+; Get names containing more than three characters.
+(filter #(&gt; (count %) 3) stooges) ; -&gt; (&quot;Larry&quot; &quot;Curly&quot; &quot;Shemp&quot;)
+(nthnext stooges 2) ; -&gt; (&quot;Curly&quot; &quot;Shemp&quot;)
+(every? #(instance? String %) stooges) ; -&gt; true
+(not-every? #(instance? String %) stooges) ; -&gt; false
+(not-any? #(instance? Number %) stooges) ; -&gt; true
+</pre>
+
+<pre class="example">(some #(instance? Number %) stooges) ; -&gt; nil  效率低
+(contains? (set stooges) &quot;Moe&quot;) ; -&gt; true  效率高
+</pre>
+
+<h4>Thread 宏</h4>
+
+<p>
+(f1 (f2 (f3 x)))
+
+</p>
+
+<p>
+与
+
+</p>
+
+<p>
+(-> x f3 f2 f1)
+
+</p>
+
+<p>
+相同。
+
+</p>
+
+<h4>time 宏</h4>
+
+<p>
+time 宏可以看成一个wrapper函数， 它会打印被它包起来的函数的执行时间，并且返回这个函数的返回值。如：
+
+</p>
+
+<p>
+(time (f 2))
+
+</p>
+
+<h4>线程内sleep</h4>
+
+<p>
+(Thread/sleep 3000)  ;sleep for 3000 ms 
+
+</p>
+
+<h4>dotimes</h4>
+
+<p>
+(dotimes [_ 3] (time (f 2)))
+
+</p>
+
+<p>
+(dotimes [x 5] (print (inc x)))
+
+</p>
+
+<h4>doseq</h4>
+
+<p>
+(doseq [x (range 3) ] (print x))
+
+</p>
+
+<h4>complement 取反操作</h4>
+
+<pre class="example">(defn teenager? [age] (and (&gt;= age 13) (&lt; age 20)))
+(def non-teen? (complement teenager?))
+(println (non-teen? 47)) ; -&gt; true
+</pre>
+
+<h4>split</h4>
+
+<p>
+<exmaple>
+(clojure.string/split "a b c  d e" #"\ +")    ; ==> ["a" "b" "c" "d" "e"]
+</exmaple>
+
+</p>
+
+<h4>打印</h4>
+
+<pre class="example">(print &quot;hello world&quot;)
+(println &quot;hello&quot; &quot;world&quot; 1) ; &quot;hello world 1&quot;
+(printf &quot;hello %s (%.3f)&quot; &quot;world&quot; 3.0) ; hello world (3.000)
+(format &quot;hello %s (%.3f)&quot; &quot;world&quot; 3.0) ; &quot;hello world (3.000)&quot;
+(str &quot;hello &quot; &quot;world &quot; 3) ; &quot;hello world 3&quot;
+(println-str &quot;hello&quot; &quot;world&quot; 3) ; &quot;hello world 3\n&quot;
+</pre>
+
+<h4>注释</h4>
+
+<p>
+单行： ; ;; ;;; Lisper习惯于用越多;表示越重要或者越概要的注释
+
+</p>
+
+<p>
+;      单行注释
+
+</p>
+
+<p>
+;;     函数注释
+
+</p>
+
+<p>
+;;;    macro或者defmulti的注释
+
+</p>
+
+<p>
+;;;;   ns注释
+
+</p>
+
+<p>
+多行：
+
+</p>
+
+<pre class="example">(comment &quot;
+...1...
+...2...
+&quot;)
+</pre>
+
+<h4>解析XML</h4>
+
+<pre class="example">(require 'clojure.xml)
+(clojure.xml/parse &quot;./data/test.xml&quot;)
+(def r (xml-seq (clojure.xml/parse &quot;./data/test.xml&quot;)))
+(for [x r :when (= :mongodb (:tag x))] x)
+</pre>
+
+<h4>defstruct 与 Structmap</h4>
+
+<pre class="example">(defstruct vehicle-struct :make :model :year :color)
+(def vehicle (struct vehicle-struct &quot;Toyota&quot; &quot;Prius&quot; 2009))
+(:year vehicle)
+</pre>
+
+<p>
+建立accessor
+
+</p>
+
+<pre class="example">(def year (accessor vehicle-struct :year))
+(year vehicle)
+</pre>
+
+<p>
+后者的性能比前者高。
+
+</p>
+
+<h4>动态线程绑定var</h4>
+
+<p>
+let 这个special form 创建局限于一个 当前form的bindings. 注意：如果这些表达式里面有调用别的函数，那么这个函数是无法利用let创建的这个binding的。
+
+</p>
+
+<p>
+宏 binding 跟let 类似, 但是它创建的本地binding会暂时地覆盖已经存在的全局binding. 这个binding可以在创建这个binding的form以及这个form里面调用的函数里面都能看到。但是一旦跳出了这个binding 那么被覆盖的全局binding的值会回复到之前的状态。
+
+</p>
+
+<p>
+def的var都是static的，所有线程都可以访问。如果想创建线程自己的binding，别的线程无法访问，应该做两件事情：
+
+</p>
+
+<p>
+1.def创建var时指定参数^:dynamic
+
+</p>
+
+<p>
+2.用binding宏来创建自己的线程的binding
+
+</p>
+
+<pre class="example">By default Vars are static, but per-thread bindings for Vars defined with metadata marking them as dynamic can be established via the macro binding and within-thread they obey a stack discipline:  
+user=&gt; (def ^:dynamic x 1)  
+user=&gt; (def ^:dynamic y 1)  
+user=&gt; (+ x y)  
+2  
+   
+user=&gt; (binding [x 2 y 3]  
+         (+ x y))  
+5  
+   
+user=&gt; (+ x y)  
+2
+</pre>
+
+<h4>标准输入输出</h4>
+
+<p>
+对应stdin, stdout和stderr, Clojure默认提供了*in*, *out*和*err* 三个symbols与之对应。
+
+</p>
+
+<p>
+可以使用binding宏进行重定向。比如下面的例子将*out* 重定向到文件中：
+
+</p>
+
+<pre class="example">(binding [*out* (java.io.FileWriter. &quot;./data/output_file&quot;)] (println &quot;Write to output file.&quot;) (flush))
+</pre>
+
+<p>
+这个重定向仅在binding表达式中有效，离开这个表达式后，*out*仍然是stdout.
+
+</p>
+
+<h4>读写文件</h4>
+
+<p>
+整体的读写文件。
+
+</p>
+
+<pre class="example">(def s (slurp &quot;./data/a.xml&quot;))
+(spit &quot;./data/b.xml&quot; s)
+(slurp &quot;./data/b.xml&quot;)
+</pre>
+
+<p>
+更常规的作法
+
+</p>
+
+<pre class="example">(def wtr (io/writer &quot;./file_name&quot; :append true))
+(io/copy wtr &quot;String...&quot;)
+(.close wtr)
+</pre>
+
+<h4>with-open</h4>
+
+<pre class="example">(with-open [rdr (clojure.java.io/reader &quot;/tmp/foo.txt&quot;)]
+    (reduce conj [] (line-seq rdr)))
+</pre>
+
+<h4>匿名函数 fn</h4>
+
+<pre class="example">user=&gt; (def f (fn [x] (+ 2 x)))  
+#'user/f  
+
+user=&gt; (f 1)  
+3  
+user=&gt; (f 6)  
+8  
+</pre>
+
+<p>
+另一种匿名函数写法
+
+</p>
+
+<h4><a id="(...)"></a>let 与 binding 的区别</h4>
+
+<p>
+let其实是词法作用域的对变量的“遮蔽”，它并非重新绑定变量值，而binding则是在变量的root binding之外在线程的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">ThreadLocal</a>内存储了一个绑定值，变量值的查找顺序是先查看<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">ThreadLocal</a>有没有值，有的话优先返回，没有则返回root binding。
+
+</p>
+
+<h4>= 与 == 的区别</h4>
+
+<p>
+== 只能用于Number；= 相当于java的equals()，可用于对象、数字、数据结构集合等。
+
+</p>
+
+<h4>map</h4>
+
+<pre class="example">(def f (fn [x y] (+ x y)))
+(map f [2 4 3] [9 0 3])
+
+output:
+(11 4 6)
+</pre>
+
+<h4>sequence</h4>
+
+<pre class="example">user=&gt; (first (map #(print-str %) [1 2 3]))  
+&quot;1&quot;
+
+user=&gt; (rest (map #(print-str %) [1 2 3]))  
+(&quot;2&quot; &quot;3&quot;)
+</pre>
+
+<p>
+<a id="(print-str"></a>%) 函数将元素转变成了字符串。
+
+</p>
+
+<h4>字符串包含关系检查</h4>
+
+<p>
+(contains? #{\A \B \C \%} (first seq))
+
+</p>
+
+<p>
+or
+
+</p>
+
+<p>
+(some #{(first seq)} '(\A \B \C \%))
+
+</p>
+
+<p>
+也可作如下的检查函数。
+
+</p>
+
+<pre class="example">(defn in? 
+  &quot;true if seq contains elm&quot;
+  [seq elm]  
+  (some #(= elm %) seq))
+</pre>
+
+<h4>随机数</h4>
+
+<p>
+随机数：
+
+</p>
+
+<pre class="example">(rand-int 100) ; 得到一个[0 100) 的随机数
+(for [i (range 20)] (rand-int 10)) ; (4 0 5 9 9 7 5 9 3 1 0 8 7 1 9 8 9 4 7 1)
+(take 10 (repeatedly #(rand-int 100))) ; (50 12 86 73 42 90 84 96 71 33)
+</pre>
+
+<p>
+取一个集合中的随机位置元素：
+
+</p>
+
+<pre class="example">(rand-nth [11 22 33 44 55]) ;
+(rand-nth (range 100)) ; 每次运行结果会变
+</pre>
+
+<p>
+float随机数：
+
+</p>
+
+<pre class="example">(rand) ; [0 1.0) 的float，如：0.43488316932510274
+(rand 10) ; [0 10.0)，如：6.26826853733003
+</pre>
+
+<h4>整除和取余</h4>
+
+<p>
+(quot 10 3) ; 3 相当于java的10/3  quotient: 除法的商
+
+</p>
+
+<p>
+(rem 10 3) ; 1 相当于java的 10 % 3 reminder：余数
+
+</p>
+
+<h4>String</h4>
+
+<pre class="example">(str 10) ; &quot;10&quot;
+(str \a) ; &quot;a&quot;
+(str \a nil &quot;bc&quot;) ; &quot;abc&quot;
+(str &quot;hello&quot; &quot;world&quot;) ; &quot;hello world&quot;
+(str '(\a \b \c)) ; &quot;(\\a \\b \\c)&quot;
+(apply str '(\a \b \c)) ; &quot;abc&quot; 相当于 (str \a \b \c)
+(seq &quot;abc&quot;) ; (\a \b \c)
+(format &quot;%s %s&quot; &quot;hello&quot; &quot;world&quot;) ; &quot;hello world&quot;
+(subs &quot;12345&quot; 1) ; &quot;2345&quot; 相当于 (.substring &quot;12345&quot; 1)
+(subs &quot;12345&quot; 1 3) ; &quot;23&quot;相当于 (.substring &quot;12345&quot; 1 3)
+(apply str (reverse &quot;12345&quot;)) ; &quot;54321&quot;
+</pre>
+
+<h4>condp 与 cond</h4>
+
+<p>
+condp 的写法
+
+</p>
+
+<pre class="example">(def n 3)
+(condp = n 2 &quot;2=n&quot; 3 &quot;3=n&quot; &quot;no match&quot;) ; &quot;3=n&quot;
+(condp &gt; n 0 &quot;0&gt;n&quot; 5 &quot;5&gt;n&quot; &quot;others&quot;) ; &quot;5&gt;n&quot;
+</pre>
+
+<p>
+对应的 cond 的写法
+
+</p>
+
+<pre class="example">(def n 3)
+(cond (= 2 n) &quot;2=n&quot; (= 3 n) &quot;3=n&quot; :else &quot;no match&quot;)
+(cond (&gt; 0 n) &quot;0&gt;n&quot; (&gt; 5 n) &quot;5&gt;n&quot; :else &quot;other&quot;)
+</pre>
+
+<p>
+注：:else只是一个习惯用法，可为任何内容。
+
+</p>
+
+<h4>loop 与 recur</h4>
+
+<p>
+(loop [i 1] (if (< i 5) (do (println i) (recur (inc i)))))
+
+</p>
+
+<p>
+(defn f [n] (loop [i n] (when (pos? i) (println i) (recur (dec i)))))
+
+</p>
+
+<p>
+(Loop [i 1 r 0 z 1] (if (> i 10) (print r z) (recur (inc i) (+ r i) (* z i)))) 
+
+</p>
+
+<h4>zipmap</h4>
+
+<p>
+(zipmap ["a" "b"] [1 20])  ; ==> {"a" 1, "b" 20}
+
+</p>
+
+<h4>interpose</h4>
+
+<p>
+(interpose "-" [1 2 4])   ; ==> (1 "-" 2 "-" 4)
+
+</p>
+
+<h4>interleave</h4>
+
+<p>
+(interleave [1 2 3] [3 4 5] ["a" "b"])  ; ==> (1 3 "a" 2 4 "b")
+
+</p>
+
+<h3>Leiningen</h3>
+
+<p>
+Leiningen默认把dependency repository安装在 $HOME/.m2 目录下。 这些库来自Maven和Clojars。
+
+</p>
+
+<h4>建立新的App工程</h4>
+
+<p>
+lein new app proj_name
+
+</p>
+
+<h4>建立新的Lib工程</h4>
+
+<p>
+lein new lib_name  (It is same to "lein new default lib_name")
+
+</p>
+
+<h4>生成工程的jar包</h4>
+
+<p>
+lein uberjar
+
+</p>
+
+<h4>查找包</h4>
+
+<p>
+lein search XXXX
+
+</p>
+
+<h4>查看项目的包依赖树</h4>
+
+<p>
+lein deps :tree
+
+</p>
+
+<h4>下载项目的依赖包</h4>
+
+<p>
+lein deps
+
+</p>
+
+<h4>project.clj 中:dependencies的写法</h4>
+
+<p>
+[group-id/artifact-id version-string]
+
+</p>
+
+<p>
+如：
+
+</p>
+
+<p>
+[org.clojure/java.jdbc "0.2.3"]
+
+</p>
+
+<p>
+defproject 中的名称 aaa/bbb 即是group-id/artifact-id, 如果名称中没有/,则 artifact-id 与 group-id 相同。 
+
+</p>
+
+<h4>制作standalone的clojure scripts</h4>
+
+<p>
+生成一个 ./lein/profiles.clj 文件，内含：
+
+</p>
+
+<pre class="example">{:user {:plugins [[lein-exec &quot;0.3.5&quot;]]}}
+</pre>
+
+<p>
+编辑 script.clj 文件：
+
+</p>
+
+<pre class="example">(require 'leiningen.exec)
+(leiningen.exec/deps '[[org.clojure/math.combinatorics &quot;0.0.7&quot;]])
+(require '[clojure.math.combinatorics :as combo])
+
+;; Any args passed to script are stored in the `*command-line-args*`
+;; list, with the first element being the filename of the script.
+(println &quot;Hi, lein exec!&quot; *command-line-args*)
+(println (combo/combinations [1 2 3] 2))
+</pre>
+
+<p>
+执行脚本：
+
+</p>
+
+<pre class="example">lein exec script.clj arg1 arg2
+</pre>
+
+<h4>使用lein-marginalia生成项目文档</h4>
+
+<p>
+在./lein/profiles.clj中加入 {:user {:plugins <a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">lein-marginalia&#32;&#34;0.7.1&#34;</a>}}
+
+</p>
+
+<p>
+在项目路径下执行
+
+</p>
+
+<p>
+lein marg
+
+</p>
+
+<p>
+即可在当前路径下生成 docs/uberdoc.html
+
+</p>
+
+<h4>清理工程</h4>
+
+<p>
+lein clean
+
+</p>
+
+<h4>发布库到Clojars</h4>
+
+<p>
+lein depoly clojars
+
+</p>
+
+<h3>与Java的互操作</h3>
+
+<h4>引入包</h4>
+
+<pre class="example">(import
+  '(java.util Calendar GregorianCalendar)
+  '(javax.swing JFrame JLabel))
+</pre>
+
+<h4>调用对象或方法</h4>
+
+<pre class="example">(.toUpperCast &quot;foo&quot;) ;调用对象方法
+(System/staticMethod) ;调用静态方法或访问静态属性
+(new MyClass arg1 arg2) ;创建对象
+(MyClass. arg1 arg2) ;创建对象
+</pre>
+
+<h4>调用java里面的静态方法</h4>
+
+<pre class="example">(. Math pow 2 4) ; -&gt; 16.0
+(Math/pow 2 4)
+</pre>
+
+<p>
+方法调用可以用.. 宏串起来
+
+</p>
+
+<pre class="example">(. (. calendar getTimeZone) getDisplayName) ; long way
+(.. calendar getTimeZone getDisplayName) ; -&gt; &quot;Central Standard Time&quot;
+</pre>
+
+<h4>doto</h4>
+
+<p>
+doto 函数可以用来调用一个对象上的多个方法。
+
+</p>
+
+<pre class="example">(doto calendar
+  (.set Calendar/YEAR 1981)
+  (.set Calendar/MONTH Calendar/AUGUST)
+  (.set Calendar/DATE 1))
+(def formatter (java.text.DateFormat/getDateInstance))
+(.format formatter (.getTime calendar)) ; -&gt; &quot;Aug 1, 1981&quot;
+</pre>
+
+<h3>Noir</h3>
+
+<h4>建立noir web应用</h4>
+
+<pre class="example">lein new noir mywebsite
+lein deps
+lein run
+</pre>
+
+<h4>defpage</h4>
+
+<pre class="example">(defpage &quot;/rest/:id&quot; {:keys [id]} (str &quot;user id: &quot; id))
+</pre>
+
+<p>
+第二个参数将第一个参数的:id绑定到id上，第三个参数使用id的值组成response的字符串。
+
+</p>
+
+<p>
+例如访问 <a href="http://localhost:8080/rest/samchen%20">http://localhost:8080/rest/samchen，</a> 则返回
+
+</p>
+
+<p>
+user id: samchen
+
+</p>
+
+<!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-07-01
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

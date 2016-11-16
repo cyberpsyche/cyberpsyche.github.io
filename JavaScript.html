@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>JavaScript </title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">JavaScript </h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h3>Google Apps</h3>
+
+<h4>code for ref "QRTS" in Google Maps via longitude and latitude</h4>
+
+<pre class="example">function GetQuadtreeAddress(long, lat)
+{
+	var PI = 3.1415926535897;
+	var digits = 18; // how many digits precision
+	// now convert to normalized square coordinates
+	// use standard equations to map into mercator projection
+	var x = (180.0 + parseFloat(long)) / 360.0;
+	var y = -parseFloat(lat) * PI / 180; // convert to radians
+	y = 0.5 * Math.log((1+Math.sin(y)) / (1 - Math.sin(y)));
+	y *= 1.0/(2 * PI); // scale factor from radians to normalized
+	y += 0.5; // and make y range from 0 - 1
+	var quad = &quot;t&quot;; // google addresses start with t
+	var lookup = &quot;qrts&quot;; // tl tr bl br
+	while (digits–) // (post-decrement)
+	{
+		// make sure we only look at fractional part
+		x -= Math.floor(x);
+		y -= Math.floor(y);
+		quad = quad + lookup.substr((x &gt;= 0.5 ? 1 : 0) + (y &gt;= 0.5 ? 2 : 0), 1);
+		// now descend into that square
+		x *= 2;
+		y *= 2;
+	}
+	return quad;
+}
+</pre>
+
+<p>
+and you can check the quad like this :
+
+</p>
+
+<p>
+<a href="http://kh.google.com/kh?v=3&amp;t=tsrrtrsqsqqqrqrtss">http://kh.google.com/kh?v=3&#38;t=tsrrtrsqsqqqrqrtss</a>
+
+</p>
+
+<h3>Hint</h3>
+
+<h4>a 'BACK' href</h4>
+
+<pre class="example">&lt;a href=&quot;javascript: history.go(-1)&quot;&gt;BACK&lt;/a&gt;
+</pre>
+
+<h4>a 'Hint' href</h4>
+
+<pre class="example">&lt;a href=&quot;#&quot; style=&quot;cursor:help;color:#555;&quot; title=&quot;This is hint text&quot;&gt;&lt;font color=&quot;red&quot;&gt;?&lt;/font&gt;&lt;/a&gt;
+</pre>
+
+<h4>Jump to target page</h4>
+
+<pre class="example">&lt;script language=&quot;javascript&quot;&gt;location.href=&quot;target.php&quot;;&lt;/script&gt;
+</pre>
+
+<h4>javascript 加法运算</h4>
+
+<p>
+将变量转型后再相加即可，转型函数为：
+
+</p>
+
+<p>
+parseInt(numstring,   [radix])
+
+</p>
+
+<p>
+其中，radix值域为2－36
+
+</p>
+
+<h4>将字符串转为json对象</h4>
+
+<p>
+var str="{a:1, b:2}";
+var json_obj=eval('('+str+')');
+</p><!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Debian & Ubuntu GNU/Linux</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">Debian & Ubuntu GNU/Linux</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<p>
+人类的Linux。                        ----------Mark Shuttleworth, South Africa
+<hr />
+
+<h2>Terms</h2>
+
+<h3>i18n</h3>
+internationalization
+
+</p>
+
+<p>
+i + (18 characters) + n
+
+</p>
+
+<h2>Installation and Configuration of Software Packages </h2>
+
+<h3>Upgrade</h3>
+
+<p>
+1、 修改/etc/apt/source.list, 例如把 etch 改为 lenny。
+
+</p>
+
+<p>
+2、 执行 aptitude update，若出现 W: There is no public key available for the following key IDs: 4D270D06F42584E6， 则要先执行
+
+</p>
+
+<pre class="example"> 
+gpg --keyserver wwwkeys.eu.pgp.net --recv-keys 4D270D06F42584E6
+apt-key add ~/.gnupg/pubring.gpg 
+</pre>
+
+<p>
+3、 升级 apt 与 aptitude 工具
+
+</p>
+
+<pre class="example">aptitude install apt aptitude 
+</pre>
+
+<p>
+4、 升级系统
+
+</p>
+
+<pre class="example">aptitude full-upgrade 
+</pre>
+
+<p>
+5、 安装软件包
+
+</p>
+
+<pre class="example">aptitude search PKG_NAME
+aptitude install PKG_NAME
+</pre>
+
+<h3>FAI</h3>
+
+<p>
+Fully Automatic Installation, 种基于Debian GNU/Linux平台的全自动安装集群结点机的软件包，可实现快速的批量系统安装。
+
+</p>
+
+<p>
+<a href="http://fai-project.org/">http://fai-project.org/</a>
+
+</p>
+
+<h3>制作usb安装盘</h3>
+
+<pre class="example"># cat debian.iso &gt; /dev/sdX
+# sync
+</pre>
+
+<h3>fcitx</h3>
+
+<p>
+Fcitx means Free Chinese Input Toy for X.
+
+</p>
+
+<h4>config</h4>
+
+<p>
+我从fcitx最早的版本就开始使用它，已经好几年了，非常喜欢，在Ubuntu下直接可以安装Fcitx3.4版本的版软件（Ubuntu 6.06下俗称girldog小妾版，Ubuntu 8.04下版本又有更新），由于我只用五笔打字，所以就改配置文件。
+
+</p>
+
+<p>
+将$HOME/.fcitx/config中的输入法项只保留码表项置1，其它置0。这样只保留了五笔/二笔/仓吉码输入，然后
+
+</p>
+
+<p>
+cp /usr/share/fcitx/tables.conf $HOME/.fcitx/
+
+</p>
+
+<p>
+修改$HOME/.fcitx/tables.conf，将其中除五笔外的配置部分都删除，这样在Ctrl+Shift时就不会有烦恼了哈。
+
+</p>
+
+<p>
+为了使用fcitx还要设置XMODIFIERS。可修改$HOME/.bash_profile，加入如下内容：
+
+</p>
+
+<pre class="example">export XMODIFIERS=&quot;@im=fcitx&quot;
+fcitx &amp;
+</pre>
+
+<h4>fcitx 候选词缺字体</h4>
+
+<p>
+修改~/.fcitx/config文件，加入中文字体：
+
+</p>
+
+<pre class="example">[程序]
+显示字体(中)=WenQuanYi Bitmap Song
+显示字体(英)=WenQuanYi Bitmap Song
+...
+</pre>
+
+<h4>英文Locale下使用fcitx</h4>
+
+<p>
+fcitx和LC_CTYPE其实没有关系，我就是在en_US.UTF-8下使用fcitx，无须设成zh_CN.UTF-8。
+
+</p>
+
+<p>
+sudo apt-get install fcitx后，/etc/X11/xinit/xinput.d/下应该有一个fcitx文件，如果是自己编译安装，可能需要自己建立这个文件，内容为：
+
+</p>
+
+<pre class="example">XIM=fcitx
+XIM_PROGRAM=/usr/bin/fcitx
+XIM_ARGS=&quot;&quot;
+GTK_IM_MODULE=XIM
+QT_IM_MODULE=XIM
+DEPENDS=&quot;fcitx&quot;
+</pre>
+
+<p>
+可以使用im-switch，不过我没有用：
+
+</p>
+
+<pre class="example">im-switch -s fcitx
+</pre>
+
+<p>
+理论上已经可以使用fcitx了，在gnome-terminal下将其Input Method改为XIM即可输入中文，但最从一而终的办法如下，对目前的gtk2各版本是很有效的。即修改/etc/gtk-2.0/gtk.immodules文件，把有关xim的部分改成：
+
+</p>
+
+<p>
+in Ubuntu 9.10 as /usr/lib/gtk-2.0/2.10.0/immodule-files.d/libgtk2.0-0.immodules
+
+</p>
+
+<pre class="example">&quot;/usr/lib/gtk-2.0/2.4.0/immodules/im-xim.so&quot;
+&quot;xim&quot; &quot;X Input Method&quot; &quot;gtk20&quot; &quot;/usr/share/locale&quot; &quot;en:ko:ja:th:zh&quot; 
+</pre>
+
+<p>
+这样，gtk环境在en:ko:ja:th:zh等环境下均可使用XIM了。如果升级gtk，那么需要再次修改这个文件。
+
+</p>
+
+<p>
+注： Ubuntu 8.04下可修改文件 /usr/lib/gtk-2.0/2.10.0/immodule-files.d/libgtk2.0-0.immodules ，改动内容是一样的。
+
+</p>
+
+<h3>Fonts</h3>
+
+<h4>使用苹果（Apple）的黑体（Stheiti.ttf）</h4>
+
+<p>
+复制字体文件至/usr/share/fonts/truetype/mac-os-x/下。
+
+</p>
+
+<p>
+在/etc/fonts/language-selector.conf中（其实该文件是指向/usr/share/language-selector/fontconfig/zh_CN的链接文件）的serif family和sans-serif family中加入<family>STHeiti</family>，以此作为Ubuntu默认的字体。
+
+</p>
+
+<p>
+刷新字体缓存：
+
+</p>
+
+<p>
+sudo fc-cache -f -v
+
+</p>
+
+<p>
+设置英文字体和渲染方式
+
+</p>
+
+<p>
+打开“系统－首选项－字体” 面板：在字体选项里选择一款英文字体，如：Lucida Grande 或者 Bitstream Vera Sans。在“字体渲染”选项中选择“次象素平滑”或者“最佳形状”。
+
+</p>
+
+<h3>wifi</h3>
+
+<h4>Thinkpad Z61t WIFI 无线网络设置</h4>
+
+<p>
+安装linux-restricted-modules-2.6.15-27-686 与 wifi-radar。这样可以使用ipw3945 module。通过sudo wifi-radar可以选择无线网络。
+
+</p>
+
+<p>
+同时，安装network-manager, network-manager-gnome包，在Panel中设为Startup Session。注销用户后重新进入则可以通过nm-applet选择无线网络。无线网络中断或关闭后也可通过sudo /etc/init.d/networking restart重新激活并登录无线网络。
+
+</p>
+
+<p>
+配置文件为/etc/wifi-radar.conf
+
+</p>
+
+<h3>dpkg, apt and aptitude commands</h3>
+
+<h4>查看某个文件属于哪个deb包</h4>
+
+<pre class="example">dpkg -S filename
+</pre>
+
+<p>
+同
+
+</p>
+
+<pre class="example">apt-file search filename
+</pre>
+
+<h4>查看包的依赖关系</h4>
+
+<pre class="example">apt-cache depends PKG-NAME
+</pre>
+
+<p>
+查看本包并哪些包依赖
+
+</p>
+
+<pre class="example">apt-cache rdepends PKG-NAME
+</pre>
+
+<p>
+检查是否有损坏的依赖
+
+</p>
+
+<pre class="example">apt-get check 
+</pre>
+
+<h4>安装包相关的编译环境</h4>
+
+<pre class="example">apt-get build-dep PKG-NAME
+</pre>
+
+<h4>升级已安装的包</h4>
+
+<pre class="example">apt-get upgrade
+</pre>
+
+<p>
+若是发行版升级则用
+
+</p>
+
+<pre class="example">apt-get dist-upgrade
+</pre>
+
+<h4>仅下载安装包</h4>
+
+<pre class="example">apt-get install -d pkgname
+</pre>
+
+<h4>dpkg 用法</h4>
+
+<pre class="example">dpkg --info &quot;软件包名&quot; --列出软件包解包后的包名称.
+dpkg -l --列出当前系统中所有的包.可以和参数less一起使用在分屏查看. (类似于rpm -qa)
+dpkg -l |grep -i &quot;软件包名&quot; --查看系统中与&quot;软件包名&quot;相关联的包.
+dpkg -s 查询已安装的包的详细信息.
+dpkg -L 查询系统中已安装的软件包所安装的位置. (类似于rpm -ql)
+dpkg -S 查询系统中某个文件属于哪个软件包. (类似于rpm -qf)
+dpkg -I 查询deb包的详细信息,在一个软件包下载到本地之后看看用不用安装(看一下呗).
+dpkg -i 手动安装软件包(这个命令并不能解决软件包之前的依赖性问题),如果在安装某一个软件包的时候遇到了软件依赖的问题,可以用apt-get -f install在解决信赖性这个问题.
+dpkg -r 卸载软件包.不是完全的卸载,它的配置文件还存在.
+dpkg -P 全部卸载(但是还是不能解决软件包的依赖性的问题)
+dpkg -reconfigure 重新配置
+</pre>
+
+<h4>apt-file 命令用法</h4>
+
+<pre class="example">apt-file search filename -----查找filename属于哪个软件包
+apt-file list packagename -----列出软件包的内容
+apt-file update --更新apt-file的数据库
+</pre>
+
+<h4>aptitude </h4>
+
+<p>
+aptitude在处理包依赖关系时比apt-get更佳，但两者不要混用，彼此不知对方干了什么，aptitude有可能把apt-get build的包给做了。
+
+</p>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<thead>
+<tr>
+<th>命令</th><th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aptitude update</td><td>更新可用的包列表</td>
+</tr>
+<tr>
+<td>aptitude upgrade</td><td>升级可用的包</td>
+</tr>
+<tr>
+<td>aptitude safe-upgrade</td><td>安全的升级</td>
+</tr>
+<tr>
+<td>aptitude full-upgrade</td><td>全升级</td>
+</tr>
+<tr>
+<td>aptitude dist-upgrade</td><td>将系统升级到新的发行版</td>
+</tr>
+<tr>
+<td>aptitude install pkgname</td><td>安装包</td>
+</tr>
+<tr>
+<td>aptitude remove pkgname</td><td>删除包</td>
+</tr>
+<tr>
+<td>aptitude purge pkgname</td><td>删除包及其配置文件</td>
+</tr>
+<tr>
+<td>aptitude search string</td><td>搜索包</td>
+</tr>
+<tr>
+<td>aptitude show pkgname</td><td>显示包的详细信息</td>
+</tr>
+<tr>
+<td>aptitude clean</td><td>删除下载的包文件</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td>aptitude autoclean</td><td>仅删除过期的包文件</td>
+</tr>
+</tfoot>
+</table>
+
+<h3>配置</h3>
+
+<p>
+可用gconf-editor编辑配置信息，包括各种应用程序的keybinding等。
+
+</p>
+
+<h3>lm-sensors</h3>
+
+<p>
+传感器包。可检测cpu温度等。
+
+</p>
+
+<h2>升级</h2>
+
+<h3>Ubuntu 升级</h3>
+
+<p>
+在软件源管理中选择 Normal Release。
+
+</p>
+
+<pre class="example">sudo update-manager -dc
+</pre>
+
+<h3>NO-PUBKEY 问题</h3>
+
+<p>
+在apt-get update时出现以下问题：
+
+</p>
+
+<p>
+W: GPG error: <a href="http://ftp.debian-unofficial.org">http://ftp.debian-unofficial.org</a> etch Release: The following
+signatures couldn't be verified because the public key is not available:
+NO_PUBKEY D5642BC86823D007
+W: You may want to run apt-get update to correct these problems
+
+</p>
+
+<p>
+出现上叙问题是由于没有公钥，<a href="http://ftp.debian-unofficial.org">http://ftp.debian-unofficial.org</a> 的签名无法进行验证！只要重新导入公钥即可！
+
+</p>
+
+<pre class="example">gpg --keyserver subkeys.pgp.net --recv-keys D5642BC86823D007
+
+gpg --export D5642BC86823D007 | apt-key add -
+</pre>
+
+<h3>限制用户最小密码长度</h3>
+
+<p>
+修改/etc/login.defs里面的PASS_MIN_LEN的值。比如限制用户最小密码长度是8： PASS_MIN_LEN 8
+
+</p>
+
+<h3>查看cpu是否支持64bit</h3>
+
+<pre class="example">sed '/^$/q' /proc/cpuinfo | grep --color=always -E '\&lt;lm\&gt;'
+</pre>
+
+<p>
+简单办法：
+
+</p>
+
+<p>
+getconf LONG_BIT
+
+</p>
+
+<p>
+或看 file /bin/ls 是否有64-bit的字样。
+
+</p>
+
+<h2>可视化</h2>
+
+<h3>超炫的桌面效果</h3>
+
+<p>
+平铺workplace：  win+e
+
+</p>
+
+<p>
+放大： win+(mouse-wheel)
+
+</p>
+
+<p>
+窗口透明度： alt+(mouse-wheel)
+
+</p>
+
+<h3>显卡驱动信息</h3>
+
+<p>
+使用fglrxinfo查看显卡驱动信息
+
+</p>
+
+<h3>双屏 dual-screen</h3>
+
+<p>
+单desktop双倍屏宽模式：
+
+</p>
+
+<pre class="example">sudo aticonfig --initial=dual-head -f -dtop=horizontal --overlay-on=1
+</pre>
+
+<p>
+or 双desktop单位屏宽模式：
+
+</p>
+
+<pre class="example">sudo aticonfig --initial=dual-head --screen-layout=right -v -f
+</pre>
+<!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

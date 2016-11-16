@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Freebsd Notes</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">Freebsd Notes</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h3>Ports</h3>
+
+<h4>portsnap 方式</h4>
+
+<p>
+安装ports，下载压缩的 Ports 套件快照到 /var/db/portsnap
+
+</p>
+
+<pre class="example"># portsnap fetch
+</pre>
+
+<p>
+假如您是首次运行 Portsnap， 则需要将快照释放到 /usr/ports：
+
+</p>
+
+<pre class="example"># portsnap extract
+</pre>
+
+<p>
+如果您已经有装好的 /usr/ports 而您只想更新，则应执行下面的命令：
+
+</p>
+
+<pre class="example"># portsnap update
+</pre>
+
+<h4>CVSup方式</h4>
+
+<p>
+在首次运行 csup 之前， 务必确认 /usr/ports 是空的！ 如果您之前已经用其他地方安装了一份 Ports 套件，则 csup 可能不会自动删除已经在上游服务器上删除掉的补丁文件。
+
+</p>
+
+<p>
+运行 csup:
+
+</p>
+
+<pre class="example"># csup -L 2 -h cvsup.FreeBSD.org /usr/share/examples/cvsup/ports-supfile
+</pre>
+
+<p>
+需要将 cvsup.FreeBSD.org 改为离您较近的 CVSup 服务器。
+
+</p>
+
+<p>
+注意: 有时可能希望使用自己的 ports-supfile， 比如说，不想每次都通过命令行来指定所使用的 CVSup 服务器。
+
+</p>
+
+<p>
+1.这种情况下， 需要以 root 身份将 /usr/share/examples/cvsup/ports-supfile 复制到新的位置， 例如 /root 或您的主目录。
+
+</p>
+
+<p>
+2.编辑 ports-supfile。
+
+</p>
+
+<p>
+3.把 CHANGE_THIS.FreeBSD.org 修改成离您较近的 CVSup 服务器。 
+
+</p>
+
+<p>
+4.接下来按如下的方式运行 csup：
+
+</p>
+
+<pre class="example"># csup -L 2 /root/ports-supfile
+</pre>
+
+<p>
+此后运行 csup命令将下载最近所进行的改动， 并将它们应用到您的 Ports Collection 上，不过这一过程并不重新联编您系统上的 ports。
+
+</p>
+
+<h3>安装 Ports 软件</h3>
+
+<p>
+进入欲安装的软件目录，如/usr/ports/sysutils/lsof，可用 whereis lsof 了解软件相关目录。然后执行以下命令即可。
+
+</p>
+
+<pre class="example"># make
+# make install
+</pre>
+
+<p>
+编译目录将会出现一个名为work的目录，目录内有多个文件，包括.configure_done, .patch_done, .extract_done, .build_done, .install_done等多个文件，若想重执行安装过程中任何一步，只需将相应文件删除即可，然后重新执行安装过程。
+
+</p>
+
+<p>
+删除工作目录可以用
+
+</p>
+
+<pre class="example"># make clean
+</pre>
+
+<p>
+Tricks: 使用 make install clean 可以一步完成 make、 make install 和 make clean 这三个分开的步骤的工作。
+
+</p>
+
+<p>
+ports 系统使用 fetch 去下载文件，它有很多可以设置的环境变量， 其中包括 FTP_PASSIVE_MODE、 FTP_PROXY， 和 FTP_PASSWORD等。
+
+</p>
+
+<h3>查看包信息</h3>
+
+<p>
+使用pkg_info命令可查看到已安装包的信息。若需查看包安装的具体文件和位置信息，可执行如下命令：
+
+</p>
+
+<pre class="example"># pkg_info -L wget-1.11.2
+</pre>
+
+<h3>清除 Ports 软件</h3>
+
+<p>
+使用 Ports 套件会最终用完磁盘空间。 在通过 ports 联编和安装软件之后，您应记得清理临时的 work 目录， 其方法是使用 make clean 命令。您可以使用下面的命令来清理整个 Ports 套件：
+
+</p>
+
+<pre class="example"># portsclean -C
+</pre>
+
+<p>
+随着时间的推移， 您可能会在 distfiles 目录中积累下大量源代码文件。 您可以手工删除这些文件， 也可以使用下面的命令来删除所有 port 都不引用的文件：
+
+</p>
+
+<pre class="example"># portsclean -D
+</pre>
+
+<p>
+除此之外， 也可以用下列命令删去目前安装的 port 没有使用的源码包文件：
+
+</p>
+
+<pre class="example"># portsclean -DD
+</pre>
+
+<p>
+不要忘记删除那些已经安装， 但已不再使用的 ports。用于自动完成这种工作的一个好工具是 ports-mgmt/pkg_cutleaves port。
+</p><!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

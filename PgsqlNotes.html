@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>PostgresQL Notes</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">PostgresQL Notes</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h3>Postgresql 安装</h3>
+
+<p>
+0.Brief版安装
+
+</p>
+
+<pre class="example">./configure
+gmake
+su
+gmake install
+adduser postgres
+mkdir /usr/local/pgsql/data
+chown postgres /usr/local/pgsql/data
+su - postgres
+/usr/local/pgsql/bin/initdb -D /usr/local/pgsql/data
+/usr/local/pgsql/bin/postgres -D /usr/local/pgsql/data &gt;logfile 2&gt;&amp;1 &amp;
+/usr/local/pgsql/bin/createdb test
+/usr/local/pgsql/bin/psql test
+</pre>
+
+<p>
+1.创建PostgreSQL的用户：
+
+</p>
+
+<pre class="example"># useradd -c 'PostgreSQL user' -d /export/home/postgres -m -s /bin/bash postgres
+</pre>
+
+<p>
+2.确保postgres读写data的权限：
+
+</p>
+
+<pre class="example"># chown postgres /var/lib/pgsql/data
+# chmod +rwx /var/lib/pgsql/data
+</pre>
+
+<p>
+3.创建一个数据库组
+
+</p>
+
+<pre class="example">$ initdb -U postgres -D /var/lib/pgsql/data/mydata
+</pre>
+
+<p>
+4.运行数据库
+
+</p>
+
+<pre class="example">$ pg_ctl -D /var/lib/pgsql/data -l logfile start
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">$ postgres -D /var/lib/pgsql/data
+</pre>
+
+<p>
+5.创建库或删除库
+
+</p>
+
+<p>
+createdb DBNAME / dropdb DBNAME
+
+</p>
+
+<p>
+6.修改用户密码
+
+</p>
+
+<pre class="example">=&gt; alter user USERNAME password '123456';
+</pre>
+
+<p>
+7.整库导入
+
+</p>
+
+<pre class="example">pg_restore -d DBNAME db.tar
+</pre>
+
+<p>
+8.关闭数据库
+
+</p>
+
+<pre class="example">$ pg_ctl -D /var/lib/pgsql/data stop
+</pre>
+
+<h3>远程连接配置</h3>
+
+<p>
+修改/var/lib/pgsql/data/postgresql.conf，加入一行： 
+
+</p>
+
+<pre class="example">listen_addresses = '*'
+</pre>
+
+<p>
+修改/var/lib/pgsql/data/pg_hba.conf，加入一行： 
+
+</p>
+
+<pre class="example">host all all 192.168.0.0 255.255.255.0 trust
+</pre>
+
+<p>
+连接库：
+
+</p>
+
+<pre class="example">psql -h 192.168.0.3 -p 5432 -d seri07db -U postgres --password
+</pre>
+
+<h3>psql</h3>
+
+<p>
+列出所有库：
+
+</p>
+
+<pre class="example">psql -l
+</pre>
+
+<p>
+查看库中所有表：
+
+</p>
+
+<pre class="example">$ psql -d DBNAME
+=&gt; SELECT tablename FROM pg_tables WHERE tablename LIKE '%s_%%' ORDER BY tablename
+</pre>
+
+<p>
+创建表：
+
+</p>
+
+<pre class="example">=&gt; create table ipcity1 (id integer PRIMARY KEY DEFAULT nextval('seq_name'), startip numeric, marry boolean, birthday date, now timestamp with time zone, city varchar(200) );
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">=&gt; create table ipcity3 as select * from ipcity1 where id not in ( select id from ipcity4 );
+</pre>
+
+<p>
+创建sequence:
+
+</p>
+
+<pre class="example">=&gt; create sequence seq_name START 1;
+</pre>
+
+<p>
+注意，修改sequence属主用：
+
+</p>
+
+<pre class="example">=&gt; alter table seq_name owner to USERNAME;
+</pre>
+
+<p>
+插入记录：
+
+</p>
+
+<pre class="example">INSERT INTO films VALUES
+    ('UA502', 'Bananas', 105, '1971-07-13', 'Comedy', '82 minutes');
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">INSERT INTO films VALUES
+    ('UA502', 'Bananas', 105, DEFAULT, 'Comedy', '82 minutes');
+INSERT INTO films (code, title, did, date_prod, kind)
+    VALUES ('T_601', 'Yojimbo', 106, DEFAULT, 'Drama');
+</pre>
+
+<p>
+Use 'DEFAULT' clause to use default value for specific column.
+
+</p>
+
+<p>
+查询表：
+
+</p>
+
+<pre class="example">SELECT city, (temp_hi+temp_lo)/2 AS temp_avg, date FROM weather;
+</pre>
+
+<pre class="example">SELECT city, max(temp_lo)
+    FROM weather
+    WHERE city LIKE 'S%'
+    GROUP BY city
+    HAVING max(temp_lo) &lt; 40;
+</pre>
+
+<p>
+更新表：
+<pre class="example">UPDATE weather
+    SET temp_hi = temp_hi - 2, temp_lo = temp_lo - 2
+    WHERE date &gt; '1994-11-28';
+</pre>
+
+<p>
+修改字段类型：
+
+</p>
+
+<pre class="example">=&gt; alter table gaizhengp alter column id type varchar(30);
+</pre>
+
+<p>
+其它查询：
+
+</p>
+
+<pre class="example">=&gt; select version();
+=&gt; select current_date;
+=&gt; select 2+2;
+</pre>
+
+<p>
+执行脚本：
+<pre class="example">=&gt; \i ~/path/to/source.sql
+</pre>
+
+<p>
+直接导入数据：
+<pre class="example">COPY weather FROM '/home/user/weather.txt';
+</pre>
+
+<p>
+查询表结构：
+
+</p>
+
+<pre class="example">=&gt; \d TABLE_NAME;
+=&gt; \d+ TABLE_NAME;
+</pre>
+
+<h3>PostGIS</h3>
+
+<p>
+创建库：
+
+</p>
+
+<pre class="example">su - postgres
+cd /usr/share/postgresql-8.3-postgis
+createdb seri07db
+createlang plpgsql seri07db
+psql -d seri07db -f lwpostgis.sql
+psql -d seri07db -f spatial_ref_sys.sql
+</pre>
+
+<p>
+创建专门的用户：
+
+</p>
+
+<pre class="example">psql
+create user seri07 password '123456';
+alter database seri07db owner to seri07;
+alter table spatial_ref_sys owner to seri07;
+alter table geometry_columns owner to seri07;
+</pre>
+
+<p>
+pgsql2shp:
+
+</p>
+
+<pre class="example">$ pgsql2shp -f shpfile -p 5432 my_db roads_table
+</pre>
+
+<p>
+shp2pgsql:
+
+</p>
+
+<pre class="example">$ shp2pgsql shaperoads roadstable roadsdb &gt; roads.sql
+$ psql -d roadsdb -f roads.sql
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">shp2pgsql shaperoads roadstable roadsdb | psql -d roadsdb
+</pre>
+
+<h4>建空间索引</h4>
+
+<pre class="example">=&gt; create index seri07db_c103_ocldnta_si on seri07db_c103_ocldnta using GIST (the_geom GIST_GEOMETRY_OPS);
+=&gt; create index seri07db_c103_ocldnta_gid on seri07db_c103_ocldnta (gid);
+</pre>
+
+<h3>字符集</h3>
+
+<p>
+设定postgresql整个集群的字符集：
+
+</p>
+
+<pre class="example">$ initdb -E SQL_ASCII
+</pre>
+
+<p>
+设定单个库的字符集： 
+
+</p>
+
+<pre class="example">$ createdb -E SQL_ASCII dbname
+</pre>
+
+<p>
+or 
+
+</p>
+
+<pre class="example">=&gt; CREATE DATABASE dbname WITH ENCODING 'SQL_ASCII';
+</pre>
+
+<h3>表操作</h3>
+
+<h4>表改名</h4>
+
+<pre class="example">=&gt; ALTER TABLE oldname rename to newname;
+</pre>
+
+<!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2016-05-23
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>
