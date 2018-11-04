@@ -28,7 +28,7 @@ function hide() {
 </div>
 
 <div class="menuitem">
-  <a href="">work</a>
+  <a href="../workwiki/WelcomePage.html">work</a>
 </div>
 
 </div><!-- menu ends here -->
@@ -252,7 +252,15 @@ done
 
 <p>
 # 定义几个变量用于测试目的
+
+</p>
+
+<p>
 FILE_NAME="/usr/local/app/world.txt"
+
+</p>
+
+<p>
 TIME_NOW="`date +"%Y%m%d%H%M%S"`"
 
 </p>
@@ -385,6 +393,8 @@ date +%Y%m%d --date=&quot;19781012 10000 days ago&quot;
 </p>
 
 <pre class="example">echo &quot;$(( ($(date +%s) - $(date +%s -d1978-10-12)) / (24 * 3600) )) &quot;
+
+echo &quot;$(( ($(date +%s) - 277028280) / (24 * 3600) )) &quot;
 </pre>
 
 <h4>一次生成100个大小为10K的文件</h4>
@@ -1035,7 +1045,7 @@ net.ipv4.ip_local_port_range = 5000    65000
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2016-05-23
+          <td align="left">Update : 2018-09-23
           </td>
           <td align="center">
            <span class="foothome">
