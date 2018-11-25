@@ -28,7 +28,7 @@ function hide() {
 </div>
 
 <div class="menuitem">
-  <a href="">work</a>
+  <a href="../workwiki/WelcomePage.html">work</a>
 </div>
 
 </div><!-- menu ends here -->
@@ -136,10 +136,23 @@ createdb DBNAME / dropdb DBNAME
 <pre class="example">$ pg_ctl -D /var/lib/pgsql/data stop
 </pre>
 
+<ol>
+<li>PGDATA环境变量
+</li>
+</ol>
+
+<pre class="example">export PGDATA='/usr/local/var/postgres'
+</pre>
+
+<p>
+/usr/local/var/postgres 常作为默认的pgsql数据库文件位置。
+
+</p>
+
 <h3>远程连接配置</h3>
 
 <p>
-修改/var/lib/pgsql/data/postgresql.conf，加入一行： 
+修改/var/lib/pgsql/data/postgresql.conf，加入一行：
 
 </p>
 
@@ -147,7 +160,7 @@ createdb DBNAME / dropdb DBNAME
 </pre>
 
 <p>
-修改/var/lib/pgsql/data/pg_hba.conf，加入一行： 
+修改/var/lib/pgsql/data/pg_hba.conf，加入一行：
 
 </p>
 
@@ -297,6 +310,19 @@ Use 'DEFAULT' clause to use default value for specific column.
 =&gt; \d+ TABLE_NAME;
 </pre>
 
+<p>
+删除表
+
+</p>
+
+<pre class="example">=&gt; DROP TABLE table_name CASCADE;
+</pre>
+
+<p>
+用CASCADE表示把关联的表关系也删除。
+
+</p>
+
 <h3>PostGIS</h3>
 
 <p>
@@ -394,7 +420,7 @@ or
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2016-05-23
+          <td align="left">Update : 2018-11-20
           </td>
           <td align="center">
            <span class="foothome">
