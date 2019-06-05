@@ -402,6 +402,161 @@ M-,
 </tbody>
 </table>
 
+<h4>调出日历</h4>
+
+<p>
+C-c .    调出日历，可用于输入日期时间
+
+</p>
+
+<h4>特殊文本格式</h4>
+
+<pre class="example">*bold*
+/italic/
+_underlined_
+=code=
+~verbatim~
++strike-through+
+</pre>
+
+<h4>富文本导出</h4>
+
+<p>
+org-mode的强大之处还在于它能到出成各种不同的格式，例如html、pdf等，在导出时，可以加入一些说明符号，来制定导出选项，常用导出符号如下：
+
+</p>
+
+<p>
+设置标题和目录：
+
+</p>
+
+<pre class="example"># +TITLE: This is the title of the document
+# +OPTIONS: toc:2 (only to two levels in TOC)
+# +OPTIONS: toc:nil (no TOC at all)
+</pre>
+
+<p>
+添加引用：
+
+</p>
+
+<pre class="example"># +BEGIN_QUOTE
+Everything should be made as simple as possible,
+but not any simpler -- Albert Einstein
+# +END_QUOTE
+</pre>
+
+<p>
+设置居中：
+
+</p>
+
+<pre class="example"># +BEGIN_CENTER
+    Everything should be made as simple as possible,but not any simpler
+# +END_CENTER
+</pre>
+
+<p>
+设置样例（在这里面的内容将会被直接输出，不会被转义）
+
+</p>
+
+<pre class="example"># +BEGIN_EXAMPLE
+这里面的字符不会被转义
+# +END_EXAMPLE
+</pre>
+
+<p>
+注释，这些内容不会被导出
+
+</p>
+
+<pre class="example">注释的用法#  this is comment
+# +BEGIN_COMMENT
+这里的注释不会被导出
+# +END_COMMENT
+</pre>
+
+<p>
+Latex使用: org-mode能支持直接输入Latex，在导出后Latex能被正确解释。
+
+</p>
+
+<h4>插入源代码</h4>
+
+<p>
+org-mode除了可以直接插入源代码之外，可以直接求出运行结果，这也是其强大之处，在使用之前，需要在.emacs配置文件中设置加载的运行语言：
+
+</p>
+
+<pre class="example">(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '(
+   (sh . t)
+   (python . t)
+   (R . t)
+   (ruby . t)
+   (ditaa . t)
+   (dot . t)
+   (octave . t)
+   (sqlite . t)
+   (perl . t)
+   (C . t)
+   ))
+</pre>
+
+<p>
+设置好之后输入：
+
+</p>
+
+<pre class="example"># +BEGIN_SRC emacs-lisp
+(+ 1 2 3 4)
+# +END_SRC
+</pre>
+
+<p>
+将光标移到代码块内，按C-c C-c，org-mode会自动添加如下一行：
+
+</p>
+
+<pre class="example"># +RESULTS:
+: 10
+</pre>
+
+<p>
+这正是该代码的计算结果。下面试一试Python代码：
+
+</p>
+
+<pre class="example"># +BEGIN_SRC python :results output
+a = 1+1
+print a
+# +END_SRC
+# +RESULTS:
+: 2
+</pre>
+
+<p>
+下面测试一下C语言
+
+</p>
+
+<pre class="example"># +begin_src C++ :includes &lt;stdio.h&gt;
+  int a=1;
+  int b=1;
+  printf(&quot;%d\n&quot;, a+b);
+# +end_src
+# +RESULTS:
+: 2
+</pre>
+
+<p>
+常用快捷键： - C-c C-c 对当前代码块求值
+
+</p>
+
 <h3>Markdown</h3>
 
 <p>
@@ -616,7 +771,7 @@ M-x describe-key RET 查询key绑定
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-02-21
+          <td align="left">Update : 2019-05-26
           </td>
           <td align="center">
            <span class="foothome">
