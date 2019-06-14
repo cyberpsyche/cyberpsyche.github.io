@@ -28,7 +28,7 @@ function hide() {
 </div>
 
 <div class="menuitem">
-  <a href="">work</a>
+  <a href="../workwiki/WelcomePage.html">work</a>
 </div>
 
 </div><!-- menu ends here -->
@@ -271,6 +271,15 @@ $ git push [远程名] [本地分支]:[远程分支]  # 提交到远程分支
 $ git push [远程名] :[远程分支]  # 删除远程分支
 </pre>
 
+<pre class="example"># 分支的创建和合并
+# git branch yourbranch 
+# git checkout yourbranch    切换到yourbranch
+# 开发yourbranch分支，然后开发之后与master分支合并
+# git checkout master
+# git merge yourbranch
+# git branch -d yourbranch    合并完后删除本地分支
+</pre>
+
 <p>
 Rebase
 
@@ -338,7 +347,7 @@ update
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2016-05-23
+          <td align="left">Update : 2019-05-26
           </td>
           <td align="center">
            <span class="foothome">
