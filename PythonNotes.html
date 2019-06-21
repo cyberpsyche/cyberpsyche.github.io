@@ -828,6 +828,20 @@ m.hexdigest()
 &gt;&gt;&gt; '8bcf6629759bd278a5c6266bd9c054f8'
 </pre>
 
+<h3>pip</h3>
+
+<h4>升级包，包括pip本身</h4>
+
+<p>
+pip3 install --upgrade pip
+
+</p>
+
+<p>
+pip3 install --upgrade Django
+
+</p>
+
 <h3>pipenv  --- 不再需要virtualenv和pip了</h3>
 
 <h4>构建环境或克隆环境</h4>
@@ -854,14 +868,30 @@ pipenv uninstall --all  //卸载所有包
 <pre class="example">pipenv run ...
 </pre>
 
-<h4>升级环境下的包</h4>
+<h4>查看所有需要更新的包</h4>
+
+<pre class="example">pipenv update --outdated
+</pre>
+
+<h4>升级环境下所有的包</h4>
 
 <pre class="example">pipenv update
+</pre>
+
+<h4>升级更新指定的包</h4>
+
+<pre class="example">pipenv update &lt;包名&gt;
 </pre>
 
 <h4>安装指定版本的包</h4>
 
 <pre class="example">pipenv install package_name==1.2.3
+</pre>
+
+<h4>指定Python版本</h4>
+
+<pre class="example">pipenv --python 3
+pipenv --python 3.6
 </pre>
 
 <h4>查看环境下包的依赖关系</h4>
@@ -874,9 +904,30 @@ pipenv uninstall --all  //卸载所有包
 <pre class="example">pipenv shell
 </pre>
 
-<h4>生成Pipenv.lock</h4>
+<h4>Lock</h4>
+
+<p>
+生成Pipenv.lock
+
+</p>
 
 <pre class="example">pipenv lock
+</pre>
+
+<p>
+用下面的命令就可以将Pipfile和Pipfile.lock文件里面的包导出为requirements.txt文件。
+
+</p>
+
+<pre class="example">pipenv lock -r
+</pre>
+
+<p>
+如果只想导出开发用的包，可以添加--dev参数：
+
+</p>
+
+<pre class="example">pipenv lock -r --dev
 </pre>
 
 <h4>删除环境</h4>
@@ -889,7 +940,7 @@ pipenv uninstall --all  //卸载所有包
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2018-11-20
+          <td align="left">Update : 2019-06-17
           </td>
           <td align="center">
            <span class="foothome">
