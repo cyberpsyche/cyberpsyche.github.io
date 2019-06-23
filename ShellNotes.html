@@ -99,6 +99,77 @@ cp orig new    |awk '{print &gt; &quot;new&quot;}' orig
 </pre>
 
 <h3>Bash shell scripts</h3>
+
+<h4>语法tips提醒</h4>
+
+<p>
+尽量使用func(){}来定义函数，而不是func{}
+
+</p>
+
+<p>
+尽量使用[[]]来代替[]
+
+</p>
+
+<p>
+尽量使用$()将命令的结果赋给变量，而不是反引号
+
+</p>
+
+<p>
+在复杂的场景下尽量使用printf代替echo进行回显
+
+</p>
+
+<pre class="example">简单的if尽量使用 &amp;&amp; ||，写成单行。比如
+
+[[x a&gt; 2]] &amp;&amp; echo x
+</pre>
+
+<p>
+当export变量时，尽量加上子脚本的namespace，保证变量不冲突
+
+</p>
+
+<p>
+会使用trap捕获信号，并在接受到终止信号时执行一些收尾工作
+
+</p>
+
+<p>
+使用mktemp生成临时文件或文件夹
+
+</p>
+
+<p>
+利用/dev/null过滤不友好的输出信息
+
+</p>
+
+<p>
+会利用命令的返回值判断命令的执行情况
+
+</p>
+
+<p>
+使用文件前要判断文件是否存在，否则做好异常处理
+
+</p>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>不要处理ls后的数据(比如ls -l</td><td>awk '{ print $8 }')，ls的结果非常不确定，并且平台有关</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+读取文件时不要使用for loop而要使用while read
+
+</p>
+
 <h4>Self print script</h4>
 <pre class="example">#!/bin/bash
 cat `basename $0`
@@ -214,6 +285,111 @@ if [ $gender=femal ]; then---------wrong.
 [[ expression ]] 括号两端必须要有空格
 </pre>
 
+<h4>使用main函数提高脚本可读性</h4>
+
+<pre class="example">#!/usr/bin/env bash
+func1(){
+    #do sth
+}
+func2(){
+    #do sth
+}
+main(){
+    func1
+    func2
+}
+main &quot;$@&quot;
+</pre>
+
+<h4>变量</h4>
+
+<p>
+shell中默认的变量作用域都是全局的。最好使用local readonly这类的命令，其次我们可以使用declare来声明变量。
+
+</p>
+
+<h4>间接引用变量</h4>
+
+<p>
+通过在变量名前加一个!就可以做到简单的间接引用了。比如下面这个场景：
+
+</p>
+
+<p>
+VAR1="2323232"
+
+</p>
+
+<p>
+VAR2="VAR1"
+
+</p>
+
+<p>
+有一个变量VAR1，又有一个变量VAR2，这个VAR2的值是VAR1的名字，那么我们现在想通过VAR2来获取VAR1的值，可以使用
+
+</p>
+
+<p>
+echo ${!VAR2}
+
+</p>
+
+<h4>函数返回值</h4>
+
+<p>
+shell中函数的返回值只能是整数，因为一般情况下一个函数的返回值通常表示这个函数的运行状态，所以一般都是0或者是１。不过，如果非得想传递字符串，也可以通过下面变通的方法:
+
+</p>
+
+<pre class="example">func(){
+    echo &quot;my string.&quot;   }
+res=$(func)
+echo &quot;This is from $res.&quot;
+</pre>
+
+<h4>heredocs</h4>
+
+<p>
+heredocs，也可以算是一种多行输入的方法，即在”<<”后定一个标识符，接着我们可以输入多行内容，直到再次遇到标识符为止。
+
+</p>
+
+<p>
+使用heredocs，可以非常方便的生成一些模板文件：
+
+</p>
+
+<pre class="example">cat&gt;&gt;/etc/rsyncd.conf &lt;&lt; EOF
+log file = /usr/local/logs/rsyncd.log
+transfer logging = yes
+log format = %t %a %m %f %b
+syslog facility = local3
+EOF
+</pre>
+
+<h4>获取当前脚本的路径</h4>
+
+<p>
+pwd获得的是当前shell的执行路径，而不是当前脚本的执行路径。所以直接用pwd并不严谨。
+
+</p>
+
+<p>
+正确方法为以下两种：
+
+</p>
+
+<p>
+script_dir=$(cd $(dirname $0) && pwd)
+
+</p>
+
+<p>
+script_dir=$(dirname $(readlink -f $0 ))
+
+</p>
+
 <h4>Quoting</h4>
 <pre class="example">  \c             Take character c literally.
   `cmd`          Run cmd and replace it in the line of code with its output.
@@ -236,6 +412,11 @@ $var 等价于 ${var}， ${var}2 是为了与 $var2 作区分。
 
 <p>
 $(var) 等价于 `var`， 用于获取命令 var 的返回值。
+
+</p>
+
+<p>
+使用”$”来获取变量的时候最好加上双引号！ 如"$var"。
 
 </p>
 
@@ -954,6 +1135,30 @@ ssh user@server -i ~/.ssh/id_rsa_passphrase_file
 
 </p>
 
+<h4>提升代码效率</h4>
+
+<p>
+比如下面的例子：
+
+</p>
+
+<pre class="example">#method1
+find . -name '*.txt' |xargs sed -i s/233/666/g
+find . -name '*.txt' |xargs sed -i s/235/626/g
+find . -name '*.txt' |xargs sed -i s/333/616/g
+find . -name '*.txt' |xargs sed -i s/233/664/g
+</pre>
+
+<pre class="example">#method2
+find . -name '*.txt' |xargs sed -i &quot;s/233/666/g;s/235/626/g;s/333/616/g;s/233/664/g&quot;
+
+</pre>
+
+<p>
+这两种方法做的事情都一样，就是查找所有的.txt后缀的文件并做一系列替换。前者是多次执行find，后者是执行一次find，但是增加了sed的模式串。第一种可读性更好一点，但是当替换的量变大的时候，第二种的速度就会比第一种快很多。这里效率提升的原因，就是第二种只要执行一次命令，而第一种要执行多次。
+
+</p>
+
 <h4>history</h4>
 
 <p>
@@ -1009,7 +1214,7 @@ su -l user -c your_cmd
 <table class="ewiki-table" border="2" cellpadding="5">
 <tbody>
 <tr>
-<td>nroff -man /usr/man/man1/cscope.1</td><td>more </td>
+<td>nroff -man /usr/man/man1/cscope.1</td><td>more</td>
 </tr>
 </tbody>
 </table>
@@ -1027,7 +1232,7 @@ su -l user -c your_cmd
 </p>
 
 <p>
-登录后 /etc/motd 
+登录后 /etc/motd
 
 </p>
 
@@ -1126,7 +1331,7 @@ net.ipv4.ip_local_port_range = 5000    65000
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-05-26
+          <td align="left">Update : 2019-06-20
           </td>
           <td align="center">
            <span class="foothome">
