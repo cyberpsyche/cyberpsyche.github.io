@@ -1325,7 +1325,144 @@ net.ipv4.ip_local_port_range = 5000    65000
 
 <pre class="example">/sbin/sysctl -p
 </pre>
-<!-- Page published by Emacs Wiki ends here -->
+
+<h3>ffmpeg</h3>
+
+<h4>修改视频帧率</h4>
+
+<p>
+$ ffmpeg -i input.avi -r 24 output.avi  // 强制把输出视频文件帧率改为 24 fps: -r 帧率
+
+</p>
+
+<h4>截图命令</h4>
+
+<p>
+截取一张352x240尺寸大小，格式为jpg的图片
+
+</p>
+
+<p>
+$ ffmpeg -i input_file -y -f image2 -t 0.001 -s 352x240 output.jpg 
+
+</p>
+
+<h4>在视频的第8.001秒出截取230x240的缩略图</h4>
+
+<p>
+ffmpeg -i input_file -y -f mjpeg -ss 8 -t 0.001 -s 320x240 output.jpg
+
+</p>
+
+<h4>把视频的前30帧转换成一个Animated Gif</h4>
+
+<p>
+ffmpeg -i input_file -vframes 30 -y -f gif output.gif
+
+</p>
+
+<h4>每隔一秒截一张图</h4>
+
+<p>
+ffmpeg -i out.mp4 -f image2 -vf fps=fps=1 out%d.png
+
+</p>
+
+<h4>每隔20秒截一张图</h4>
+
+<p>
+ffmpeg -i out.mp4 -f image2 -vf fps=fps=1/20 out%d.png
+
+</p>
+
+<h4>多张截图合并到一个文件里（2x3）每隔一千帧(秒数=1000/fps25)即40s截一张图</h4>
+
+<p>
+ffmpeg -i out.mp4 -frames 3 -vf "select=not(mod(n\,1000)),scale=320:240,tile=2x3" out.png
+
+</p>
+
+<h4>从视频中生成GIF图片</h4>
+
+<p>
+ffmpeg -i out.mp4 -t 10 -pix_fmt rgb24 out.gif
+
+</p>
+
+<h4>从视频截选指定长度的内容生成GIF图片</h4>
+
+<p>
+ffmpeg -ss 3 -t 5 -i input.mp4 -s 480*270 -f gif out.gif
+
+</p>
+
+<h4>转换视频为图片（每帧一张图）</h4>
+
+<p>
+ffmpeg -i out.mp4 out%4d.png
+
+</p>
+
+<h4>图片转换为视频</h4>
+
+<p>
+ffmpeg -f image2 -i out%4d.png -r 25 video.mp4
+
+</p>
+
+<p>
+ffmpeg –i video-frame-%0d.png -c:v libx264 -vf “fps=25, format=yuv420p” out.mp4
+
+</p>
+
+<h4>分离视频音频流</h4>
+
+<p>
+ffmpeg -i input_file -vcodec copy -an output_file_video    //分离视频流
+
+</p>
+
+<p>
+ffmpeg -i input_file -acodec copy -vn output_file_audio    //分离音频流
+
+</p>
+
+<h4>视频封装</h4>
+
+<p>
+ffmpeg -i video_file -i audio_file -vcoder copy -acodec copy output_file
+
+</p>
+
+<h4>视频剪切</h4>
+
+<p>
+ffmpeg -i test.avi -r 1 -f image2 image.jpeg //视频截图
+
+</p>
+
+<p>
+ffmpeg -i input.avi -ss 0:1:30 -t 0:0:20 -vcoder copy -acoder copy output.avi //剪切视频 -r 提取图像频率， -ss 开始时间， -t 持续时间
+
+</p>
+
+<h4>视频录制（流）</h4>
+
+<p>
+ffmpeg -i rtsp://hostname/test -vcoder copy out.avi
+
+</p>
+
+<h4>内容反转（reverse）</h4>
+
+<p>
+ffmpeg -i input-file.mp4 -vf reverse output.mp4  // For video only
+
+</p>
+
+<p>
+ffmpeg -i input-file.mp4 -vf reverse -af areverse output.mp4   // For audio and video
+</p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">
