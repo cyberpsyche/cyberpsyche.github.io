@@ -557,6 +557,28 @@ print a
 
 </p>
 
+<h4>转出为Beamer PDF</h4>
+
+<p>
+在org文件开头加入：
+
+</p>
+
+<pre class="example">#+LATEX_HEADER: \usepackage[UTF8]{ctex}
+#+LATEX_CMD: xelatex
+#+OPTIONS: H:2 toc:t num:t
+#+LATEX_CLASS: beamer
+#+LATEX_CLASS_OPTIONS: [presentation]
+#+BEAMER_THEME: Marburg
+#+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col) %8BEAMER_OPT(Opt)
+
+# This uses org-mode; open it in Emacs and hit C-c C-e l b to render a PDF
+
+#+TITLE: My Title
+#+AUTHOR: Sam Chen
+#+email: cyberpsyche@gmail.com
+</pre>
+
 <h3>Markdown</h3>
 
 <p>
@@ -771,7 +793,7 @@ M-x describe-key RET 查询key绑定
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-05-26
+          <td align="left">Update : 2019-06-20
           </td>
           <td align="center">
            <span class="foothome">

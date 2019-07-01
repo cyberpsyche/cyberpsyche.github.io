@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>WikiIndex</title>
+    <title>Jupyter Notebook笔记</title>
     <meta name="generator" content="emacs-wiki.el" />
     <meta http-equiv="Content-Type"
           content="text/html; charset=utf-8" />
@@ -37,100 +37,67 @@ function hide() {
 </div>
   </head>
   <body>
-    <h1 id="top">WikiIndex</h1>
+    <h1 id="top">Jupyter Notebook笔记</h1>
 
     <!-- Page published by Emacs Wiki begins here -->
-<ul>
-<li><a href="AndroidNotes.html">AndroidNotes</a>
-</li>
-<li><a href="AppleiOs.html">AppleiOs</a>
-</li>
-<li><a href="BigData.html">BigData</a>
-</li>
-<li><a href="ClojureNotes.html">ClojureNotes</a>
-</li>
-<li><a href="CommParty.html">CommParty</a>
-</li>
-<li><a href="DebianUbuntu.html">DebianUbuntu</a>
-</li>
-<li><a href="EmacsWiki.html">EmacsWiki</a>
-</li>
-<li><a href="FavoriteLinks.html">FavoriteLinks</a>
-</li>
-<li><a href="FreebsdNotes.html">FreebsdNotes</a>
-</li>
-<li><a href="GitNotes.html">GitNotes</a>
-</li>
-<li><a href="HtmlNotes.html">HtmlNotes</a>
-</li>
-<li><a href="JavaNotes.html">JavaNotes</a>
-</li>
-<li><a href="JavaScript.html">JavaScript</a>
-</li>
-<li><a href="JupyterNotebook.html">JupyterNotebook</a>
-</li>
-<li><a href="MacOsx.html">MacOsx</a>
-</li>
-<li><a href="MaximaNotes.html">MaximaNotes</a>
-</li>
-<li><a href="MetaPost.html">MetaPost</a>
-</li>
-<li><a href="MiscNotes.html">MiscNotes</a>
-</li>
-<li><a href="MobileNotes.html">MobileNotes</a>
-</li>
-<li><a href="MovieArts.html">MovieArts</a>
-</li>
-<li><a href="MyDoodle.html">MyDoodle</a>
-</li>
-<li><a href="MyPhotos.html">MyPhotos</a>
-</li>
-<li><a href="MysqlNotes.html">MysqlNotes</a>
-</li>
-<li><a href="ObjCnotes.html">ObjCnotes</a>
-</li>
-<li><a href="OracleNotes.html">OracleNotes</a>
-</li>
-<li><a href="PearlsOfWisdom.html">PearlsOfWisdom</a>
-</li>
-<li><a href="PgsqlNotes.html">PgsqlNotes</a>
-</li>
-<li><a href="PhilosophyReligion.html">PhilosophyReligion</a>
-</li>
-<li><a href="PhpTricks.html">PhpTricks</a>
-</li>
-<li><a href="ProgrammingNotes.html">ProgrammingNotes</a>
-</li>
-<li><a href="ProxyNotes.html">ProxyNotes</a>
-</li>
-<li><a href="PythonNotes.html">PythonNotes</a>
-</li>
-<li><a href="ReadIng.html">ReadIng</a>
-</li>
-<li><a href="RnOtes.html">RnOtes</a>
-</li>
-<li><a href="ShellNotes.html">ShellNotes</a>
-</li>
-<li><a href="SolarisNotes.html">SolarisNotes</a>
-</li>
-<li><a href="SvnNotes.html">SvnNotes</a>
-</li>
-<li><a href="TermNotes.html">TermNotes</a>
-</li>
-<li><a href="TexNotes.html">TexNotes</a>
-</li>
-<li><a href="VimNotes.html">VimNotes</a>
-</li>
-<li><a href="WebGeek.html">WebGeek</a>
-</li>
-<li><a href="WebServerNotes.html">WebServerNotes</a>
-</li>
-<li><a href="WelcomePage.html">WelcomePage</a>
-</li>
-<li><a href="WikiNotes.html">WikiNotes</a>
-</li>
-</ul>
-<!-- Page published by Emacs Wiki ends here -->
+<h3>Tips</h3>
+
+<h4>Shift+回车执行单元代码</h4>
+
+<p>
+快速运行并输出结果，并跳转到下一个单元。
+
+</p>
+
+<h4>代码自动完成</h4>
+
+<p>
+在代码顶部添加 %config IPCompleter.greedy=True 这一行并且shift+回车运行，对于接下来运行过的内容都会被列入自动提示中。
+
+</p>
+
+<p>
+按Tab键弹出自动提示。
+
+</p>
+
+<h4>多行输出</h4>
+
+<p>
+在Notebook的中开头cell中添加以下代码可以实现多行输出：
+
+</p>
+
+<pre class="example">from IPython.core.interactiveshell import InteractiveShell
+InteractiveShell.ast_node_interactivity = 'all' #默认为'last'
+</pre>
+
+<h4>运行或载入外部Python文件</h4>
+
+<p>
+如 %run ./a.py
+
+</p>
+
+<h4>用 ?</h4>
+
+<p>
+输出帮助提示
+
+</p>
+
+<h4>Markdown单元可支持LateX公式编辑</h4>
+
+<p>
+比如输入\\( P(A \mid B) = \frac{P(B \mid A) \, P(A)}{P(B)} \\)
+
+</p>
+
+<h4>保存为多种格式文件</h4>
+
+<p>
+如.py, .pdf, .html等。
+</p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">
