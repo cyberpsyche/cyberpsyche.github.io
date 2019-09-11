@@ -129,6 +129,14 @@ createdb DBNAME / dropdb DBNAME
 </pre>
 
 <p>
+or
+
+</p>
+
+<pre class="example">ALTER USER postgres WITH PASSWORD 'postgres';
+</pre>
+
+<p>
 7.整库导入
 
 </p>
@@ -154,6 +162,16 @@ createdb DBNAME / dropdb DBNAME
 
 <p>
 /usr/local/var/postgres 常作为默认的pgsql数据库文件位置。
+
+</p>
+
+<ol>
+<li>登录数据库
+</li>
+</ol>
+
+<p>
+sudo -u postgres psql -d DBNAME
 
 </p>
 
@@ -280,6 +298,11 @@ Use 'DEFAULT' clause to use default value for specific column.
     SET temp_hi = temp_hi - 2, temp_lo = temp_lo - 2
     WHERE date &gt; '1994-11-28';
 </pre>
+
+<p>
+<strong>注意：插入、修改记录等均要使用单引号，不能使用双引号。</strong>
+
+</p>
 
 <p>
 修改字段类型：
@@ -428,7 +451,7 @@ or
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-06-20
+          <td align="left">Update : 2019-08-28
           </td>
           <td align="center">
            <span class="foothome">
