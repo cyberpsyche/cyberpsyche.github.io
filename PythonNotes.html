@@ -1164,17 +1164,33 @@ pip3 install supervisor
 
 </p>
 
-<p>
-[program:celery]
-command=/usr/local/sbin/celery worker -A tasks
-directory=/home/sam/Projects/xxx
+<pre class="example">[program:celery.worker]
+command=/usr/local/sbin/celery -A tasks worker --loglevel info --logfile celery_worker.log
+directory=/home/sam/Projects/xxx-proj
 stdout_logfile=/data/logs/celery.log
-autostart=true
-autorestart=true
-redirect_stderr=true
-stopsignal=QUIT
+;启动设置
+numprocs=1          ;进程数
+autostart=true      ;当supervisor启动时,程序将会自动启动
+autorestart=true    ;自动重启
 
-</p>
+;停止信号,默认TERM
+;中断:INT (类似于Ctrl+C)(kill -INT pid)，退出后会将写文件或日志(推荐)
+;终止:TERM (kill -TERM pid)
+;挂起:HUP (kill -HUP pid),注意与Ctrl+Z/kill -stop pid不同
+;从容停止:QUIT (kill -QUIT pid)
+stopsignal=INT
+
+;输出日志
+stdout_logfile=celery_worker.log
+stdout_logfile_maxbytes=10MB  ;默认最大50M
+stdout_logfile_backups=10     ;日志文件备份数，默认为10
+
+;错误日志
+redirect_stderr=false         ;为true表示禁止监听错误
+stderr_logfile=celery_worker_err.log
+stderr_logfile_maxbytes=10MB
+stderr_logfile_backups=10
+</pre>
 
 <h4>supervisor + gunicorn</h4>
 
@@ -1198,6 +1214,11 @@ sudo supervisorctl update
 <h4>supervisor 控制</h4>
 
 <p>
+supervisorctl 打开控制器终端
+
+</p>
+
+<p>
 sudo supervisorctl stop <app_name>
 
 </p>
@@ -1209,6 +1230,11 @@ sudo supervisorctl restart <app_name>
 
 <p>
 sudo supervisorctl status
+
+</p>
+
+<p>
+sudo supervisorctl -c supervisord.conf reload
 
 </p>
 
