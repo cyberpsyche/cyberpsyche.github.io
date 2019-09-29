@@ -1142,7 +1142,133 @@ pipenv --python 3.6
 <pre class="example">pipenv --rm
 </pre>
 
-<!-- Page published by Emacs Wiki ends here -->
+<h3>supervisor</h3>
+
+<p>
+pip3 install supervisor
+
+</p>
+
+<p>
+创建 supervisord.conf :
+
+</p>
+
+<pre class="example">echo_supervisord_conf &gt; supervisord.conf
+</pre>
+
+<h4>supervisor + celery</h4>
+
+<p>
+编辑supervisord.conf，在最后增加下列内容：
+
+</p>
+
+<p>
+[program:celery]
+command=/usr/local/sbin/celery worker -A tasks
+directory=/home/sam/Projects/xxx
+stdout_logfile=/data/logs/celery.log
+autostart=true
+autorestart=true
+redirect_stderr=true
+stopsignal=QUIT
+
+</p>
+
+<h4>supervisor + gunicorn</h4>
+
+<p>
+用法见 <a href="WebServerNotes.html">WebServerNotes</a>
+
+</p>
+
+<h4>supervisor 动态读入supervisord.conf 更新，并enact 更新：</h4>
+
+<p>
+sudo supervisorctl reread
+
+</p>
+
+<p>
+sudo supervisorctl update
+
+</p>
+
+<h4>supervisor 控制</h4>
+
+<p>
+sudo supervisorctl stop <app_name>
+
+</p>
+
+<p>
+sudo supervisorctl restart <app_name>
+
+</p>
+
+<p>
+sudo supervisorctl status
+
+</p>
+
+<h3>gunicorn</h3>
+
+<p>
+pip3 install gunicorn
+
+</p>
+
+<p>
+用法见 <a href="WebServerNotes.html">WebServerNotes</a>
+
+</p>
+
+<h3>celery</h3>
+
+<p>
+启动异步进程
+
+</p>
+
+<p>
+celery -A celery_app worker -l info
+
+</p>
+
+<p>
+启动 Celery Beat 进程
+
+</p>
+
+<p>
+celery beat -A celery_app
+
+</p>
+
+<p>
+同时启动Beat和Async进程：
+
+</p>
+
+<p>
+celery -B -A celery_app worker --loglevel=info
+
+</p>
+
+<p>
+BROKER_URL
+
+</p>
+
+<p>
+BROKER_URL = 'amqp://sam:123456@localhost:5672/%2Fhollywood'
+
+</p>
+
+<p>
+用%2F代表 '/'
+</p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">

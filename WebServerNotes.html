@@ -28,7 +28,7 @@ function hide() {
 </div>
 
 <div class="menuitem">
-  <a href="">work</a>
+  <a href="../workwiki/WelcomePage.html">work</a>
 </div>
 
 </div><!-- menu ends here -->
@@ -223,6 +223,107 @@ kill -HUP `cat /usr/local/nginx/logs/nginx.pid`
 
 </p>
 
+<h4>nginx with SSL</h4>
+
+<p>
+./configure --prefix=/usr/local/nginx --with-openssl=/usr/local/opt/openssl --with-http_ssl_module
+
+</p>
+
+<p>
+OpenSSL 创建私钥:
+
+</p>
+
+<pre class="example">openssl genrsa -des3 -out server.key 1024
+openssl req -new -key server.key -out server.csr
+openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
+</pre>
+
+<p>
+将server.crt, server.key 放入 /usr/local/nginx/conf/ssl/ 下。
+
+</p>
+
+<p>
+Nginx.conf :
+
+</p>
+
+<pre class="example">server {
+        listen 443 ssl;
+        server_name localhost;
+        server_name_in_redirect off;
+        #ssl on;
+        ssl_certificate      /usr/local/nginx/conf/ssl/server.crt;
+        ssl_certificate_key  /usr/local/nginx/conf/ssl/server.key;
+        ssl_session_timeout  5m;
+        access_log /var/log/nginx/access.log;
+        error_log /var/log/nginx/error.log;
+
+        location / {
+                proxy_pass http://127.0.0.1:8000;
+                proxy_pass_header       Authorization;
+                proxy_pass_header       WWW-Authenticate;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        }
+
+        location /static/ {
+                root /Users/sam/Projects/Test/django/cookiecutter_test/my_awesome_project/staticfiles/;
+        }
+    }
+
+    server{
+        listen 80;
+        server_name localhost;
+        rewrite ^/(.*)$ https://localhost:443/$1 permanent;
+    }
+</pre>
+
+<h4>gunicorn + supervisor</h4>
+
+<p>
+gunicorn.conf.py
+
+</p>
+
+<pre class="example">import multiprocessing
+  
+bind = &quot;127.0.0.1:8000&quot;   #绑定的ip与端口
+workers = 2                #核心数
+errorlog = '/var/log/gunicorn/error.log' #发生错误时log的路径
+accesslog = '/var/log/gunicorn/access.log' #正常时的log路径
+#loglevel = 'debug'   #日志等级
+proc_name = 'my_awesome_project'   #进程名
+</pre>
+
+<p>
+supervisord.conf
+
+</p>
+
+<pre class="example">[supervisord]
+logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
+logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)
+logfile_backups=10           ; (num of main logfile rotation backups;default 10)
+loglevel=info                ; (log level;default info; others: debug,warn,trace)
+pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+nodaemon=false               ; (start in foreground if true;default false)
+minfds=1024                  ; (min. avail startup file descriptors;default 1024)
+minprocs=200
+
+[program:gunicorn]
+command=/home/sam/.local/share/virtualenvs/cookiecutter_test-eUAS7QjF/bin/gunicorn -b 127.0.0.1:8000 config.wsgi  --pid /tmp/gunicorn.pid
+directory=/home/sam/Projects/Test/django/cookiecutter_test/my_awesome_project ;
+</pre>
+
+<p>
+执行 supervisord
+
+</p>
+
 <h2>Web Protocol</h2>
 
 <h3>HTTP</h3>
@@ -266,7 +367,7 @@ See <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes">http://en.w
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2016-05-23
+          <td align="left">Update : 2019-08-28
           </td>
           <td align="center">
            <span class="foothome">
