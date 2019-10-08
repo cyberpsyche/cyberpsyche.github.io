@@ -1186,7 +1186,7 @@ stdout_logfile_maxbytes=10MB  ;默认最大50M
 stdout_logfile_backups=10     ;日志文件备份数，默认为10
 
 ;错误日志
-redirect_stderr=false         ;为true表示禁止监听错误
+redirect_stderr=false         ;为true表示禁止监听错误, stderr转发至stdout中。
 stderr_logfile=celery_worker_err.log
 stderr_logfile_maxbytes=10MB
 stderr_logfile_backups=10
