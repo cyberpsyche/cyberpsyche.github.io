@@ -706,6 +706,28 @@ xcode: valid signing identity not found 的完美解决
 
 </p>
 
+<h4>Mac中的内存标记</h4>
+
+<p>
+Wired(联动): 系统核心占用的，有效期内是不可以被交换到Disk上去的，以保证对速度等要求较高的处理，可以使用IOMalloc（IOFree）以及kmem_alloc_wired（kmem_free）来分派Wired memory。
+
+</p>
+
+<p>
+Active(活跃): 表示这些内存数据正在使用中，或者刚被使用过。
+
+</p>
+
+<p>
+Inactive(非活跃): 表示这些内存中的数据是有效的，但是最近没有被使用。
+
+</p>
+
+<p>
+Free(可用空间): 表示这些内存中的数据是无效的，即内存剩余量。
+
+</p>
+
 <h3>XCode </h3>
 
 <h4>Could not find info...</h4>
@@ -756,7 +778,7 @@ save as an Application
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-08-28
+          <td align="left">Update : 2020-01-15
           </td>
           <td align="center">
            <span class="foothome">

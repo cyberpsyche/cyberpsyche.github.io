@@ -253,7 +253,15 @@ openssl x509 -req -days 365 -in server.csr -signkey server.key -out server.crt
 </p>
 
 <p>
-Nginx.conf :
+注：在启动nginx前将要求输入 PEM pass phrase. 原因是在生成server.key时使用了密码，这将引起nginx自动重启等的困难。解决办法是用以下语句生成新的server.key，以去除其中密码。
+
+</p>
+
+<pre class="example">openssl rsa -in server.key -out server.key.unsecure
+</pre>
+
+<p>
+Nginx.conf (注意加入的ssl项):
 
 </p>
 
@@ -263,7 +271,8 @@ Nginx.conf :
         server_name_in_redirect off;
         #ssl on;
         ssl_certificate      /usr/local/nginx/conf/ssl/server.crt;
-        ssl_certificate_key  /usr/local/nginx/conf/ssl/server.key;
+        #ssl_certificate_key  /usr/local/nginx/conf/ssl/server.key;
+        ssl_certificate_key  /usr/local/nginx/conf/ssl/server.key.unsecure;
         ssl_session_timeout  5m;
         access_log /var/log/nginx/access.log;
         error_log /var/log/nginx/error.log;

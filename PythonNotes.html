@@ -1026,6 +1026,31 @@ s.strip() == s.rstrip().lstrip()
 
 </p>
 
+<h4>lambda语句</h4>
+
+<p>
+匿名函数表仅在定义匿名函数的地方使用这个函数， 形如 lambda 参数列表:返回值表达式。 省略了return关键字。
+
+</p>
+
+<pre class="example">&gt;&gt;&gt; lambda x,y: x+y
+&lt;function &lt;lambda&gt; at 0x000001B2DE5BD598&gt;
+&gt;&gt;&gt; (lambda x,y: x+y)(3,4) # 因为匿名函数没有名字，使用的时候要用括号把它包起来
+&gt;&gt;&gt; a = [{'name':'B', 'age':50}, {'name':'A', 'age':30}, {'name':'C', 'age':40}]
+&gt;&gt;&gt; sorted(a, key=lambda x:x['name']) # 按姓名排序
+[{'name': 'A', 'age': 30}, {'name': 'B', 'age': 50}, {'name': 'C', 'age': 40}]
+&gt;&gt;&gt; sorted(a, key=lambda x:x['age']) # 按年龄排序
+[{'name': 'A', 'age': 30}, {'name': 'C', 'age': 40}, {'name': 'B', 'age': 50}]
+</pre>
+
+<h4>print + end 的用法</h4>
+
+<pre class="example">&gt;&gt;&gt; a = [1,2,3]
+&gt;&gt;&gt; for i in a:
+...    print(i, end=&quot;...&quot;)
+1...2...3...
+</pre>
+
 <h4>md5</h4>
 
 <pre class="example">import hashlib
@@ -1134,12 +1159,73 @@ data = json.load(open('.../XXX.json','r'))
         print &quot;trace:&quot;, trace
 </pre>
 
+<h4>* 与 ** 的用法</h4>
+
+<p>
+（1） Python 函数支持默认参数和可变参数，一颗星*表示不限数量的单值参数，两颗星**表示不限数量的键值对参数。但必须按顺序使用。
+
+</p>
+
+<pre class="example">&gt;&gt;&gt; def do_something(name, age, gender='男', *args, **kwds):
+	print('姓名：%s，年龄：%d，性别：%s'%(name, age, gender))
+	print(args)
+	print(kwds)
+
+&gt;&gt;&gt; do_something('xufive', 50, '男', 175, 75, math=99, english=90)
+姓名：xufive，年龄：50，性别：男
+(175, 75)
+{'math': 99, 'english': 90}
+</pre>
+
+<p>
+（2）一颗星*和两颗星**还可用于列表、元组、字典的解包
+
+</p>
+
+<pre class="example">&gt;&gt;&gt; b = [1,2,3]
+&gt;&gt;&gt; print(b)
+[1, 2, 3]
+&gt;&gt;&gt; print(*b)
+1 2 3
+&gt;&gt;&gt; c = {'name':'xufive', 'age':51}
+&gt;&gt;&gt; print(c)
+{'name': 'xufive', 'age': 51}
+&gt;&gt;&gt; print(*c)
+name age
+&gt;&gt;&gt; print('name:{name}, age:{age}'.format(**c))
+name:xufive, age:51
+</pre>
+
+<h4>三元表达式</h4>
+
+<pre class="example">&gt;&gt;&gt; y = 5
+&gt;&gt;&gt; x = -1 if y &lt; 0 else 1
+&gt;&gt;&gt; x
+1
+</pre>
+
+<h4>数组中插入数组</h4>
+
+<pre class="example">&gt;&gt;&gt; a = [0, 1, 2, 3, 4, 5]
+&gt;&gt;&gt; b = ['a', 'b']
+&gt;&gt;&gt; a[2:2] = b
+&gt;&gt;&gt; a
+[0, 1, 'a', 'b', 2, 3, 4, 5]
+</pre>
+
 <h4>Python 3.X 里不包含 has_key() 函数，被 __contains__(key) 替代</h4>
 
 <pre class="example">&gt;&gt;&gt; dict3 = {'name':'z','Age':7,'class':'First'}
 &gt;&gt;&gt; print(&quot;Value : &quot;,dict3.__contains__('name'))
 &gt;&gt;&gt; print(&quot;Value : &quot;,dict3.__contains__('sex'))
 </pre>
+
+<h4>生成器和迭代器 yield</h4>
+
+<p>
+generator（生成器）,  iterator（迭代器）。目的是减少内存开销。
+
+</p>
 
 <h4>python代码加密</h4>
 
@@ -1274,6 +1360,11 @@ pipenv --python 3.6
 </pre>
 
 <h3>supervisor</h3>
+
+<p>
+注意: supervisor的原理为将一般进程作为其子进程进行管理，故supervisor不能监控后台Daemon进程，command 不能为后台运行命令。
+
+</p>
 
 <p>
 pip3 install supervisor
