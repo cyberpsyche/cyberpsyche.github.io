@@ -192,6 +192,2495 @@ GraphX - 分布式图处理框架，基于Spark平台提供对图计算和图挖
 
 <p>
 <a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a> - 百度实现的开源分布式图数据库
+
+</p>
+
+<h2>Gremlin</h2>
+
+<h3>边遍历概念</h3>
+
+<h4>顶点为基准的Steps：</h4>
+
+<p>
+out(label): 根据指定的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>来访问顶点的OUT方向邻接点（可以是零个<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>，代表所有类型边；也可以一个或多个<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>，代表任意给定<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>的边，下同）
+
+</p>
+
+<p>
+in(label): 根据指定的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>来访问顶点的IN方向邻接点
+
+</p>
+
+<p>
+both(label): 根据指定的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>来访问顶点的双向邻接点
+
+</p>
+
+<p>
+outE(label): 根据指定的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>来访问顶点的OUT方向邻接边
+
+</p>
+
+<p>
+inE(label): 根据指定的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>来访问顶点的IN方向邻接边
+
+</p>
+
+<p>
+bothE(label): 根据指定的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">EdgeLabel</a>来访问顶点的双向邻接边
+
+</p>
+
+<h4>边为基准的Steps：</h4>
+
+<p>
+outV(): 访问边的出顶点（注意：这里是以边为基准，上述Step均以顶点为基准），出顶点是指边的起始顶点
+
+</p>
+
+<p>
+inV(): 访问边的入顶点，入顶点是指边的目标顶点，也就是箭头指向的顶点
+
+</p>
+
+<p>
+bothV(): 访问边的双向顶点
+
+</p>
+
+<p>
+otherV(): 访问边的伙伴顶点，即相对于基准顶点而言的另一端的顶点
+
+</p>
+
+<h4>Has Step说明</h4>
+
+<p>
+在众多Gremlin的语句中，有一大类是filter类型，顾名思义，就是对输入的对象进行条件判断，只有满足过滤条件的对象才可以通过filter进入下一步。
+
+</p>
+
+<p>
+has语句是filter类型语句的代表，能够以顶点和边的属性作为过滤条件，决定哪些对象可以通过。has语句包括很多变种：
+
+</p>
+
+<p>
+hasLabel(labels…​): object的label与labels列表中任何一个匹配就可以通过
+
+</p>
+
+<p>
+hasId(ids…​): object的id满足ids列表中的任何一个就可以通过
+
+</p>
+
+<p>
+has(key, value): 包含属性“key=value”的object通过，作用于顶点或者边
+
+</p>
+
+<p>
+has(label, key, value): 包含属性“key=value”且label值匹配的object通过，作用于顶点或者边
+
+</p>
+
+<p>
+has(key, predicate): 包含键为key且对应的value满足predicate的object通过，作用于顶点或者边
+
+</p>
+
+<p>
+hasKey(keys…​): object的属性键包含所有的keys列表成员才能通过，作用于顶点属性
+
+</p>
+
+<p>
+hasValue(values…​): object的属性值包含所有的values列表成员才能通过，作用于顶点属性
+
+</p>
+
+<p>
+has(key): 包含键为key的属性的object通过，作用于顶点或者边
+
+</p>
+
+<p>
+hasNot(key): 不包含键为key的属性的object通过，作用于顶点或者边
+
+</p>
+
+<h3>图查询返回结果数限制</h3>
+
+<p>
+Gremlin能统计查询结果集中元素的个数，且允许从结果集中做范围截取。假设某个查询操作（如：g.V()）的结果集包含8个元素，我们可以从这8个元素中截取指定部分。主要包括：
+
+</p>
+
+<p>
+count(): 统计查询结果集中元素的个数；
+
+</p>
+
+<p>
+range(m, n): 指定下界和上界的截取，左闭右开。比如range(2, 5)能获取第2个到第4个元素（0作为首个元素，上界为-1时表示剩
+余全部）；
+
+</p>
+
+<p>
+limit(n): 下界固定为0，指定上界的截取，等效于range(0, n)，语义是“获取前n个元素”。比如limit(3)能获取前3个元素；
+
+</p>
+
+<p>
+tail(n): 上界固定为-1，指定下界的截取，等效于range(count - n, -1)，语义是“获取后n个元素”。比如tail(2)能获取最后的2个元素；
+
+</p>
+
+<p>
+skip(n): 上界固定为-1，指定下界的截取，等效于range(n, -1)，语义是“跳过前n个元素，获取剩余的元素”。比如skip(6)能跳过前6个元素，获取最后2个元素。
+
+</p>
+
+<h3>查询路径path</h3>
+
+<p>
+path()返回当前遍历过的所有路径。有时需要对路径进行过滤，只选择没有环路的路径或者选择包含环路的路径，Gremlin针对这种需求提供了两种过滤路径的step：simplePath()和cyclicPath()。
+
+</p>
+
+<p>
+// “<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”顶点到与其有两层关系的顶点的所有路径（只包含顶点）
+g.V().hasLabel('software').has('name','HugeGraph') .both().both().path()
+
+</p>
+
+<p>
+path()，获取当前遍历过的所有路径.
+
+</p>
+
+<p>
+simplePath()，过滤掉路径中含有环路的对象，只保留路径中不含有环路的对象
+
+</p>
+
+<p>
+// “<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”顶点到与其有两层关系的顶点的不含环路的路径（只包含顶点）
+g.V().hasLabel('software').has('name','HugeGraph') .both().both().simplePath().path()
+
+</p>
+
+<p>
+cyclicPath()，过滤掉路径中不含有环路的对象，只保留路径中含有环路的对象
+
+</p>
+
+<p>
+// “<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”顶点到与其有两层关系的顶点的包含环路的路径（只包含顶点）
+g.V().hasLabel('software').has('name','HugeGraph') .both().both().cyclicPath().path()
+
+</p>
+
+<h3>循环操作</h3>
+
+<p>
+循环操作是指多次执行某一部分语句，用于语句需要重复运行的场景，比如“查找朋友的朋友的朋友”，可以直接使用循环操作来完成即“查找3层朋友”，下面对具体的循环相关的Step进行说明：
+
+</p>
+
+<p>
+repeat(): 指定要重复执行的语句，如repeat(out('friend'))
+
+</p>
+
+<p>
+times(): 指定要重复执行的次数，如执行3次repeat(out('friend')).times(3)
+
+</p>
+
+<p>
+// 访问某个顶点的OUT邻接点（1次） // 注意'okram'是顶点的id
+g.V('okram').repeat(out()).times(1)
+
+</p>
+
+<p>
+g.V('okram').out().out().out() 与 g.V('okram').repeat(out()).times(3) 结果相同
+
+</p>
+
+<p>
+until(): 指定循环终止的条件，如一直找到某个名字的朋友为止
+
+</p>
+
+<p>
+注意：until()与 times()是互斥的，两个语句无法同时存在于同一个循环中。
+
+</p>
+
+<p>
+注意：until()放在repeat()之前或之后的顺序是会影响逻辑的，放前面表示先判断再执行，放后面表示先执行后判断。请对比如下两个语句的执行结果：
+
+</p>
+
+<p>
+g.V('okram').repeat(out()).until(hasLabel('person')).path()
+
+</p>
+
+<p>
+g.V('okram').until(hasLabel('person')).repeat(out()).path()
+
+</p>
+
+<p>
+repeat(out('friend')).until(has('name','xiaofang'))
+
+</p>
+
+<p>
+emit(): 指定循环语句的执行过程中收集数据的条件，每一步的结果只要符合条件则被收集，不指定条件时收集所有结果
+
+</p>
+
+<p>
+// 查询顶点'okram'的所有OUT可达点的路径 // 且必须满足是'person'类型的点
+g.V('okram') .repeat(out()) .emit(hasLabel('person')) .path()
+
+</p>
+
+<p>
+注意：emit()放在repeat()之前或之后的顺序是会影响结果的，放前面表示先收集再执行，放后面表示先执行后收集。请对比如下两个语句的执行结果：
+
+</p>
+
+<p>
+g.V('okram').repeat(out()).emit(hasLabel('person')).path()
+
+</p>
+
+<p>
+g.V('okram').emit(hasLabel('person')).repeat(out()).path()
+
+</p>
+
+<p>
+注意：emit()与until()搭配使用时，是“或”的关系而不是“与”的关系，满足两者间任意一个即可。
+
+</p>
+
+<p>
+loops(): 当前循环的次数，可用于控制最大循环次数等，如最多执行3次repeat(out('friend')).until(loops().is(3)).path()
+
+</p>
+
+<p>
+// 查询顶点'okram'到顶点'Gremlin'之间的路径
+// 且之间只相差2跳的距离
+// 其中的and()是指两个条件都满足
+g.V('okram')
+ .repeat(out())
+ .until(has('name', 'Gremlin')
+        .and().loops().is(2))
+<blockquote>
+<p>
+ .path()
+
+</p>
+</blockquote>
+
+<p>
+查找子树
+
+</p>
+
+<p>
+// 查找从一个节点出发，到 // 叶子节点结束的所有路径 // 这些路径的集合为一颗子树(子图)
+g.V('okram') .repeat(out()) .until(outE().count().is(0)) .path()
+
+</p>
+
+<p>
+查找两点之间的最短路径
+
+</p>
+
+<p>
+// 已知两个顶点'okram'和'javeme'，
+// 通过任意关系来找到这两点之间的路径
+// 且限制了最大深度为3
+// 若存在那么第一条结果即是最短路径
+g.V('okram')
+ .repeat(bothE().otherV().simplePath())
+ .until(hasId('javeme').and().loops().is(lte(3)))
+ .hasId('javeme')
+<blockquote>
+<p>
+ .path()
+注意：bothE().otherV()一般等价于both()，但是在这里有一些差别，后者仅仅返回路径中的顶点信息，前者会把路径中的边信息也返回。
+
+</p>
+</blockquote>
+
+<h3>查询结果排序</h3>
+
+<p>
+Gremlin允许对查询的结果进行排序输出，可以指定按某个属性的升序、降序或是随机序的方式输出。排序方式可以通过单独的order()或者order().by(...)指定
+
+</p>
+
+<p>
+order()会将结果以升序输出
+
+</p>
+
+<p>
+注：order()单独使用时，必须保证遍历器（traverser）中的元素是可排序的，在 java 里就是必须实现java.lang.Comparable接口，否则会抛出异常。
+
+</p>
+
+<p>
+联合使用order().by(...) Step，传入排序方式，一般用于遍历器中的元素是属性时：
+
+</p>
+
+<p>
+order().by(incr): 将结果以升序输出，这也是默认的排序方式；
+
+</p>
+
+<p>
+order().by(decr): 将结果以降序输出；
+
+</p>
+
+<p>
+order().by(shuffle): 将结果以随机序输出，每次执行结果顺序都可能不一样。
+
+</p>
+
+<p>
+使用 order().by(…) step 但是 by() 传递的仅是一个排序方式的参数时，也必须保证遍历器（traverser）中的元素是可排序的。
+
+</p>
+
+<p>
+联合使用order().by(...) Step，传入属性和排序方式，用于遍历器中的元素是顶点或边时：
+
+</p>
+
+<p>
+order().by(key): 将结果按照元素属性key的值升序排列，与order().by(key, incr)等效；
+
+</p>
+
+<p>
+order().by(key, incr): 将结果按照元素属性key的值升序排列；
+
+</p>
+
+<p>
+order().by(key, decr): 将结果按照元素属性key的值降序排列；
+
+</p>
+
+<p>
+order().by(key, shuffle): 将结果按照元素属性key的值随机序排列，每次执行结果顺序都可能不一样。
+
+</p>
+
+<p>
+注：by()step不是一个真正的step，而是一个“step modulator”，与此类似的还有as()和option()step。通过by()step可以为某些step添加traversal、function、comparator等，通常的使用方式是step().by()…by()，某些step只能添加一个by()，而有一些可以添加任意数量的by()step。
+
+</p>
+
+<p>
+// 以升序输出所有顶点的"name"属性值
+g.V().values('name').order().by(incr)
+
+</p>
+
+<p>
+// 以降序输出所有顶点的"name"属性值
+<blockquote>
+<p>
+ g.V().values('name').order().by(decr)
+
+</p>
+</blockquote>
+
+<p>
+// 以随机序输出所有顶点的"name"属性值
+<blockquote>
+<p>
+ g.V().values('name').order().by(shuffle)
+
+</p>
+</blockquote>
+
+<p>
+// 将"person"类型的顶点按照"age"升序（默认）排列，并获取"age"属性 g.V().hasLabel('person').order().by('age').values('age')
+
+</p>
+
+<p>
+// 将"person"类型的顶点按照"age"降序排列输出，并获取"age"属性 g.V().hasLabel('person').order().by('age', decr).values('age')
+
+</p>
+
+<h3>数据分组与去重</h3>
+
+<p>
+group(): 对结果集进行分组，可通过by(property)来指定根据什么维度进行分组，可称维度为分组键；如果不指定维度则以元素id作为分组键，相当于重复的元素被分为一组。每一组由分组键+组内元素列表构成。如果有需要也可对每一组的元素列表进行reduce操作，依然使用by()语句，如by(count())对组内元素计数。
+
+</p>
+
+<p>
+groupCount(): 对结果集进行分组，并统计每一组的元素个数。每一组由分组键+组内元素数量构成。
+
+</p>
+
+<p>
+dedup(): 去除结果集中相同的元素，可通过by(property)来指定根据什么维度进行去重。
+
+</p>
+
+<p>
+by(): 语义上一般指“根据什么维度”，与上述语句配合使用，如group().by()、dedup().by()等。
+
+</p>
+
+<p>
+// 根据年龄进行分组
+g.V().hasLabel('person').group().by('age')
+
+</p>
+
+<p>
+// 根据年龄进行分组 // 并统计各个年龄的人数
+g.V().hasLabel('person') .group().by('age').by(count())
+
+</p>
+
+<p>
+// 根据顶点类别进行分组 // 并统计各个类别的数量
+g.V().group().by(label).by(count())
+
+</p>
+
+<p>
+// 根据年龄进行分组计数
+<blockquote>
+<p>
+ g.V().hasLabel('person') .groupCount().by('age')
+
+</p>
+</blockquote>
+
+<p>
+// 查看所有人当中有哪几种年龄 // 人之间的年龄是可能有重复的， // 通过dedup去除掉重复的年龄
+g.V().hasLabel('person') .values('age').dedup()
+
+</p>
+
+<p>
+// 从各个年龄的人中选出一个代表
+g.V().hasLabel('person').dedup().by('age')
+
+</p>
+
+<p>
+// 根据地域分组，并得到各个组的平均年龄
+g.V().hasLabel('person').group() .by('addr').by(values('age').mean())
+
+</p>
+
+<p>
+// 拥有相同数量边的顶点作为一组 // 并获取每一组的顶点数量 // 结果相当于：拥有m条边的顶点有n个
+g.V().groupCount().by(bothE().count())
+
+</p>
+
+<h3>条件和过滤</h3>
+
+<p>
+where()就是用来过滤遍历过程中当前阶段的对象。另一方面，predicate就是过滤时使用的判断条件，包括关系运算和区间判断等，只有满足判断条件的对象才能通过进入下一轮或者作为结果。
+
+</p>
+
+<p>
+where()常与select()或者match()配合使用，也可以单独使用。
+以下是predicate的说明：
+
+</p>
+
+<pre class="example">Predicate	Description
+eq(object)	传入的对象等于目标object?
+neq(object)	传入的对象不等于目标object?
+lt(number)	传入的数字小于目标number?
+lte(number)	传入的数字小于或等于目标number?
+gt(number)	传入的数字大于目标number?
+gte(number)	传入的数字大于或等于目标number?
+inside(low,high)	传入的数字大于low且小于high?
+outside(low,high)	传入的数字小于low或者大于high?
+between(low,high)	传入的数字大于等于low且小于high?
+within(objects…​)	传入的对象等于目标对象列表objects中的任意一个?
+without(objects…​)	传入的对象不等于目标对象列表objects中的任何一个?
+同时，逻辑运算and()、or()或者not()作用于predicate会产生一个新的predicate
+</pre>
+
+<p>
+predicate可以通过test()来获得boolean值
+
+</p>
+
+<p>
+// (3 == 2)
+eq(2).test(3)
+
+</p>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<thead>
+<tr>
+<th>// ('d' == 'a'</th><th>'d' == 'b'</th><th>'d' == 'c')</th>
+</tr>
+</thead>
+</table>
+
+within('a','b','c').test('d')
+
+</p>
+
+<p>
+// (3 > 1 && 3 < 4)
+<blockquote>
+<p>
+ inside(1,4).test(3)
+
+</p>
+</blockquote>
+
+<p>
+// not()作用于neq()，等价于eq()
+<blockquote>
+<p>
+ not(neq(2))
+
+</p>
+</blockquote>
+
+<p>
+// and()连接的predicate，是一个新的predicate
+within(1,2,3).and(not(eq(2))).test(3)
+
+</p>
+
+<p>
+// or()连接的predicate，是一个新的predicate
+inside(1,4).or(eq(5)).test(3)
+
+</p>
+
+<p>
+where()单独使用有三种使用方式：
+
+</p>
+
+<pre class="example">• where(P)
+• where(String, P)
+• where(Traversal)
+&lt;example&gt;
+
+// 查看“zhoney”的合作伙伴 // where(P)方式
+ g.V('zhoney').as('a') .out('created').in('created') .where(neq('a'))
+
+// “spmallette”开发过不止一个软件的合作伙伴
+// where(Traversal)方式
+g.V('spmallette').out('created').in('created')
+ .where(out('created').count().is(gt(1)))
+ .values('name')
+
+where()可以与by()语句配合使用，表示用by(property)指定的属性进行predicate判断
+
+// 查询”被别人认识“ // 且认识自己的人的年龄大于自己的年龄的人
+g.V().as('a') .out('knows').as('b') .where('a', gt('b')).by('age')
+
+where()与as()+select()配合使用
+
+as()可以为某一阶段的对象添加标签，select()则可以通过标签获取对象。因此as()+select()可以在某个step处得到历史信息。
+
+// 查看“zhoney”的合作伙伴，并将“zhoney”及其合作伙伴的名字以map输出
+// select().where()方式
+g.V('zhoney').as('a')
+ .out('created').in('created').as('b')
+ .select('a','b').by('name')
+ .where('a',neq('b'))
+
+where()与match()配合使用，match()可以保证满足某种模式的对象通过。
+
+// 查看“zhoney”的合作伙伴，并将“zhoney”及其合作伙伴的名字以map输出
+// match().where()方式
+g.V('zhoney').match(__.as('a').out('created').as('b'),
+                    __.as('b').in('created').as('c')).
+                    where('a', neq('c'))
+             .select('a','c').by('name')
+
+filter()有三种用法：
+&lt;example&gt;
+• lambda方式，filter{it.get()…}
+• Traversal方式，filter(Traversal)
+• 特定filter step方式
+</pre>
+
+<p>
+// 查找图中的“person”顶点 // lambda方式
+g.V().filter {it.get().label() == 'person'}
+
+</p>
+
+<p>
+// 查找图中的“person”顶点 // Traversal方式
+<blockquote>
+<p>
+ g.V().filter(label().is('person'))
+
+</p>
+</blockquote>
+
+<p>
+// 查找图中的“person”顶点 // 特定filter step方式
+g.V().hasLabel('person')
+
+</p>
+
+<h3>逻辑运算</h3>
+
+<p>
+Gremlin支持在遍历器上加上逻辑运算进行过滤，只有满足该逻辑条件的元素才会进入下一个遍历器中。
+
+</p>
+
+<p>
+下面讲解实现上述功能的具体Step：
+
+</p>
+
+<p>
+is()：可以接受一个对象（能判断相等）或一个判断语句（如：P.gt()、P.lt()、P.inside()等），当接受的是对象时，原遍历器中的元素必须与对象相等才会保留；当接受的是判断语句时，原遍历器中的元素满足判断才会保留，其实接受一个对象相当于P.eq()；
+
+</p>
+
+<p>
+and()：可以接受任意数量的遍历器（traversal），原遍历器中的元素，只有在每个新遍历器中都能生成至少一个输出的情况下才会保留，相当于过滤器组合的与条件；
+
+</p>
+
+<p>
+or()：可以接受任意数量的遍历器（traversal），原遍历器中的元素，只要在全部新遍历器中能生成至少一个输出的情况下就会保留，相当于过滤器组合的或条件；
+
+</p>
+
+<p>
+not()：仅能接受一个遍历器（traversal），原遍历器中的元素，在新遍历器中能生成输出时会被移除，不能生成输出时则会保留，相当于过滤器的非条件。
+
+</p>
+
+<p>
+and()和or()还可以放在where()中以中缀符的形式出现。
+
+</p>
+
+<p>
+// 筛选出顶点属性“age”等于28的属性值，与`is(P.eq(28))`等效
+g.V().values('age').is(28)
+
+</p>
+
+<p>
+// 筛选出顶点属性“age”大于等于28的属性值
+g.V().values('age').is(gte(28))
+
+</p>
+
+<p>
+// 筛选出顶点属性“age”属于区间（27，29）的属性值
+g.V().values('age').is(inside(27, 29))
+注：P.inside(a, b)是左开右开区间（a，b）
+
+</p>
+
+<p>
+// 筛选出由两个或两个以上的人参与创建（“created”）的顶点 // 注意：这里筛选的是顶点 g.V().where(__.in('created').count().is(gt(2))).values('name')
+
+</p>
+
+<p>
+// 筛选出有创建者（“created”）的年龄（“age”）在20～29之间的顶点 g.V().where(__.in('created').values('age').is(between(20, 29))).values('name')
+
+</p>
+
+<p>
+and()，逻辑与
+
+</p>
+
+<p>
+// 所有包含出边“supports”的顶点的名字“name”
+g.V().and(outE('supports')).values('name')
+
+</p>
+
+<p>
+// 所有包含出边“supports”和“implements”的顶点的名字“name”
+<blockquote>
+<p>
+ g.V().and(outE('supports'), outE('implements')).values('name')
+
+</p>
+</blockquote>
+
+<p>
+// 包含边“created”并且属性“age”为28的顶点的名字“name”
+g.V().and(outE('created'), values('age').is(28)).values('name')
+
+</p>
+
+<p>
+中缀符写法
+
+</p>
+
+<p>
+// 包含边“created”并且属性“age”为28的顶点的名字“name”
+g.V().where(outE('created')
+            .and()
+            .values('age').is(28))
+<blockquote>
+<p>
+ .values('name')
+
+</p>
+</blockquote>
+
+<p>
+or()，逻辑或
+
+</p>
+
+<p>
+// 所有包含出边“supports”的顶点的名字“name”
+g.V().or(outE('supports')).values('name')
+注：只有一个条件时，and()与or()的效果一样的。
+
+</p>
+
+<p>
+// 所有包含出边“supports”或“implements”的顶点的名字“name”
+g.V().or(outE('supports'), outE('implements')).values('name')
+
+</p>
+
+<p>
+// 包含边“created”或属性“age”为28的顶点的名字“name”
+g.V().or(outE('created'), values('age').is(28)).values('name')
+
+</p>
+
+<p>
+中缀符写法
+// 包含边“created”或属性“age”为28的顶点的名字“name”
+g.V().where(outE('created')
+            .or()
+            .values('age').is(28))
+<blockquote>
+<p>
+ .values('name')
+
+</p>
+</blockquote>
+
+<p>
+not()，逻辑非
+
+</p>
+
+<p>
+// 筛选出所有不是“person”的顶点的“label”
+g.V().not(hasLabel('person')).label()
+
+</p>
+
+<p>
+// 筛选出所有包含不少于两条（大于等于两条）“created”边的“person”的名字“name” g.V().hasLabel('person').not(out('created').count().is(lt(2))).values('name')
+
+</p>
+
+<p>
+目标：获取所有最多只有一条“created”边并且年龄不等于28的“person”顶点
+
+</p>
+
+<p>
+// 写法1： 与（含有小于等于一条“created”边，年龄不等于28）
+g.V().hasLabel('person')
+ .and(outE('created').count().is(lte(1)),
+      values("age").is(P.not(P.eq(28))))
+<blockquote>
+<p>
+ .values('name')
+
+</p>
+</blockquote>
+
+<p>
+// 写法2：非（或（含有多于一条“created”边，年龄等于28））
+g.V().hasLabel('person')
+ .not(or(out('created').count().is(gt(1)),
+         values('age').is(28)))
+<blockquote>
+<p>
+ .values('name')
+
+</p>
+</blockquote>
+
+<h3>统计运算</h3>
+
+<p>
+• sum()：将流上的所有的数字求和；
+
+</p>
+
+<p>
+• max()：对流上的所有的数字求最大值；
+
+</p>
+
+<p>
+• min()：对流上的所有的数字求最小值；
+
+</p>
+
+<p>
+• mean()：将流上的所有的数字求均值；
+
+</p>
+
+<p>
+这四种Step只能作用在Number类型的流上，在java里就是继承自java.lang.Number类。
+
+</p>
+
+<p>
+// 计算所有“person”的“age”的总和
+<blockquote>
+<p>
+ g.V().hasLabel('person').values('age').sum()
+
+</p>
+</blockquote>
+
+<p>
+// 计算所有“person”的“created”出边数的总和
+g.V().hasLabel('person').map(outE('created').count()).sum()
+
+</p>
+
+<p>
+// 计算所有“person”的“age”中的最大值
+g.V().hasLabel('person').values('age').max()
+
+</p>
+
+<p>
+// 计算所有“person”的“created”出边数的最大值
+g.V().hasLabel('person').map(outE('created').count()).max()
+
+</p>
+
+<p>
+// 计算所有“person”的“age”中的最小值
+g.V().hasLabel('person').values('age').min()
+
+</p>
+
+<p>
+// 计算所有“person”的“created”出边数的最小值
+g.V().hasLabel('person').map(outE('created').count()).min()
+
+</p>
+
+<p>
+// 计算所有“person”的“age”的均值
+g.V().hasLabel('person').values('age').mean()
+
+</p>
+
+<p>
+// 计算所有“person”的“created”出边数的均值
+g.V().hasLabel('person').map(outE('created').count()).mean()
+
+</p>
+
+<h3>数学运算</h3>
+在Gremlin中有一个专门负责科学计算功能的step math()。 math() 不同于常见的函数组合和嵌套形式，提供了一种易于读取的基于字符串的数学处理器。
+
+</p>
+
+<p>
+math() 支持by()，其中多个by() 按照在math()运算表达式中首次引用变量的顺序应用。
+保留变量_是指传入math()的当前遍历器对象。
+
+</p>
+
+<p>
+math()支持的运算符包括：+，-，*，/，%，^
+
+</p>
+
+<p>
+math()支持的内嵌函数包括：
+
+</p>
+
+<pre class="example">abs: absolute value，绝对值
+acos: arc cosine，反余弦
+asin: arc sine，反正弦
+atan: arc tangent，反正切
+cbrt: cubic root，立方根
+ceil: nearest upper integer，向上最接近的整数
+cos: cosine，余弦
+cosh: hyperbolic cosine，双曲余弦
+exp: euler’s number raised to the power (e^x)，以e为底的指数
+floor: nearest lower integer，向下最近接的整数
+log: logarithmus naturalis (base e)，以e为底的对数
+log10: logarithm (base 10)，以10为底的对数
+log2: logarithm (base 2)，以2为底的对数
+sin: sine，正弦
+sinh: hyperbolic sine，双曲正弦
+sqrt: square root，平方根
+tan: tangent，正切
+tanh: hyperbolic tangent，双曲正切
+signum: signum function，签名功能
+</pre>
+
+<p>
+//
+g.V().as('a').out('knows').as('b').math('a + b').by('age')
+
+</p>
+
+<h3>路径选取与过滤</h3>
+
+<p>
+Gremlin支持从走过的路径里选取部分数据作为结果，并且可以在选取时进行条件过滤。
+
+</p>
+
+<p>
+下面讲解实现上述功能的具体Step：
+
+</p>
+
+<p>
+as()+select(): 对路径中结果进行选取，首先通过as(label)对任意步骤打上标签，然后使用select(label)来选取若干历史步骤的结果作为新结果。此外还可通过select().by(property)来指定根据什么维度进行选取。
+
+</p>
+
+<p>
+as()+where(): 以条件匹配的方式进行路径结果选取，只有符合条件的路径才能被选取出来。
+
+</p>
+
+<p>
+as()+match(): 以模式匹配的方式进行路径结果选取，只有符合模式的路径才能被选取出来。
+
+</p>
+
+<p>
+as()+dedup(): 根据路径中的若干步骤的结果进行去重，只有首次出现的路径段才能被选取出来。
+
+</p>
+
+<p>
+// 从路径中选取第1步和第3步的结果作为最终结果
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as('a') .out().as('b') .out().as('c') .select('a', 'c')
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as('a').out().as('b').out().as('c').path()
+
+</p>
+
+<p>
+// 从集合中选择最后一个元素
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as("a") .repeat(out().as("a")).times(2) .select(last, "a")
+也可用：
+select(all, "a")
+select(first, "a")
+
+</p>
+
+<p>
+// 通过by()来指定选取的维度
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as('a') .out().as('b') .out().as('c') .select('a', 'c') .by('name').by('name')
+
+</p>
+
+<p>
+// 从map中选择指定key的值
+g.V().valueMap().select('tag').dedup()
+
+</p>
+
+<p>
+// 选取满足第1步和第3步“lang”属性相等的路径
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as('a')
+ .out().as('b').out().as('c')
+ .where('a', eq('c')).by('lang')
+<blockquote>
+<p>
+ .select('a', 'b', 'c').by(id)
+
+</p>
+</blockquote>
+
+<p>
+// 选取满足两个模式的路径：
+// 1.第3步有OUT节点
+// 2.第3步的OUT节点的指定路径不允许回到第二步的节点
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as('a').out().as('b')
+ .match(__.as('b').out().as('c'),
+        __.not(__.as('c').out().in('define').as('b')))
+<blockquote>
+<p>
+ .select('a','b','c').by(id)
+
+</p>
+</blockquote>
+
+<p>
+// 以路径中的前3步作为去重依据，对路径进行去重
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').as('a') .out().as('b').out().as('c').in() .dedup('a', 'b', 'c').path()
+
+</p>
+
+<p>
+查询支持Gremlin语言的软件，至少由2个相互认识的且在北京的作者完成
+
+</p>
+
+<p>
+// 获取支持Gremlin语言的软件，
+// 并且作者是至少为2个相互认识的人，
+// 且这两个作者都在北京
+g.V('3:Gremlin').in('supports').as('software')
+ .match(
+  __.as('software').in('created').as('person1'),
+  __.as('person1').both('knows').as('person2'),
+  __.as('person2').out('created').as('software'),
+  __.as('person1').has('addr', 'Beijing'),
+  __.as('person2').has('addr', 'Beijing')
+  )
+<blockquote>
+<p>
+ .select('software').dedup()
+
+</p>
+</blockquote>
+
+<p>
+查询支持Gremlin语言的软件的作者，并按边权重排序
+
+</p>
+
+<p>
+// 获取支持Gremlin语言的软件，
+// 并查找其作者，并对中间经过的边打标签
+// 按照边的权重进行排序
+// 选取软件、权重、作者作为结果
+g.V('3:Gremlin').in('supports').as('s')
+ .inE('created').as('e').outV().as('t')
+ .order().by(select('e').by('weight'), decr)
+<blockquote>
+<p>
+ .select('s', 'e', 't').by('name').by('weight')
+
+</p>
+</blockquote>
+
+<h3>分支</h3>
+
+<p>
+choose和branch说明
+
+</p>
+
+<p>
+在对图进行遍历分析时，有时需要根据某些条件对当前的对象集合进行不同的操作，也就是if-then-else语法结构。Gremlin中有一类step可以满足这种分支需求，这组step叫做branch step。branch()是这类step的基础，比较抽象，而choose()是典型的branch step。
+
+</p>
+
+<p>
+choose()的基本使用方法有两类：
+
+</p>
+
+<p>
+单独使用，choose(predicate, true-traversal, false-traversal)：根据predicate判断，当前对象满足时，继续true-traversal，否则继续false-traversal
+
+</p>
+
+<p>
+与option配合使用，choose(traversal).option(value1, traversal1).option(...)...：根据对象通过traversal的结果决定后续操作，如果结果是value1，则该对象继续traversal1，以此类推
+
+</p>
+
+<p>
+option()不是一种Gremlin step，只是一种辅助语法，可与choose()配合使用
+
+</p>
+
+<p>
+if-then-else型choose()语句
+
+</p>
+
+<p>
+// 查找所有的“person”类型的顶点
+// 如果“age”属性小于等于20，输出他的朋友的名字
+// 如果“age”属性大于20，输出他开发的软件的名字
+// choose(condition, true-action, false-action)
+g.V().hasLabel('person')
+ .choose(values('age').is(lte(20)),
+         __.in('knows'),
+<span style="text-align: center;">
+         __.out('created')).values('name')
+
+</span>
+
+</p>
+
+<p>
+option()型choose()语句
+
+</p>
+
+<p>
+// 查找所有的“person”类型的顶点
+// 如果“age”属性等于0，输出名字
+// 如果“age”属性等于28，输出年龄
+// 如果“age”属性等于29，输出他开发的软件的名字
+// choose(predicate).option().option()...
+g.V().hasLabel('person')
+ .choose(values('age'))
+ .option(0, values('name'))
+ .option(28, values('age'))
+<blockquote>
+<p>
+ .option(29, __.out('created').values('name'))
+
+</p>
+</blockquote>
+
+<p>
+如果choose(predicate, true-traversal, false-traversal)中false-traversal为空或者是identity()，则不满足条件的对象直接通过choose()
+// 查找所有顶点，
+// 类型为“person”的顶点输出其创建的软件的“name”属性
+// 否则输出顶点自身的“name”属性
+g.V().choose(hasLabel('person'),
+             out('created'))
+<blockquote>
+<p>
+ .values('name')
+
+</p>
+</blockquote>
+
+<p>
+// 查找所有顶点，
+// 类型为“person”的顶点输出其创建的软件的“name”属性
+// 否则输出顶点自身的“name”属性
+g.V().choose(hasLabel('person'),
+             out('created'),
+             identity())
+<blockquote>
+<p>
+ .values('name')
+
+</p>
+</blockquote>
+
+<p>
+choose()和option()配合使用时，还提供了一个none，不满足其他选项的对象，执行none选项的traversal
+
+</p>
+
+<p>
+// 查找所有类型为“person”的顶点，
+// “name”属性为“Zhoney Zhang”的输出其“age”属性
+// 否则输出顶点的“name”属性
+g.V().hasLabel('person')
+ .choose(values('name'))
+ .option('Zhoney Zhang', values('age'))
+<blockquote>
+<p>
+ .option(none, values('name'))
+
+</p>
+</blockquote>
+
+<p>
+branch()有三种用法：
+
+</p>
+
+<pre class="example">• lambda方式，filter{it.get()…}
+• Traversal方式，filter(Traversal)
+• 特定branch step方式
+</pre>
+
+<p>
+// 查询所有顶点
+// “name”属性值为“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的顶点输出其“lang”属性
+// “name”属性值不为“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的顶点输出其“name”属性
+// lambda方式
+g.V().branch {it.get().value('name')}
+     .option('HugeGraph', values('lang'))
+<blockquote>
+<p>
+     .option(none, values('name'))
+
+</p>
+</blockquote>
+
+<p>
+// 查询所有顶点
+// “name”属性值为“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的顶点输出其“lang”属性
+// “name”属性值不为“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的顶点输出其“name”属性
+// traversal方式
+g.V().branch(values('name'))
+     .option('HugeGraph', values('lang'))
+<blockquote>
+<p>
+     .option(none, values('name'))
+
+</p>
+</blockquote>
+
+<p>
+// 查询所有顶点
+// “name”属性值为“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的顶点输出其“lang”属性
+// “name”属性值不为“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的顶点输出其“name”属性
+// 特定branch step方式
+g.V().choose(has('name','HugeGraph'),
+             values('lang'),
+<span style="text-align: center;">
+             values('name'))
+<h3>合并</h3>
+
+</span>
+
+</p>
+
+<p>
+coalesce: 可以接受任意数量的遍历器（traversal），按顺序执行，并返回第一个能产生输出的遍历器的结果；
+
+</p>
+
+<p>
+optional: 只能接受一个遍历器（traversal），如果该遍历器能产生一个结果，则返回该结果，否则返回调用optionalStep的元素本身。当连续使用.optional()时，如果在某一步返回了调用元素本身，则后续的.optional()不会继续执行；
+
+</p>
+
+<p>
+union: 可以接受任意数量的遍历器（traversal），并能够将各个遍历器的输出合并到一起；
+
+</p>
+
+<p>
+// 按优先级寻找到顶点“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的以下边和邻接点，找到一个就停止
+// 1、“implements”出边和邻接点
+// 2、“supports”出边和邻接点
+// 3、“created”入边和邻接点
+g.V('3:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').coalesce(outE('implements'), outE('supports'), inE('created')).inV().path().by('name').by(label)
+
+</p>
+
+<p>
+// 查找顶点"linary"的“created”出顶点，如果没有就返回"linary"自己
+g.V('linary').optional(out('created'))
+
+</p>
+
+<p>
+// 查找每个“person”顶点的出“knows”顶点，如果存在，然后以出“knows”顶点为起点，继续寻找其出“created”顶点，最后打印路径
+g.V().hasLabel('person').optional(out('knows').optional(out('created'))).path()
+
+</p>
+
+<p>
+// 寻找顶点“linary”的出“created”顶点，邻接“knows”顶点，并将结果合并
+<blockquote>
+<p>
+ g.V('linary').union(out('created'), both('knows')).path()
+
+</p>
+</blockquote>
+
+<p>
+// 寻找顶点“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的入“created”顶点（创作者），出“implements”和出“supports”顶点，并将结果合并
+g.V('3:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').union(__.in('created'), out('implements'), out('supports'), out('contains')).path()
+
+</p>
+
+<h3>结果聚集与展开</h3>
+
+<p>
+Gremlin在路径游走的时候，可以将某一步的所有结果收集到一个集合里面（我们称之为结果聚集），以备在后续步骤中使用；此外还可在需要的时候将聚集的结果展开。
+
+</p>
+
+<p>
+下面讲解实现上述功能的具体Step：
+
+</p>
+
+<p>
+aggregate(): 聚集路径中指定步骤的所有结果，通过aggregate(label)对任意步骤打上标签，在此之前的步骤的结果均会被收集到此标签所代表的集合中（但并不会影响路径的游走），可配合by及cap一起使用，通过cap(label)来获取该结果集合，此外还可通过select(label)或without(label)等其它方式读取。
+
+</p>
+
+<p>
+store(): 类似aggregate()，只是以Lazy的方式来收集。
+
+</p>
+
+<p>
+unfold(): 将集合展开平铺，路径将扩张。
+
+</p>
+
+<p>
+fold(): 将多个元素折叠为一个集合，路径将收缩。
+
+</p>
+
+<p>
+// 收集第1步的结果到集合'x'中 // 注意：不影响后续结果
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out().aggregate('x')
+
+</p>
+
+<p>
+// 收集第1步的结果到集合'x'中 // 并通过cap取出结果 // 与前者比较，结果的层次更深了
+<blockquote>
+<p>
+ g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out() .aggregate('x').cap('x')
+
+</p>
+</blockquote>
+
+<p>
+// 通过by()来指定聚集的维度
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out() .aggregate('x').by('name') .cap('x')
+
+</p>
+
+<p>
+// 以Lazy方式收集，后续步骤使用limit限制时， // 路径中取到第2个结果时将会停止， // 因此集合中有2个元素。 g.V().store('x').by('name').limit(1).cap('x')
+
+</p>
+
+<p>
+试一试并比较：g.V().aggregate('x').by('name').limit(1).cap('x')
+
+</p>
+
+<p>
+unfold()：以把集合展开、平铺
+
+</p>
+
+<p>
+// 将集合‘x’展开(层级变少了)
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out()
+ .aggregate('x').by('name')
+<blockquote>
+<p>
+ .cap('x').unfold()
+
+</p>
+</blockquote>
+
+<p>
+fold()：将元素折叠为集合
+
+</p>
+
+<p>
+// 将属性折叠起来(层级变深)
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out() .values('name').fold()
+
+</p>
+
+<p>
+// 统计所有'name'属性的长度 // 其中通过lambuda表达式累加字符串长度
+<blockquote>
+<p>
+ g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out().values('name') .fold(0) {a,b -> a + b.length()}
+
+</p>
+</blockquote>
+
+<p>
+// 查询与<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>类似支持Gremlin语言的软件
+// 但不包含自身和一步邻居
+// 比较：请看看去除where语句的效果
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').aggregate('x')
+ .out().aggregate('x')
+ .out().in()
+<blockquote>
+<p>
+ .where(without('x'))
+
+</p>
+</blockquote>
+
+<p>
+// 查询与<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>的两度OUT邻居
+// 并收集这些到‘a’集合里面，
+// 最终以‘name’属性展示其邻居
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').out().aggregate('a')
+ .out().aggregate('a').cap('a')
+<blockquote>
+<p>
+ .unfold().values('name')
+
+</p>
+</blockquote>
+
+<p>
+// 查询所有由3个以上作者完成的软件
+// 并显示它的名称及其作者
+g.V().as('software', 'authors')
+ .where(__.in('created').count().is(gte(3)))
+ .select('software', 'authors')
+ .by('name')
+<blockquote>
+<p>
+ .by(__.in('created').values('name').fold())
+
+</p>
+</blockquote>
+
+<h3>模式匹配</h3>
+
+<p>
+Gremlin中的match()语句为图查询提供了一种基于“模式匹配”的方式，以便用更具描述性的方式进行图查询。match()语句通过多个模式片段traversal fragments来进行模式匹配。这些traversal fragments中会定义一些变量，只有满足所有用变量表示的约束的对象才能够通过，并被放到一个Map<String, Object>中，其中map的key为变量名（label），value为顶点、边、路径或者属性。match()语句的格式为：match(Traversal...)。其中可以有任意多个Traversal，每一个Traversal就是一个“匹配模式”traversal fragment。
+
+</p>
+
+<p>
+match()语句中的“模式”通过<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">MatchAlgorithm</a>来选择匹配顺序，默认的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">MatchAlgorithm</a>是<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">CountMatchAlgorithm</a>。<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">CountMatchAlgorithm</a>根据过滤强度动态调整“模式匹配”的执行计划（最能够减少规模的“模式”优先匹配），从而优化执行减少资源消耗。因此，当图的规模比较大且用户不知道满足特定模式的数据规模时，使用match()可以自动进行优化，减小操作规模。另外，对于一些图查询场景，相较于单路径遍历，match()语句的“模式匹配”更容易表达需求。
+
+</p>
+
+<p>
+match()语句通过模式匹配生成map<String, Object>
+
+</p>
+
+<p>
+// 对每一个顶点，用以下模式去匹配，满足则生成一个map<String, Object>，不满足则过滤掉
+// 模式1：“a”对应当前顶点，且创建了软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”
+// 模式2：“b”对应顶点软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”
+// 模式3：“c”对应创建软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的年龄为29的person顶点
+g.V().match(__.as('a').out('created').has('name', 'HugeGraph').as('b'),
+<span style="text-align: center;">
+            __.as('b').in('created').has('age', 29).as('c'))
+
+</span>
+
+</p>
+
+<p>
+match()语句可以与select()语句配合使用，从Map<String, Object>中选取部分结果
+
+</p>
+
+<p>
+// 对每一个顶点，用以下模式去匹配，满足则生成一个map<String, Object>，不满足则过滤掉
+// 模式1：“a”对应当前顶点，且创建了软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”
+// 模式2：“b”对应顶点软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”
+// 模式3：“c”对应创建软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的年龄为29的person顶点
+// 并选取map中的“a"和”c"，对应的对象以”name“属性的值代替
+g.V().match(__.as('a').out('created').has('name', 'HugeGraph').as('b'),
+            __.as('b').in('created').has('age', 29).as('c'))
+<blockquote>
+<p>
+     .select('a', 'c').by('name')
+
+</p>
+</blockquote>
+
+<p>
+match()语句可以与where()语句配合使用，过滤结果
+
+</p>
+
+<p>
+// 对每一个顶点，用以下模式去匹配，满足则生成一个map<String, Object>，不满足则过滤掉
+// 模式1：“a”对应当前顶点，且创建了软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”
+// 模式2：“b”对应顶点软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”
+// 模式3：“c”对应创建软件“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的年龄为29的person顶点
+// 模式4：”a“和”c“对应的对象不相等
+// 并选取map中的“a"和”c"，对应的对象以”name“属性的值代替
+g.V().match(__.as('a').out('created').has('name', 'HugeGraph').as('b'),
+            __.as('b').in('created').has('age', 29).as('c'))
+     .where('a', neq('c'))
+<blockquote>
+<p>
+     .select('a', 'c').by('name')
+
+</p>
+</blockquote>
+
+<p>
+match()语句中可以使用外部的label
+
+</p>
+
+<p>
+// 对每一个顶点打标签”a“，"a"经过一条OUT方向的”knows“边到达的顶点打标签”b“
+// 对”b“中的每一个顶点用以下模式去匹配，满足则生成一个map<String, Object>，不满足则过滤掉
+// 模式1：”b“通过一条OUT方向的”created“边到达顶点”c“
+// 模式2：”c“不能通过一条IN方向的”created“边到达”a“
+// 选取map中的“a"，”b“，”c"，对应的对象以”name“属性的值代替
+g.V().as('a').out('knows').as('b')
+ .match(__.as('b').out('created').as('c'),
+        __.not(__.as('c').in('created').as('a')))
+<blockquote>
+<p>
+ .select('a','b','c').by('name')
+
+</p>
+</blockquote>
+
+<p>
+注意match(__.as('b').out('created').as('c')中的__.as(b)是读取label标识的对象，as('c')是为新的对象打上label标识
+
+</p>
+
+<h3>随机过滤与注入</h3>
+
+<p>
+Gremlin支持对遍历器（traversal）上的结果进行采样或者做随机过滤。
+
+</p>
+
+<p>
+sample: 接受一个整数值，从前一步的遍历器中采样（随机）出最多指定数目的结果；
+
+</p>
+
+<p>
+coin: 字面意思是抛硬币过滤，接受一个浮点值，该浮点值表示硬币出现正面的概率。coin Step 对前一步的遍历器中的每个元素都抛一次硬币，出现正面则可以通过，反面则被拦截。
+
+</p>
+
+<p>
+Sample Step后能接上byStep，能以指定的属性为判断依据进行随机过滤。
+
+</p>
+
+<p>
+Gremlin允许在遍历器中注入一些默认值或自定义值，比如在分支 Step 中给 else 路径的元素一个默认值，又或者在遍历器过程中人为地加上一些额外的元素。
+
+</p>
+
+<p>
+constant: 通常用在choose或coalesceStep中做辅助输出，为那些不满足条件的元素提供一个默认值；
+
+</p>
+
+<p>
+inject: 能够在流（遍历器）的任何位置注入与当前遍历器同输出类型的对象，当然，也可以作为流的起始 Step 产生数据；
+
+</p>
+
+<p>
+注: inject只是在查询过程中添加一些额外的元素，并没有把数据真正地插入到图中
+
+</p>
+
+<p>
+// 从所有顶点的出边中随机选择2条
+g.V().outE().sample(2)
+
+</p>
+
+<p>
+// 从所以顶点的“name”属性中随机选取3个
+g.V().values('name').sample(3)
+
+</p>
+
+<p>
+// 从所有的“person”中根据“age”随机选择3个
+g.V().hasLabel('person').sample(3).by('age')
+
+</p>
+
+<p>
+//与local联合使用做随机漫游（从某个顶点出发，随机选一条边，走到边上的邻接点；再以该点为起点，继续随机选择边，走到邻接点…）
+
+</p>
+
+<p>
+// 从顶点“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”出发做3次随机漫游
+g.V('3:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>') .repeat(local(bothE().sample(1).otherV())) .times(3) .path()
+
+</p>
+
+<p>
+// 每个顶点按0.5的概率过滤
+g.V().coin(0.5)
+
+</p>
+
+<p>
+// 每个顶点按1.0的概率过滤
+g.V().coin(1.0).count()
+
+</p>
+
+<p>
+// 输出所有“person”类顶点的“name”属性，否则输出“inhuman”（非人类）
+g.V().choose(hasLabel('person'),
+             values('name'),
+<span style="text-align: center;">
+             constant('inhuman'))
+
+</span>
+
+</p>
+
+<p>
+// 与前例功能相同，使用“coalesce”Step 实现
+g.V().coalesce(hasLabel('person').values('name'), constant('inhuman'))
+
+</p>
+
+<p>
+// 给顶点“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的作者添加一个叫“Tom”的人
+g.V('3:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').values('name').inject('Tom')
+
+</p>
+
+<p>
+// 在前例的基础上计算每个元素的长度（“name”属性值的长度） g.V('3:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').values('name').inject('Tom') .map {it.get().length()}
+
+</p>
+
+<p>
+// 在前例的基础上计算走过的路径
+g.V('3:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').values('name').inject('Tom') .map {it.get().length()}.path()
+这里又能看出注入元素“Tom”与原生的元素的区别，由于“Tom”是在获取“name”属性这一步时才注入的，所以之前的从顶点“<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”出发，获取其“created”的入顶点这两步“Tom”是没有的。
+
+</p>
+
+<p>
+// 使用inject创建出两个元素（顶点的id），并使用该元素作为id获取顶点及其属性“name”
+inject('javeme', 'linary', 'zhoney').map {g.V(it.get()).next()}.values('name')
+
+</p>
+
+<p>
+// 使用inject创建出一个“person”（顶点label），并使用该元素作为label获取顶点及其属性“name”
+inject('person').flatMap {g.V().hasLabel(it.get())}.values('name')
+
+</p>
+
+<h3>结果存取口袋sack</h3>
+
+<p>
+Gremlin在路径遍历的时候，可以将中间结果存放到一个叫口袋（sack）的结构里面，以备在后续步骤中使用；此外在放入数据到口袋的时候，还可以做一些灵活的操作比如：分裂（split）、合并（merge）等。sack相关step属于Gremlin语言里面的高级操作，在处理较为复杂的任务时可以灵活的实现一些特殊功能。
+
+</p>
+
+<p>
+下面讲解实现上述功能的具体Step：
+
+</p>
+
+<p>
+withSack(): 创建一个口袋，并给定一个初始结构，比如可以是一个返回Map或者随机数的lambda函数，也可以是一个对象或常数；另外还可以提供lambda分裂函数，以指定当traverser分裂时的行为，比如进行clone操作。
+
+</p>
+
+<p>
+sack(): 将数据放入口袋，或者从口袋取出数据。当传入lambda合并函数作为参数时，可指定放入口袋的行为如何执行；当不传入参数时表示读取口袋中的内容。
+
+</p>
+
+<p>
+// 创建一个包含常数1的口袋， // 并且在最终取出口袋中的值
+g.withSack(1).V().sack()
+
+</p>
+
+<p>
+// 创建一个包含常数1的口袋， // 并且在最终取出口袋中的值
+g.withSack{new Random().nextFloat()} .V().sack()
+
+</p>
+
+<p>
+// 通过sum求和的方式把数据放入口袋
+g.withSack(0).V() .repeat(outE().sack(sum).by('weight').inV()) .times(3).sack()
+
+</p>
+
+<p>
+// 通过lambda函数来指定放入口袋的行为
+// 注意：提供的初始值为Map类型，而且
+// 当traverser分裂时会拷贝Map
+g.withSack{[:]}{it.clone()}
+ .V().out().out().dedup()
+ .sack{m,v -> m[v.value('name')] = v.value('lang'); m}
+<blockquote>
+<p>
+ .sack()
+
+</p>
+</blockquote>
+
+<p>
+// 平均获取口袋中的值
+<blockquote>
+<p>
+ g.withSack(1.0).V('javeme') .out('knows').out('created') .barrier(normSack).sack()
+
+</p>
+</blockquote>
+
+<p>
+//获取路径并计算路径权重之和
+// 获取路径的同时通过sack(sum)计算权重之和
+// 最终通过select把权重和路径选取出来
+g.withSack(0).V()
+ .repeat(outE().sack(sum).by('weight').inV().as('p'))
+ .times(3).sack().as('w')
+<blockquote>
+<p>
+ .select('w', 'p').by().by{p->p.toString()}.limit(3)
+
+</p>
+</blockquote>
+
+<p>
+//获取路径并根据路径权重之和排序
+// 获取路径的同时通过sack(sum)计算权重之和
+// 最终通过order().by(sack())根据总权重排序
+g.withSack(0).V()
+ .repeat(outE().sack(sum).by('weight').inV())
+ .times(3).order().by(sack(),decr)
+<blockquote>
+<p>
+ .path().limit(3)
+
+</p>
+</blockquote>
+
+<h3>遍历栅栏barrier</h3>
+
+<p>
+Gremlin在路径遍历的时候，可以将栅栏barrier插入到懒加载的遍历流水线中，以使得barrier之前的步骤都执行完成之后再继续往下执行。barrier主要有2个好处：1、可以强制改变深度优先搜索为广度优先搜索，2、由于通过层的bulking模式可以优化大量重复的数据访问。
+
+</p>
+
+<p>
+barrier(): 在某个位置插入一个栅栏，以强制该位置之前的步骤必须都执行完成才可以继续往后执行，比如g.V().both().barrier().both()只有在第一个both()全部完成之后才会执行第二个both()。
+
+</p>
+
+<p>
+// 将所有顶点打印出来
+// 打印完一轮之后再打印一轮
+def list=[]
+g.V().sideEffect{list.add("first: "+it)}
+     .barrier()
+     .sideEffect{list.add("second: "+it)}
+<blockquote>
+<p>
+     .iterate()
+list
+
+</p>
+</blockquote>
+
+<p>
+// 禁用自动barrier策略
+g = g.withoutStrategies(<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">LazyBarrierStrategy</a>)
+g.V()
+ .both().barrier()
+ .both().barrier()
+ .both().barrier()
+ .both().barrier()
+ .both().barrier()
+ .groupCount()
+<blockquote>
+<p>
+ .order(local).by(values, decr)
+
+</p>
+</blockquote>
+
+<p>
+事实上除了可显示的插入barrier栅栏外，还有不少Step会隐式插入barrier，包括 order(), sample(), dedup(), aggregate(), fold(), count(), sum(), max(), min(), group(), groupCount(), cap()等。
+
+</p>
+
+<p>
+// 利用隐式barrier计算特征向量中心性
+// 包括groupCount、cap，按照降序排序
+g.V().repeat(both().groupCount('m'))
+     .times(5).cap('m')
+<blockquote>
+<p>
+     .order(local).by(values, decr)
+
+</p>
+</blockquote>
+
+<p>
+通过Gremlin进行图遍历通常是当前step处理前一step传递过来的对象流。很多操作是针对传递过来的对象流中的全部对象进行操作，但也有很多时候需要针对对象流中的单个对象而非对象流中的全部对象进行一些操作。这种对单个对象的局部操作，可以使用local()语句实现。
+
+</p>
+
+<h3>局部操作local</h3>
+
+<p>
+另外，有一些step默认的操作是针对对象流中的全部对象，但也可以通过参数来改变默认操作，允许针对对象流中的单个对象进行操作，包括count()，max()，mean()，min()，sum()，order()，tail()，limit()，range()，sample()，skip()和dedup()等。
+
+</p>
+
+<p>
+// 查询软件<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>的属性Map
+g.V().hasLabel('software').has('name', 'HugeGraph') .propertyMap()
+
+</p>
+
+<p>
+// 查询软件<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>的属性个数
+<blockquote>
+<p>
+ g.V().hasLabel('software').has('name', 'HugeGraph') .propertyMap().count(local)
+
+</p>
+</blockquote>
+
+<p>
+// 数目最多的顶点类型的顶点数目
+g.V().groupCount().by(label).select(values).max(local)
+
+</p>
+
+<p>
+// 所有顶点的属性列表中的第一个属性
+g.V().valueMap().limit(local, 1)
+
+</p>
+
+<p>
+// 所有顶点一步邻居中所有的software
+<blockquote>
+<p>
+ g.V().both().group().by(label).select('software').dedup(local)
+
+</p>
+</blockquote>
+
+<p>
+// 所有顶点按类型计数并按数目由多到少排序
+g.V().groupCount().by(label).order(local).by(values, decr)
+
+</p>
+
+<p>
+// 所有顶点作为一个集合，从中采样2个
+<blockquote>
+<p>
+ g.V().fold().sample(local,2)
+
+</p>
+</blockquote>
+
+<h3>遍历终止terminal</h3>
+
+<p>
+Gremlin 中有一类特殊的操作，它能够终止遍历器的“遍历”行为，使其执行并返回结果。在这里要强调的一点：原生的 Gremlin 语句通常都是用遍历器连接起来的，但其实这些连接的过程并不会执行 Gremlin 语句，只有走到了terminalStep 时才会执行。这个模式类似于 Spark 中对RDD的map和action操作。
+
+</p>
+
+<p>
+hasNext: 判断遍历器是否含有元素（结果），返回布尔值；
+
+</p>
+
+<p>
+next: 不传参数时获取遍历器的下一个元素，也可以传入一个整数 n，则获取后面 n 个元素；
+
+</p>
+
+<p>
+tryNext: hasNext和next的结合版，返回一个Optional对象，如果有结果还需要调用get()方法才能拿到；
+
+</p>
+
+<p>
+toList: 将所有的元素放到一个List中返回；
+
+</p>
+
+<p>
+toSet: 将所有的元素放到一个Set中返回，会去除重复元素；
+
+</p>
+
+<p>
+toBulkSet: 将所有的元素放到一个能排序的List中返回，重复元素也会保留；
+
+</p>
+
+<p>
+fill: 传入一个集合对象，将所有的元素放入该集合并返回，其实toList、toSet和toBulkSet就是通过fillStep实现的；
+
+</p>
+
+<p>
+iterate: 这个 Step 在终止操作里面有点特殊，它并不完全符合终止操作的定义。它会在内部迭代完整个遍历器但是不返回结果。
+
+</p>
+
+<p>
+// 判断顶点“linary”是否包含“created”出顶点
+g.V('linary').out('created').hasNext()
+
+</p>
+
+<p>
+// 判断顶点“linary”是否包含“knows”出顶点
+<blockquote>
+<p>
+ g.V('linary').out('knows').hasNext()
+
+</p>
+</blockquote>
+
+<p>
+// 获取顶点“javeme”的“knows”出顶点集合的下一个（第1个）
+g.V('javeme').out('knows').next()
+如果想获取第二个元素该怎么写呢？很简单，执行两次next()即可，但是这里的前提条件是遍历器中确实存在多个元素。
+
+</p>
+
+<p>
+// 获取顶点“javeme”的“knows”出顶点集合的下一个（第2个）
+ it = g.V('javeme').out('knows')
+ it.next()
+<blockquote>
+<p>
+ it.next()
+
+</p>
+</blockquote>
+
+<p>
+// 获取顶点“javeme”的“knows”出顶点集合的前两个
+g.V('javeme').out('knows').next(2)
+next()与next(n)使用中有一点小小的区别，就是当没有元素或者没有足够多的元素时，执行next()会报错，但是执行next(n)则是返回一个空集合（List）。
+
+</p>
+
+<p>
+// 试图获取顶点“javeme”的“created”出顶点集合中的下一个
+g.V('javeme').out('created').tryNext()
+
+</p>
+
+<p>
+// 获取所有“person”顶点的“created”出顶点集合，放入List中，允许包含重复结果
+g.V().hasLabel('person').out('created').toList()
+
+</p>
+
+<p>
+// 获取所有“person”顶点的“created”入顶点集合，放入List中，允许包含重复结果
+g.V().hasLabel('person').in('created').toList()
+
+</p>
+
+<p>
+// 获取所有“person”顶点的“created”出顶点集合，放入Set中，不允许包含重复结果
+g.V().hasLabel('person').out('created').toSet()
+相比于toList，toSet去除了重复元素。
+
+</p>
+
+<p>
+// 获取所有“person”顶点的“created”出顶点集合，放入<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">BulkSet</a>中，允许包含重复结果，排序 g.V().hasLabel('person').out('created').toBulkSet()
+所谓的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">BulkSet</a>虽然名字上带有"Set"，但还是更像一个List，对比toList的结果，它实际上是把所有元素排了个序。
+
+</p>
+
+<p>
+// 创建一个List，获取所有“person”顶点的“created”出顶点，并放入该List中
+results = []
+g.V().hasLabel('person').out('created').fill(results)
+results
+
+</p>
+
+<p>
+// 迭代所有“person”顶点
+it = g.V().hasLabel('person').iterate()
+it.hasNext()
+
+</p>
+
+<h3>转换操作map/flatMap</h3>
+
+<p>
+map: 可以接受一个遍历器 Step 或 Lamda 表达式，将遍历器中的元素映射（转换）成另一个类型的某个对象（一对一），以便进行下一步处理；
+
+</p>
+
+<p>
+flatMap: 可以接受一个遍历器 Step 或 Lamda 表达式，将遍历器中的元素映射（转换）成另一个类型的某个对象流或迭代器（一对多）。
+
+</p>
+
+<p>
+// 获取顶点“2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的入“created”顶点的“name”属性，其实可以理解为顶点对象转化成了属性值对象
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').map(values('name'))
+// g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').map {it.get().value('name')}
+
+</p>
+
+<p>
+// 先获取顶点“2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的入“created”顶点，再将每个顶点转化为出边（一条）
+<blockquote>
+<p>
+ g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').map(outE())
+
+</p>
+</blockquote>
+
+<p>
+注意：顶点“javeme”其实是有三条边的，但是这里只打印出了一条。因为mapStep是一对一的转换，要想获取所有的边可以使用flatMap。
+
+</p>
+
+<p>
+// 先获取顶点“2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>”的入“created”顶点，再将每个顶点转化为出边（多条）
+g.V('2:<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>').in('created').flatMap(outE())
+
+</p>
+
+<p>
+注意：这一次就能打印出顶点“javeme”的全部三条边了。
+
+</p>
+
+<h3>附加操作sideEffect</h3>
+
+<p>
+Gremlin在路径遍历的时候，可以在路径中做一些额外的附加操作，这个附加操作不会改变上一步的结果，会原封不动的传递到下一步去。附加操作看起来就像透明的，但实际上可以将附加操作的处理结果存储到外部变量中去。
+
+</p>
+
+<p>
+下面讲解实现上述功能的具体Step：
+
+</p>
+
+<p>
+sideEffect(): 在某个位置插入一个附加操作，以执行额外的操作，通常可与store、sack等配合使用。另外如下一些Step本质上也是sideEffect：
+
+</p>
+
+<p>
+group(string)、groupCount(string)、subgraph(string)、aggregate(string)、inject(string)、profile(string)等。
+
+</p>
+
+<p>
+withSideEffect()：绑定初始值到变量上，等价于sideEffect的效果。
+
+</p>
+
+<p>
+// 将所有顶点打印出来 // sideEffect本身不影响结果
+// 将sideEffect处理的结果打印出来
+def list=[]
+g.V().hasLabel('person') .sideEffect{list.add("vertex:"+it)} .toList()
+List
+
+</p>
+
+<p>
+// 将sideEffect结果存到变量中
+g.V().hasLabel('person') .sideEffect(outE().count().store("o")) .sideEffect(inE().count().store("i")) .cap("o","i")
+
+</p>
+
+<p>
+// 初始化一个变量以供后续条件判断中使用
+// 查找javeme的共同作者，且名称在初始集合中
+g.withSideEffect('p',['Linary Li','Zhoney Zhang','Tom'])
+ .V('javeme').out('created').in('created')
+<blockquote>
+<p>
+ .values('name').where(within('p'))
+
+</p>
+</blockquote>
+
+<p>
+// 利用sideEffect计算3种度中心性
+g.V().group('both').by().by(bothE().count())
+     .group('out').by().by(outE().count())
+     .group('in').by().by(inE().count())
+<blockquote>
+<p>
+     .cap('both', 'out', 'in')
+
+</p>
+</blockquote>
+
+<h3>执行统计和分析</h3>
+
+<p>
+Gremlin提供了两种语句来帮助用户对执行的查询语句进行统计和分析工作：
+
+</p>
+
+<p>
+explain()，详细描述原始的Gremlin语句在编译期是如何转变为最终要执行的step集合的
+
+</p>
+
+<p>
+profile()，统计Gremlin语句执行过程中的每个step消耗的时间和通过的对象等统计信息
+
+</p>
+
+<p>
+<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>是“遍历策略”，可以在编译期分析遍历（Traversal）的组成，并在遍历满足<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>的条件时对遍历进行修改。这些修改往往都是为了能够更加高效的执行遍历。
+
+</p>
+
+<p>
+遍历策略有5类：
+
+</p>
+
+<p>
+Decoration，应用程序级别的策略
+
+</p>
+
+<p>
+Optimization，<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TinkerPop</a>3级别的策略
+
+</p>
+
+<p>
+Provider optimization，图数据库实现级别的策略
+
+</p>
+
+<p>
+Finalization，遍历执行前的调整和清理策略
+
+</p>
+
+<p>
+Verification，判断遍历是否合法的验证策略
+
+</p>
+
+<p>
+g.V().hasLabel('person').outE().identity().inV().count().is(gt(5)).explain()
+
+</p>
+
+<p>
+结果中：
+
+</p>
+
+<p>
+original，表示Gremlin语句等价的最初的step列表
+
+</p>
+
+<p>
+intermediate，表示original转化在<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>作用下的转化过程
+
+</p>
+
+<p>
+strategy，表示作用于上一轮的step列表的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>
+
+</p>
+
+<p>
+category，表示strategy中的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>所属的级别，参见说明部分
+
+</p>
+
+<p>
+traversal，表示上一轮的step列表经过strategy中的<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>处理之后的新的step列表
+final，表示经过所有<a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">TraversalStrategy</a>处理后的最终要执行的step列表
+
+</p>
+
+<p>
+g.V().out('created').profile()
+
+</p>
+
+<p>
+返回的结果中，metrics中每一条是一个执行的step，其中：
+
+</p>
+
+<p>
+name是step的名字，例如"HugeGraphStep(vertex,[])"
+
+</p>
+
+<p>
+dur是step执行的时间，单位是毫秒
+
+</p>
+
+<p>
+annotations中的percentDur是当前step消耗的时间在总的执行时间中的比例
+
+</p>
+
+<p>
+counts中的traverserCount是当前step中的traverser的数目
+
+</p>
+
+<p>
+counts中的elementCount是当前step中的element的数目
+
+</p>
+
+<p>
+traverserCount和elementCount的区别在于： traverserCount是同一step中相同的对象合并之后的数目，对象相同是指当前的对象是一样的，并不代表对象的path等其他数据也相同；相同的对象合并为bulk，可以减少重复工作，提高效率。elementCount是同一step中所有对象展开bulk之后的数目之和，即未去重的对象数目。因此，traverserCount总是小于等于elementCount。
+
+</p>
+
+<p>
+profile()语句是一个“副作用”（side effect）语句，并非立刻执行。profile()语句还可以指定一个key，形式为profile(String)，在执行完要统计的Gremlin语句后，通过key获取统计信息。例如：
+t=g.V().out('created').profile('metrics')
+t.iterate()
+t.getSideEffects().get('metrics')
+
+</p>
+
+<h3>删除图</h3>
+
+<p>
+g.V().drop().iterate()
+或
+
+</p>
+
+<p>
+g.V.each{g.removeVertex(it)}
+
+</p>
+
+<p>
+g.commit()
+
+</p>
+
+<h3>删除schema (hugegraph_studio中未生效)</h3>
+
+<p>
+schema.clear()
+
+</p>
+
+<h2><a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a></h2>
+
+<h3><a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a>多图配置</h3>
+
+<p>
+修改 gremlin-server.yaml
+
+</p>
+
+<p>
+在 gremlin-server.yaml 的 graphs 域中添加一个键值对，键为图的名字，值为图的配置文件路径，比如：
+
+</p>
+
+<p>
+graphs: {
+  hugegraph: conf/hugegraph.properties,
+<blockquote>
+<p>
+  hugegraph1: conf/hugegraph1.properties
+}
+
+</p>
+</blockquote>
+
+<p>
+修改 rest-server.properties
+
+</p>
+
+<p>
+在 rest-server.properties 的 graphs 域中添加一个键值对，键为图的名字，值为图的配置文件路径，比如：
+
+</p>
+
+<p>
+graphs=[hugegraph:conf/hugegraph.properties, hugegraph1:conf/hugegraph1.properties]
+
+</p>
+
+<p>
+添加 hugegraph1.properties
+
+</p>
+
+<p>
+拷贝 hugegraph.properties，命名为 hugegraph1.properties，修改图对应的数据库名以及关于后端部分的参数，比如：
+
+</p>
+
+<p>
+store=hugegraph1
+…
+backend=rocksdb
+serializer=binary
+
+</p>
+
+<p>
+停止 Server，初始化执行 init-store.sh（为新的图创建数据库），重新启动 Server
+
+</p>
+
+<p>
+$ bin/stop-hugegraph.sh
+$ bin/init-store.sh
+$ bin/start-hugegraph.sh
+
+</p>
+
+<p>
+ hugegraph-studio 也要相应启动两个
+
+</p>
+
+<h3><a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a> 备份和恢复数据</h3>
+
+<p>
+使用hugegraph_tools. 先备份数据
+
+</p>
+
+<p>
+./bin/hugegraph backup -t all -d data
+
+</p>
+
+<p>
+-t 为指定类型：
+--huge-types, -t
+            Type of schema/data. Concat with ',' if more than one. 'all' means
+            all vertices, edges and schema, in other words, 'all' equals with
+            'vertex,edge,vertex_label,edge_label,property_key,index_label'
+<span style="text-align: center;">
+            Default: [PROPERTY_KEY, VERTEX_LABEL, EDGE_LABEL, INDEX_LABEL, VERTEX, EDGE]
+
+</span>
+
+</p>
+
+<p>
+-d 为指定数据目录
+--directory, -d
+            Directory of graph schema/data, default is './{graphname}' in
+<span style="text-align: center;">
+            local file system or '{fs.default.name}/{graphname}' in HDFS
+
+</span>
+
+</p>
+
+<p>
+恢复数据时，先将图的模式设为 RESTORING
+
+</p>
+
+<p>
+必填项 --graph-mode, -m
+            Graph mode, include: [NONE, RESTORING, MERGING]
+<span style="text-align: center;">
+            Possible Values: [NONE, RESTORING, MERGING]
+
+</span>
+
+</p>
+
+<p>
+./bin/hugegraph graph-mode-set -m RESTORING
+
+</p>
+
+<p>
+可用graph-mode-get命令查看
+
+</p>
+
+<p>
+./bin/hugegraph graph-mode-get
+
+</p>
+
+<h3><a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a> 恢复数据</h3>
+
+<p>
+./bin/hugegraph restore -t vertex,edge -d data
+
+</p>
+
+<h3><a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a> 导出数据</h3>
+
+<p>
+./bin/hugegraph dump -t all -d data
+
+</p>
+
+<h3><a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">HugeGraph</a> 删除整图</h3>
+
+<p>
+./bin/hugegraph graph-clear -c "I'm sure to delete all data"
 </p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
