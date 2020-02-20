@@ -1,0 +1,1465 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Redis</title>
+    <meta name="generator" content="emacs-wiki.el" />
+    <meta http-equiv="Content-Type"
+          content="text/html; charset=utf-8" />
+    <link rel="made" href="mailto:cyberpsyche[AT]gmail.com" />
+    <link rel="home" href="WelcomePage.html" />
+    <link rel="index" href="WikiIndex.html" />
+    <link rel="stylesheet" type="text/css" href="main.css"><script type="text/javascript">
+function showToolTip(machaine) {
+  if (machaine != "")   {
+    document.getElementById('tooltip').innerHTML     = machaine;
+    document.getElementById('tooltipbox').style.visibility = 'visible';
+  }
+}
+function hide() {
+  document.getElementById('tooltip').innerHTML     = '';
+  document.getElementById('tooltipbox').style.visibility = 'hidden';
+}
+</script>
+<div class="menu">
+<div class="menuitem">
+  <a href="WelcomePage.html">Wiki</a>
+</div>
+
+<div class="menuitem">
+  <a href="../workwiki/WelcomePage.html">work</a>
+</div>
+
+</div><!-- menu ends here -->
+<div id="tooltipbox">
+<div id="tooltip"></div>
+</div>
+  </head>
+  <body>
+    <h1 id="top">Redis</h1>
+
+    <!-- Page published by Emacs Wiki begins here -->
+<h2>Redis Intro</h2>
+
+<p>
+Redis是一个开源的基于内存也可持久化的Key-Value数据库，采用ANSI C语言编写。它拥有丰富的数据结构，拥有事务功能，保证命令的原子性。由于是内存数据库，读写非常高速，可达10w/s的评率，所以一般应用于数据变化快、实时通讯、缓存等。
+
+</p>
+
+<p>
+Redis有16个逻辑数据库（db0-db15），每个逻辑数据库项目是隔离的，默认使用db0数据库。若选择第2个数据库，可通过使用命令 select 2。 redis中字符返回值类型都是字节（bytes）类型。
+
+</p>
+
+<p>
+常用数据结构
+
+</p>
+
+<ul>
+<li>String-字符串
+</li>
+<li>List-列表
+</li>
+<li>Hash-哈希
+</li>
+<li>Set-集合
+</li>
+<li>ZSet-有序集合
+</li>
+<li>Bitmap-位图
+</li>
+</ul>
+
+<h2>redis-py</h2>
+
+<h3>installment</h3>
+
+<p>
+# pip3 install redis
+
+</p>
+
+<h3>init</h3>
+
+<p>
+常规方法
+
+</p>
+
+<pre class="example">import redis
+redis_conn = redis.Redis(host='127.0.0.1', port= 6379, password= 'your pw', db= 0)
+</pre>
+
+<p>
+or 连接池
+
+</p>
+
+<pre class="example">import redis
+redis_pool = redis.ConnectionPool(host='127.0.0.1', port= 6379, password= 'your pw', db= 0)
+redis_conn = redis.Redis(connection_pool= redis_pool)
+</pre>
+
+<h3>全局函数</h3>
+
+<p>
+全局函数对任何数据结构都适用
+
+</p>
+
+<h4>delete 删除redis中一个或多个键的所有数据</h4>
+
+<p>
+delete(<em>names)
+
+</p>
+
+<p>
+返回值：int 删除的个数
+
+</p>
+
+<p>
+v = redis_conn.delete('name', 'name_1')
+
+</p>
+
+<p>
+</em>** exists 判断redis中是否存在某个键
+
+</p>
+
+<p>
+exists(name)
+
+</p>
+
+<p>
+返回值：存在True；反之False
+
+</p>
+
+<h4>rename 重命名redis中键名</h4>
+
+<p>
+rename(src, dst)
+
+</p>
+
+<p>
+返回值：成功True
+
+</p>
+
+<p>
+v = redis_conn.rename('name_2', 'name_100')
+
+</p>
+
+<h4>move 移动redis中某个键所有数据到某个db中</h4>
+
+<p>
+move(name, db)
+
+</p>
+
+<p>
+返回值：成功True
+
+</p>
+
+<p>
+v = redis_conn.move('name_100', 12)
+
+</p>
+
+<h4>randomkey 随机获取redis中某个键名</h4>
+
+<p>
+randomkey()
+
+</p>
+
+<h4>type 查看redis中某个键数据结构类型</h4>
+
+<p>
+type(name)
+
+</p>
+
+<p>
+返回值：字符串（字节形式） 形如： b'hash'
+
+</p>
+
+<h3>String 字符串（键值对）</h3>
+
+<h4>set</h4>
+
+<p>
+set(name, value, ex=None, px=None, nx=False, xx=False)
+
+</p>
+
+<p>
+ex：过期时间（秒），时间到了后redis会自动删除
+
+</p>
+
+<p>
+px：过期时间（毫秒），时间到了后redis会自动删除。ex、px二选一即可
+
+</p>
+
+<p>
+nx：如果设置为True，则只有name不存在时，当前set操作才执行
+
+</p>
+
+<p>
+xx：如果设置为True，则只有name存在时，当前set操作才执行
+
+</p>
+
+<p>
+如： redis_conn.set('name_2', 'Zarten_2')
+
+</p>
+
+<h4>get</h4>
+
+<p>
+如：v = redis_conn.get('name_1')
+
+</p>
+
+<h4>mset 设置多个键值</h4>
+
+<p>
+mset(<em>args, </em>*kwargs)
+
+</p>
+
+<p>
+如：redis_conn.mset(name_1= 'Zarten_1', name_2= 'Zarten_2')
+
+</p>
+
+<p>
+或者
+
+</p>
+
+<pre class="example">name_dict = {
+    'name_4' : 'Zarten_4',
+    'name_5' : 'Zarten_5'
+}
+redis_conn.mset(name_dict)
+</pre>
+
+<h4>mget 获取多个值</h4>
+
+<p>
+mget(keys, <em>args)
+
+</p>
+
+<p>
+m = redis_conn.mget('name_1', 'name_2')
+
+</p>
+
+<p>
+或
+
+</p>
+
+<p>
+m = redis_conn.mget(['name_1', 'name_2'])
+
+</p>
+
+<p>
+</em>** getset 给已有的键设置新值，并返回原有的值
+
+</p>
+
+<p>
+getset(name, value)
+
+</p>
+
+<p>
+当所给的键不存在时，会设置其新值，但返回值为None
+
+</p>
+
+<h4>setrange 根据索引修改某个键的value值</h4>
+
+<p>
+setrange(name, offset, value)
+
+</p>
+
+<p>
+返回值为：修改后的字符串长度
+
+</p>
+
+<p>
+name：键，所给不存在时自动添加
+
+</p>
+
+<p>
+offset：偏移量，以0开始
+
+</p>
+
+<p>
+value：修改的字符或字符串，字符串时以offset向后顺延
+
+</p>
+
+<p>
+如： length = redis_conn.setrange('name_2', 1, 'zhihu')
+# print(length) --> Zzhihu_2
+
+</p>
+
+<h4>getrange 根据索引获取某个键的部分value值</h4>
+
+<p>
+若所给的键不存在时，返回空值 b&rdquo;
+
+</p>
+
+<p>
+getrange(key, start, end)
+
+</p>
+
+<p>
+v = redis_conn.getrange('name_4', 0, 2)
+
+</p>
+
+<h4>strlen 获取value的长度</h4>
+
+<p>
+strlen(name)
+
+</p>
+
+<p>
+所给的键不存在时，返回值为0
+
+</p>
+
+<p>
+length = redis_conn.strlen('name_2')
+
+</p>
+
+<h4>incr int类型的value自增, decr int类型的value自减</h4>
+
+<p>
+所给的键对应的值必须是整数或字符串的数值，不然会报错。默认自增幅度为1
+
+</p>
+
+<p>
+incr(name, amount=1)
+
+</p>
+
+<p>
+decr(name, amount=1)
+
+</p>
+
+<p>
+如：
+
+</p>
+
+<p>
+redis_conn.set('num_2', 2)
+
+</p>
+
+<p>
+<a id="redis_conn.set('num_2',"></a>'2') 亦可
+
+</p>
+
+<p>
+v = redis_conn.incr('num_2')
+
+</p>
+
+<h4>incrbyfloat 浮点数类型的value自增</h4>
+
+<p>
+incrbyfloat(name, amount=1.0)
+
+</p>
+
+<p>
+返回值为：浮点数类型float
+
+</p>
+
+<h4>append value后面追加</h4>
+
+<p>
+append(key, value)
+
+</p>
+
+<p>
+若所给的键不存在，则设置新值，返回值为修改后的字符串的长度
+
+</p>
+
+<h3>List</h3>
+
+<h4>lpush 列表左边添加值, rpush 列表左边添加值</h4>
+
+<p>
+lpush(name, <em>values)
+
+</p>
+
+<p>
+value值有多个时，从左到右依次向列表左边添加，类型可以不同
+
+</p>
+
+<p>
+所给的键不存在时，新建一个列表
+
+</p>
+
+<p>
+返回值：列表的大小
+
+</p>
+
+<p>
+如：v = redis_conn.lpush('Zarten', 1,2,3,4,5)
+
+</p>
+
+<p>
+</em>**  lpushx 键存在时，添加到列表左边 rpushx（最右边）
+
+</p>
+
+<p>
+lpushx(name, value)
+
+</p>
+
+<p>
+只有键存在时，才添加。若键不存在则不添加，也不新创建列表
+
+</p>
+
+<p>
+返回值为：列表大小
+
+</p>
+
+<h4>llen 获取所给键的列表大小</h4>
+
+<p>
+llen(name)
+
+</p>
+
+<p>
+如：v = redis_conn.llen('Zarten')
+
+</p>
+
+<h4>linsert 在列表中间插入新值</h4>
+
+<p>
+linsert(name, where, refvalue, value)
+
+</p>
+
+<p>
+name：键名
+
+</p>
+
+<p>
+where：位置，前面（BEFORE）或后面（AFTER）
+
+</p>
+
+<p>
+refvalue：指定哪个值的前后插入
+
+</p>
+
+<p>
+value：插入的新值
+
+</p>
+
+<p>
+返回值：插入后列表的长度，若返回-1，则refvalue不存在
+
+</p>
+
+<p>
+如：v = redis_conn.linsert('Zarten', 'AFTER', 6, 'b')
+
+</p>
+
+<h4>lset 列表中通过索引赋值</h4>
+
+<p>
+lset(name, index, value)
+
+</p>
+
+<p>
+返回值：成功 True 否则 False
+
+</p>
+
+<p>
+v = redis_conn.lset('Zarten', 2, 'cc')
+
+</p>
+
+<h4>lindex 通过索引获取列表值</h4>
+
+<p>
+lindex(name, index)
+
+</p>
+
+<p>
+v = redis_conn.lindex('Zarten', 2)
+
+</p>
+
+<h4>lrange 列表中获取一段数据</h4>
+
+<p>
+lrange(name, start, end)
+
+</p>
+
+<p>
+返回值：List类型的一段数据
+
+</p>
+
+<h4>lpop 删除左边的第一个值 rpop（右边）</h4>
+
+<p>
+lpop(name)
+
+</p>
+
+<p>
+返回值：被删除元素的值
+
+</p>
+
+<p>
+如：v = redis_conn.rpop('Zarten')
+
+</p>
+
+<h4>lrem 删除列表中N个相同的值</h4>
+
+<p>
+lrem(name, value, num=0)
+
+</p>
+
+<p>
+name：键名
+
+</p>
+
+<p>
+value：需删除的值
+
+</p>
+
+<p>
+num：删除的个数 整数表示从左往右 负数表示从右往左 例如：2 -2
+
+</p>
+
+<p>
+返回值：返回删除的个数
+
+</p>
+
+<p>
+如：v = redis_conn.lrem('Zarten', 'hehe', -2)
+
+</p>
+
+<h4>ltrim 删除列表中范围之外的所有值</h4>
+
+<p>
+ltrim(name, start, end)
+
+</p>
+
+<p>
+返回值：成功 True
+
+</p>
+
+<h4>blpop 删除并返回列表最左边的值 brpop（最右边）  b 表示block</h4>
+
+<p>
+blpop(keys, timeout=0)
+
+</p>
+
+<p>
+keys：给定的键
+
+</p>
+
+<p>
+timeout：等待超时时间，默认为0，表示一直等待
+
+</p>
+
+<p>
+返回值：tuple类型 形如： (键名, 删除的值) (b'Zarten', b'hehe')
+
+</p>
+
+<p>
+如：v = redis_conn.blpop('Zarten')
+
+</p>
+
+<h4>rpoplpush 一个列表中最右边值取出后添加到另一个列表的最左边, brpoplpush为阻塞版本</h4>
+
+<p>
+rpoplpush(src, dst)
+
+</p>
+
+<p>
+brpoplpush(src, dst, timeout=0)为rpoplpush的阻塞版本，timeout为0时，永远阻塞
+
+</p>
+
+<p>
+返回值：取出的元素值
+
+</p>
+
+<h3>Hash 哈希</h3>
+
+<h4>hset 哈希中添加一个键值对</h4>
+
+<p>
+hset(name, key, value)
+
+</p>
+
+<p>
+key存在，则修改，否则添加
+
+</p>
+
+<p>
+返回值：返回添加成功的个数 int
+
+</p>
+
+<h4>hget 获取指定key的值</h4>
+
+<p>
+hget(name, key)
+
+</p>
+
+<p>
+如：v = redis_conn.hget('Zarten', 'age')
+
+</p>
+
+<h4>hgetall 获取哈希中所有的键值对</h4>
+
+<p>
+hgetall(name)
+
+</p>
+
+<p>
+返回值：dict类型
+
+</p>
+
+<p>
+如：v = redis_conn.hgetall('Zarten')
+
+</p>
+
+<h4>Hash hmset 设置哈希中的多个键值对</h4>
+
+<p>
+hmset(name, mapping)
+
+</p>
+
+<p>
+mapping：dict 类型
+
+</p>
+
+<p>
+返回值：成功 True
+
+</p>
+
+<p>
+如：v = redis_conn.hmset('Zarten', {'sex':1, 'tel':'123'})
+
+</p>
+
+<h4>hmget 获取哈希中多个键值对</h4>
+
+<p>
+hmget(name, keys, <em>args)
+
+</p>
+
+<p>
+返回值：值的列表 list 形如： [b'1', b'123'] <class 'list'>
+
+</p>
+
+<p>
+v = redis_conn.hmget('Zarten', ['sex', 'tel'])
+
+</p>
+
+<p>
+# v = redis_conn.hmget('Zarten', 'sex', 'tel') 亦可
+
+</p>
+
+<p>
+</em>** hlen 获取哈希中键值对的个数
+
+</p>
+
+<p>
+hlen(name)
+
+</p>
+
+<p>
+v = redis_conn.hlen('Zarten')
+
+</p>
+
+<h4>hkeys 获取哈希中所有的键key</h4>
+
+<p>
+hkeys(name)
+
+</p>
+
+<p>
+返回值：list类型
+
+</p>
+
+<p>
+v = redis_conn.hkeys('Zarten')
+
+</p>
+
+<h4>hvals 获取哈希中所有的值value</h4>
+
+<p>
+hvals(name)
+
+</p>
+
+<p>
+返回值：list类型
+
+</p>
+
+<p>
+v = redis_conn.hvals('Zarten')
+
+</p>
+
+<h4>hexists 检查哈希中是否有某个键key</h4>
+
+<p>
+hexists(name, key)
+
+</p>
+
+<p>
+返回值：有 True ；否则 False
+
+</p>
+
+<p>
+v = redis_conn.hexists('Zarten', 'b')
+
+</p>
+
+<h4>hdel 删除哈希中键值对（key-value）</h4>
+
+<p>
+hdel(self, name, <em>keys)
+
+</p>
+
+<p>
+返回值：int 删除的个数
+
+</p>
+
+<p>
+v = redis_conn.hdel('Zarten', 'age')
+
+</p>
+
+<p>
+</em>** hincrby 自增哈希中key对应的value值（必须整数数值类型）
+
+</p>
+
+<p>
+hincrby(name, key, amount=1)
+
+</p>
+
+<p>
+若所给的key不存在则创建，amount默认增加1，可以为负数
+
+</p>
+
+<p>
+返回值：int 增加后的数值
+
+</p>
+
+<p>
+v = redis_conn.hincrby('Zarten', 'sex', -3)
+
+</p>
+
+<h4>hincrbyfloat 自增浮点数 同上hincrby</h4>
+
+<p>
+hincrbyfloat(name, key, amount=1.0)
+
+</p>
+
+<h4>expire 设置整个键的过期时间</h4>
+
+<p>
+expire(name, time)
+
+</p>
+
+<p>
+time：秒，时间一到，立马自动删除
+
+</p>
+
+<p>
+v = redis_conn.expire('Zarten', 10)
+
+</p>
+
+<h4>hscan 增量迭代获取哈希中的数据</h4>
+
+<p>
+hscan(name, cursor=0, match=None, count=None)
+
+</p>
+
+<p>
+name：redis的name
+
+</p>
+
+<p>
+cursor：游标（基于游标分批取获取数据）
+
+</p>
+
+<p>
+match：匹配指定key，默认None 表示所有的key
+
+</p>
+
+<p>
+count：每次分片最少获取个数，默认None表示采用Redis的默认分片个数
+
+</p>
+
+<p>
+返回值：tuple 类型 ；（扫描位置，所有dict数据）
+
+</p>
+
+<h4>hscan_iter 返回hscan的生成器</h4>
+
+<p>
+hscan_iter(name, match=None, count=None)
+
+</p>
+
+<h3>Set 集合 (集合中的元素不重复，一般用于过滤元素)</h3>
+
+<h4>sadd 添加元素到集合中</h4>
+
+<p>
+sadd(name, <em>values)
+
+</p>
+
+<p>
+若插入已有的元素，则自动不插入
+
+</p>
+
+<p>
+v = redis_conn.sadd('Zarten', 'apple', 'a', 'b', 'c')
+
+</p>
+
+<p>
+</em>** scard 返回集合中元素的个数
+
+</p>
+
+<p>
+scard(name)
+
+</p>
+
+<h4>smembers 获取集合中的所有元素</h4>
+
+<p>
+smembers(name)
+
+</p>
+
+<p>
+返回值：set类型，形如： {b'a', b'apple', b'c', b'b'}
+
+</p>
+
+<h4>srandmember 随机获取一个或N个元素</h4>
+
+<p>
+srandmember(name, number=None)
+
+</p>
+
+<p>
+name：键名
+number：一个或N个，默认返回一个。若返回N个，则返回List类型
+返回值：返回一个值或一个列表
+
+</p>
+
+<h4>sismember 判断某个值是否在集合中</h4>
+
+<p>
+sismember(name, value)
+
+</p>
+
+<p>
+返回值：True 在 False 不在
+
+</p>
+
+<h4>spop 随机删除并返回集合中的元素</h4>
+
+<p>
+spop(name)
+
+</p>
+
+<h4>srem 删除集合中的一个或多个元素</h4>
+
+<p>
+srem(name, <em>values)
+
+</p>
+
+<p>
+返回值：返回删除的个数 int
+
+</p>
+
+<p>
+如：v = redis_conn.srem('Zarten', 'c', 'a')
+
+</p>
+
+<p>
+</em>** smove 将一个集合中的值移动到另一个集合中
+
+</p>
+
+<p>
+smove(src, dst, value)
+
+</p>
+
+<p>
+若value不存在时，返回False
+
+</p>
+
+<p>
+返回值：成功 True
+
+</p>
+
+<h4>sdiff 返回在一个集合中但不在其他集合的所有元素（差集）</h4>
+
+<p>
+sdiff(keys, <em>args)
+
+</p>
+
+<p>
+在keys集合中，不在其他集合中的元素
+
+</p>
+
+<p>
+返回值：set类型 {b'2', b'4', b'3', b'1'}
+
+</p>
+
+<p>
+如：v = redis_conn.sdiff('Zarten', 'Fruit')
+
+</p>
+
+<p>
+</em>** sdiffstore 上面的sdiff的返回值（差集）保存在另一个集合中
+
+</p>
+
+<p>
+sdiffstore(dest, keys, <em>args)
+
+</p>
+
+<p>
+在keys集合中，不在其他集合中的元素保存在dest集合中
+
+</p>
+
+<p>
+dest：新的集合，设置的新集合，旧集合会被覆盖
+
+</p>
+
+<p>
+返回值：int 返回作用的个数
+
+</p>
+
+<p>
+</em>** sinter 返回一个集合与其他集合的交集
+
+</p>
+
+<p>
+sinter(keys, <em>args)
+
+</p>
+
+<p>
+返回值：set类型
+
+</p>
+
+<p>
+v = redis_conn.sinter('Zarten', 'Fruit')
+
+</p>
+
+<p>
+</em>** sinterstore 返回一个集合与其他集合的交集，并保存在另一个集合中
+
+</p>
+
+<p>
+sinterstore(dest, keys, <em>args)
+
+</p>
+
+<p>
+dest：另一个集合，设置新集合，旧集合元素会被覆盖
+
+</p>
+
+<p>
+</em>** sunion 返回一个集合与其他集合的并集
+
+</p>
+
+<p>
+sunion(keys, <em>args)
+
+</p>
+
+<p>
+v = redis_conn.sunion('Zarten', 'Fruit')
+
+</p>
+
+<p>
+</em>** sunionstore 返回一个集合与其他集合的并集，并保存在另一个集合中
+
+</p>
+
+<p>
+sunionstore(dest, keys, <em>args)
+
+</p>
+
+<p>
+dest：另一个集合，设置新集合，旧集合元素会被覆盖
+返回值：新集合元素个数
+
+</p>
+
+<p>
+</em>* Zset 有序集合
+
+</p>
+
+<p>
+有序集合比集合多了一个分数的字段，可对分数升序降序
+
+</p>
+
+<h4>zadd 有序集合中添加元素</h4>
+
+<p>
+zadd(name, <em>args, </em>*kwargs)
+
+</p>
+
+<p>
+添加元素时需指定元素的分数
+
+</p>
+
+<p>
+返回值：返回添加的个数
+
+</p>
+
+<p>
+2种方式如下：
+
+</p>
+
+<p>
+v = redis_conn.zadd('Zarten', 'a', 3, 'b', 4)
+
+</p>
+
+<p>
+<a id="v"></a>= redis_conn.zadd('Zarten', c= 5, d= 6)
+
+</p>
+
+<h4>zcard 返回有序集合中元素个数</h4>
+
+<p>
+zcard(name)
+
+</p>
+
+<p>
+v = redis_conn.zcard('Zarten')
+
+</p>
+
+<h4>zcount 返回有序集合中分数范围内的元素个数</h4>
+
+<p>
+zcount(name, min, max)
+
+</p>
+
+<p>
+包含min max
+
+</p>
+
+<p>
+返回值：个数 int
+
+</p>
+
+<p>
+v = redis_conn.zcount('Zarten', 3, 5)
+
+</p>
+
+<h4>zscore 返回有序集合中指定某个值的分数</h4>
+
+<p>
+zscore(name, value)
+
+</p>
+
+<p>
+返回值：float 类型的分数；形如： -5.0 <class 'float'>
+
+</p>
+
+<p>
+v = redis_conn.zscore('Zarten', 'zhi')
+
+</p>
+
+<h4>zincrby 增加有序集合中某个值的分数</h4>
+
+<p>
+zincrby(name, value, amount=1)
+
+</p>
+
+<p>
+value：若存在，则增加其amount分数；若不存在，则增加新值以及对应的分数
+
+</p>
+
+<p>
+amount：增加的值，可以为负数
+
+</p>
+
+<p>
+返回值：增加后的分数 float类型 ；形如： -5.0 <class 'float'>
+
+</p>
+
+<h4>zrem 删除有序集合中的某个或多个值</h4>
+
+<p>
+zrem(name, <em>values)
+
+</p>
+
+<p>
+返回值：返回删除的个数
+
+</p>
+
+<p>
+</em>** zremrangebyrank 删除有序集合元素根据排序范围
+
+</p>
+
+<p>
+zremrangebyrank(name, min, max)
+
+</p>
+
+<p>
+返回值：删除个数 int
+
+</p>
+
+<h4>zremrangebyscore 删除有序集合根据分数范围</h4>
+
+<p>
+zremrangebyscore(name, min, max)
+
+</p>
+
+<p>
+返回值：删除个数 int
+
+</p>
+
+<h4>zrank 返回某个值在有序集合中的分数排名（从小到大） zrevrank（从大到小）</h4>
+
+<p>
+zrank(name, value)
+
+</p>
+
+<p>
+zrevrank(name, value)
+
+</p>
+
+<h4>zrange 返回有序集合分数排序的一段数据</h4>
+
+<p>
+zrange(name, start, end, desc=False, withscores=False, score_cast_func=float)
+
+</p>
+
+<p>
+name：redis的name
+
+</p>
+
+<p>
+start：有序集合索引起始位置（非分数）
+
+</p>
+
+<p>
+end：有序集合索引结束位置（非分数）
+
+</p>
+
+<p>
+desc：排序规则，默认按照分数从小到大排序
+
+</p>
+
+<p>
+withscores：是否获取元素的分数，默认只获取元素的值
+
+</p>
+
+<p>
+score_cast_func：对分数进行数据转换的函数
+
+</p>
+
+<p>
+返回值：list类型 [(b'tt', 10.0), (b'd', 6.0), (b'c', 5.0)] <class 'list'>
+
+</p>
+
+<h3>Bitmap 位图</h3>
+
+<p>
+bitmap中存放二进制的位0和1，类似位数组。典型应用是基于redis的布隆过滤器。
+
+</p>
+
+<p>
+属于String字符串数据结构，固bit 映射被限制在 512 MB 之内（2^32）
+
+</p>
+
+<h4>setbit 设置位图的值</h4>
+
+<p>
+setbit(name, offset, value)
+
+</p>
+
+<p>
+name：redis键名
+
+</p>
+
+<p>
+offset：偏移量，大于等于0。当偏移伸展时，空白位置以0填充
+
+</p>
+
+<p>
+value：二进制值 0或1
+
+</p>
+
+<p>
+v = redis_conn.setbit('Zarten_2', 100, 1)
+
+</p>
+
+<h4>getbit 返回位图指定偏移量的值</h4>
+
+<p>
+getbit(name, offset)
+
+</p>
+
+<p>
+返回0或1
+
+</p>
+
+<p>
+v = redis_conn.getbit('Zarten_2', 101)
+
+</p>
+
+<h4>bitcount 返回位图中二进制为1的总个数</h4>
+
+<p>
+bitcount(key, start=None, end=None)
+
+</p>
+
+<p>
+start end指定开始和结束的位，默认整个位图
+
+</p>
+
+<p>
+v = redis_conn.bitcount('Zarten_2', 100, 1000)
+</p><!-- Page published by Emacs Wiki ends here -->
+    <div class="navfoot">
+      <hr />
+      <table width="100%" border="0" summary="Footer navigation">
+        <col width="33%"/><col width="34%"/><col width="33%"/>
+        <tr>
+          <td align="left">Update : 2020-02-17
+          </td>
+          <td align="center">
+           <span class="foothome">
+              <a href="WelcomePage.html">Home</a> / <a href="WikiIndex.html">Index</a>
+            </span>
+          </td>
+          <td align="right">
+           cyberpsyche[AT]gmail.com
+          </td>
+        </tr>
+      </table>
+   <center>
+     Based on
+      <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debianLogo.png" alt="Debian Logo" /></a>    
+   <a href="http://www.debian.org"><img style="border: 0em none;" src="images/debian.png" alt="Debian Text Logo" /></a>   
+       GNU/Linux&nbsp;and&nbsp;<a href="http://www.apple.com"><img style="border: 0em none;" src="images/MacLogo.jpg" alt="Mac Logo" /></a>OS X|&nbsp;Powered by    
+      <a href="http://www.gnu.org/software/emacs"><img style="border: 0em none;" src="images/emacs.gif" alt="Emacs Logo" /></a>&nbsp;|   
+      Best view with    
+   <a href="http://www.getfirefox.com/"><img style="border: 0em none;" src="images/getFirefox.gif" alt="Firefox Logo" /></a> 
+  </center>  
+  </div>
+  </body>
+</html>

@@ -1158,11 +1158,50 @@ find . -name '*.txt' |xargs sed -i s/233/664/g
 
 <pre class="example">#method2
 find . -name '*.txt' |xargs sed -i &quot;s/233/666/g;s/235/626/g;s/333/616/g;s/233/664/g&quot;
-
 </pre>
 
 <p>
 这两种方法做的事情都一样，就是查找所有的.txt后缀的文件并做一系列替换。前者是多次执行find，后者是执行一次find，但是增加了sed的模式串。第一种可读性更好一点，但是当替换的量变大的时候，第二种的速度就会比第一种快很多。这里效率提升的原因，就是第二种只要执行一次命令，而第一种要执行多次。
+
+</p>
+
+<h4>删除指定文件</h4>
+
+<p>
+删除当前目录下所有pyc文件。
+
+</p>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>find . -name <em>.pyc</td><td>xargs rm -f</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+</em>** 查找文件
+
+</p>
+
+<p>
+查找并删除3天前的历史文件
+
+</p>
+
+<p>
+rm -rfi `find /tmp/ -ctime 3`
+
+</p>
+
+<p>
+按分钟查找
+
+</p>
+
+<p>
+find -cmin N
 
 </p>
 
@@ -1487,7 +1526,7 @@ systemctl restart &lt;app_name&gt;
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-01-15
+          <td align="left">Update : 2020-02-17
           </td>
           <td align="center">
            <span class="foothome">

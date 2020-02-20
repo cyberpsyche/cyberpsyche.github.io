@@ -299,6 +299,27 @@ $ git rebase master
 $ git rebase [主分支] [特性分支]
 </pre>
 
+<h3>设置和取消代理</h3>
+
+<h4>设置代理</h4>
+
+<p>
+git config --global https.proxy <a href="http://127.0.0.1:1080">http://127.0.0.1:1080</a>
+
+</p>
+
+<p>
+git config --global http.proxy 'socks5://127.0.0.1:1080' 
+
+</p>
+
+<h4>取消代理</h4>
+
+<p>
+git config --global --unset https.proxy
+
+</p>
+
 <h3>建立远程仓库</h3>
 
 <h4>http/https mode</h4>
@@ -351,7 +372,7 @@ update
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-06-17
+          <td align="left">Update : 2020-02-17
           </td>
           <td align="center">
            <span class="foothome">
