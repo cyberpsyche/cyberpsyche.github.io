@@ -1379,6 +1379,44 @@ pip3 install supervisor
 <pre class="example">echo_supervisord_conf &gt; supervisord.conf
 </pre>
 
+<p>
+典型配置文件
+
+</p>
+
+<pre class="example">[unix_http_server]
+file=/tmp/supervisor.sock   ; (the path to the socket file)
+chmod=0700                 ; socket file mode (default 0700)
+
+;[inet_http_server]         ; inet (TCP) server disabled by default
+;port=127.0.0.1:9001        ; (ip_address:port specifier, *:port for all iface)
+;username=user              ; (default is no username (open server))
+;password=123               ; (default is no password (open server))
+
+[supervisord]
+logfile=/opt/logs/supervisord.log ; (main log file;default $CWD/supervisord.log)
+pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+nodaemon=true               ; (start in foreground if true;default false)
+minfds=1024                  ; (min. avail startup file descriptors;default 1024)
+minprocs=200                 ; (min. avail process descriptors;default 200)
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
+;serverurl=http://127.0.0.1:9001 ; use an http:// url to specify an inet socket
+
+
+[include]
+files = /etc/program.conf
+</pre>
+
+<p>
+注意，为使supervisorctl可以控制，需要打开[rpcinterface:supervisor]配置。
+
+</p>
+
 <h4>supervisor + celery</h4>
 
 <p>
@@ -1522,7 +1560,7 @@ BROKER_URL = 'amqp://sam:123456@localhost:5672/%2Fhollywood'
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-01-15
+          <td align="left">Update : 2020-02-17
           </td>
           <td align="center">
            <span class="foothome">
