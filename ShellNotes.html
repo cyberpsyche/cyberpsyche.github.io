@@ -495,6 +495,16 @@ echo $var
 done
 </pre>
 
+<h4>遍历文件夹</h4>
+
+<pre class="example">for file in ./library/*
+do
+    if [ -d ${file} ]; then
+       echo ${file}
+    fi
+done
+</pre>
+
 <h4>Bash 内部字符串处理</h4>
 
 <p>
@@ -525,6 +535,18 @@ ${FILE_NAME##*/}                # 相当于basename ${FILE_NAME}，即删除按�
 ${FILE_NAME%/*}                 # 相当与dirname， 即删除按从右至左方向开始，匹配到第一个/之间的子串
 ${FILE_NAME#*/}                 # 从左至右， 删除第一个/及左边的子串
 ${FILE_NAME%%/*}                # 从右至左， 删除至最后一个/及右边的子串
+
+# 取文件名中的部分
+FILE=&quot;example.tar.gz&quot;
+echo &quot;${FILE%%.*}&quot;     取头   example
+echo &quot;${FILE%.*}&quot;      去尾   example.tar
+echo &quot;${FILE#*.}&quot;      去头   tar.gz
+echo &quot;${FILE##*.}&quot;     取尾   gz
+
+# 在bash中可以这么写
+filename=$(basename &quot;$fullfile&quot;)
+extension=&quot;${filename##*.}&quot;
+filename=&quot;${filename%.*}&quot;
 </pre>
 
 <p>
@@ -550,6 +572,31 @@ ${#ARRAY[2]}                    # 计算这个数组第三个元素的长度
 
 <pre class="example">sed '/^$/d'&lt; file
 </pre>
+
+<h4>查询文件的大小</h4>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>`ls -l</td><td>awk '{print $5}'</td><td>sed -n '1p'`</td>
+</tr>
+</tbody>
+</table>
+
+<h4>判断指定目录下文件个数</h4>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>count=`ls /home/data</td><td>wc -w`</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+echo $count
+
+</p>
 
 <h4>Shell command running</h4>
 <pre class="example">  cmd1 &amp;&amp; cmd2   Run cmd1, then if cmd1 successful run cmd2, otherwise skip.
@@ -1511,6 +1558,75 @@ ffmpeg -i input-file.mp4 -vf reverse -af areverse output.mp4   // For audio and 
 
 </p>
 
+<h4>在osx系统下通过ffmpeg查看设备</h4>
+
+<p>
+ffmpeg -f avfoundation -list_devices true -i ""
+
+</p>
+
+<h4>osx下录摄像头</h4>
+
+<p>
+ffmpeg -f avfoundation -video_size 640x480 -framerate 30 -i 0:0 -vcodec libx264 -preset ultrafast -target pal-vcd ./hello.mpg
+
+</p>
+
+<p>
+ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i "0" -vcodec libx264 -preset ultrafast -acodec libfaac -f flv ~/test.flv
+
+</p>
+
+<h4>过滤、叠加并输出</h4>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i "0"  -i ~/test1.mp4 -vcodec libx264 -preset ultrafast -filter_complex "[0:v]colorkey=0x000000:0.2:1[out];[1:v][out]overlay=x=0:y=0" -f matroska -</td><td>ffplay -i -</td>
+</tr>
+<tr>
+<td>ffmpeg -f avfoundation -framerate 30 -video_size 1280x720 -i "0"  -i ~/k.jpeg -vcodec libx264 -preset ultrafast -filter_complex "[0:v]chromakey=0x70de7750:0.02:0.15[out];[1:v][out]overlay[myout]" -map "[myout]" -f matroska -</td><td>ffplay -i -</td>
+</tr>
+</tbody>
+</table>
+
+<h4>显示时高宽减半</h4>
+
+<p>
+ffplay ~/test.flv -vf scale=iw/2:ih/2
+
+</p>
+
+<h4>显示水平镜像效果</h4>
+
+<p>
+ffplay ~/test.flv -vf hflip
+
+</p>
+
+<h4>深色像素过滤</h4>
+
+<pre class="example">ffmpeg -i 1.mp4 -f gdigrab -framerate 25 -video_size 300x200 -i title=&quot;MyWindow&quot;
+-filter_complex
+&quot;[1]split[m][a];
+ [a]format=yuv444p,geq='if(gt(lum(X,Y),16),255,0)',hue=s=0[al];
+ [m][al]alphamerge[ovr];
+ [0][ovr]overlay=(main_w-overlay_w):main_h-overlay_h[v]&quot;
+-map &quot;[v]&quot; -c:v libx264 -r 25 out.mp4
+</pre>
+
+<h4>视频推流</h4>
+
+<p>
+ffmpeg -f avfoundation -framerate 30 -i "1:0" -f avfoundation -framerate 30 -video_size 640x480 -i "0" -c:v libx264 -preset slow -filter_complex 'overlay=main_w-overlay_w-10:main_h-overlay_h-10' -acodec libmp3lame -ar 44100 -ac 1 -f flv rtmp://192.168.1.101:1935/rtmplive/room
+
+</p>
+
+<p>
+ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i  "0" -vcodec libx264 -preset ultrafast -acodec libfaac -f flv  rtmp://localhost:1935/zbcs/room
+
+</p>
+
 <h3>systemctl</h3>
 
 <pre class="example">systemctl status
@@ -1526,7 +1642,7 @@ systemctl restart &lt;app_name&gt;
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-02-17
+          <td align="left">Update : 2020-03-02
           </td>
           <td align="center">
            <span class="foothome">

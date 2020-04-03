@@ -1220,6 +1220,33 @@ name:xufive, age:51
 &gt;&gt;&gt; print(&quot;Value : &quot;,dict3.__contains__('sex'))
 </pre>
 
+<h4>time(), perf_counter(), process_counter() 的异同</h4>
+
+<p>
+time.time()返回纪元以来的秒数，更改系统时间会影响到time()的取值。
+
+</p>
+
+<p>
+time.perf_counter()返回性能记数器的值，以小数秒为单位，使用最高时间分辨率，用于测量系统范围的短持续时间，在测试代码性能时会计入sleep()时间。
+
+</p>
+
+<p>
+time.process_time()计算当前进程的系统和用户CPU时间总和值，以小数秒为单位，不包括sleep()休眠时间。
+
+</p>
+
+<p>
+python3.7后提供 time.time_ns(), time.perf_counter_ns(), time.process_time_ns() 三个方法精确到纳秒，注意返回值为整型。
+
+</p>
+
+<p>
+time.clock()方法在python3.8后废除，建议改用 time.process_time()
+
+</p>
+
 <h4>生成器和迭代器 yield</h4>
 
 <p>
@@ -1560,7 +1587,7 @@ BROKER_URL = 'amqp://sam:123456@localhost:5672/%2Fhollywood'
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-02-17
+          <td align="left">Update : 2020-03-02
           </td>
           <td align="center">
            <span class="foothome">

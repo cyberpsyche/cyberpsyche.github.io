@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -54,13 +54,80 @@ OGV: Theora video codec; Vorbis audio codec
 
 <p>
 MP4: H.264 video codec; AAC audio codec or MP3 audio codec
+
+</p>
+
+<h3>HTML5 history API 解析</h3>
+
+<p>
+window.history是用来保存用户在一个会话期间的网站访问记录，并提供相应的方法进行追溯。其对应的成员如下：
+
+</p>
+
+<ul>
+<li>方法：back()、forward()、go(num)、pushState(stateData, title, url)、replaceState(stateData, title, url)
+</li>
+<li>属性：length、state
+</li>
+<li>事件：window.onpopstate
+</li>
+</ul>
+
+<p>
+方法说明：
+
+</p>
+
+<ul>
+<li>back()：回退到上一个访问记录；
+</li>
+<li>forward()：前进到下一个访问记录；
+</li>
+<li>go(num)：跳转到相应的访问记录；其中num大于0，则前进；小于0，则后退；
+</li>
+<li>pushState(stateData, title, url)：在history中创建一个新的访问记录，不能跨域，且不造成页面刷新；
+</li>
+<li>replaceState(stateData, title, url)：修改当前的访问记录，不能跨域，且不造成页面刷新；
+</li>
+</ul>
+
+<p>
+另，HTML5新增了可以监听history和hash访问变化的全局方法：
+
+</p>
+
+<ul>
+<li>window.onpopstate：当调用history.go()、history.back()、history.forward()时触发；pushState()\replaceState()方法不触发。
+</li>
+<li>window.onhashchange：当前 URL 的锚部分(以 '#' 号为开始) 发生改变时触发。触发的情况如下：
+</li>
+</ul>
+
+<p>
+a、通过设置Location 对象 的 location.hash 或 location.href 属性修改锚部分；
+
+</p>
+
+<p>
+b、使用不同history操作方法到带hash的页面;
+
+</p>
+
+<p>
+c、点击链接跳转到锚点。
+
+</p>
+
+<p>
+这些API，是为了解决异步单页的路由问题，使得页面在不刷新的情况下，带来视图的变化，同时变化后的信息能得到准确的传播。
+应用场景的实例：我们在访问一个新闻列表页，找到一篇感兴趣的新闻，文章的内容通过ajax的方式获取到。我们觉得这篇文章很有趣，并将其分享给了朋友们。如果url地址没有变化，朋友们访问的将是列表页，而非有趣的文章。而通过HTML5的API，在异步请求ajax的同时，我们可以改变url地址，朋友们访问的也正是这篇文章。
 </p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2019-06-20
+          <td align="left">Update : 2020-02-17
           </td>
           <td align="center">
            <span class="foothome">

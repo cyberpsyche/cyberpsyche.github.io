@@ -92,6 +92,10 @@ Raspberry Pi / BCM2835 Technical Reference, Detailed technical reference can be 
 
 <p>
 >>> import RPi.GPIO as GPIO
+
+</p>
+
+<p>
 >>> GPIO.RPI_INFO
 {'P1_REVISION': 3, 'REVISION': 'c03112', 'TYPE': 'Pi 4 Model B', 'MANUFACTURER': 'Sony', 'PROCESSOR': 'BCM2711', 'RAM': '4G'}
 
@@ -261,7 +265,15 @@ It is possible that don't want to clean up every channel leaving some set up whe
 
 <p>
 >>> GPIO.cleanup(channel)
+
+</p>
+
+<p>
 >>> GPIO.cleanup( (channel1, channel2) )
+
+</p>
+
+<p>
 >>> GPIO.cleanup( [channel1, channel2] )
 
 </p>
@@ -307,30 +319,20 @@ You can take a snapshot of an input at a moment in time:
 
 </p>
 
-<p>
->>> if GPIO.input(channel):
-<span style="text-align: center;">
+<pre class="example">&gt;&gt;&gt; if GPIO.input(channel):
         print('Input was HIGH')
->>> else:
+&gt;&gt;&gt; else:
         print('Input was LOW')
-
-</span>
-
-</p>
+</pre>
 
 <p>
 To wait for a button press by polling in a loop:
 
 </p>
 
-<p>
->>> while GPIO.input(channel) == GPIO.LOW:
-<span style="text-align: center;">
+<pre class="example">&gt;&gt;&gt; while GPIO.input(channel) == GPIO.LOW:
         time.sleep(0.01)  # wait 10 ms to give CPU chance to do other things
-
-</span>
-
-</p>
+</pre>
 
 <p>
 (this assumes that pressing the button changes the input from LOW to HIGH)
@@ -351,7 +353,15 @@ To avoid missing a button press while your program is busy doing something else,
 
 <p>
 the wait_for_edge() function
+
+</p>
+
+<p>
 the event_detected() function
+
+</p>
+
+<p>
 a threaded callback function that is run when an edge is detected
 
 </p>
@@ -455,21 +465,13 @@ To debounce using software, add the bouncetime= parameter to a function where yo
 
 </p>
 
-<p>
->>> # add rising edge detection on a channel, ignoring further edges for 200ms for switch bounce handling
->>> GPIO.add_event_detect(channel, GPIO.RISING, callback=my_callback, bouncetime=200)
+<pre class="example">&gt;&gt;&gt; # add rising edge detection on a channel, ignoring further edges for 200ms for switch bounce handling
+&gt;&gt;&gt; GPIO.add_event_detect(channel, GPIO.RISING, callback=my_callback, bouncetime=200)
 
-</p>
-
-<p>
 or
 
-</p>
-
-<p>
->>>GPIO.add_event_callback(channel, my_callback, bouncetime=200)
-
-</p>
+&gt;&gt;&gt;GPIO.add_event_callback(channel, my_callback, bouncetime=200)
+</pre>
 
 <h5>Remove event detection</h5>
 
@@ -482,40 +484,28 @@ or
 
 <h5>To set an output high:</h5>
 
-<p>
->>> GPIO.output(12, GPIO.HIGH)
-<blockquote>
-<p>
+<pre class="example">&gt;&gt;&gt; GPIO.output(12, GPIO.HIGH)
  # or
->>> GPIO.output(12, 1)
+&gt;&gt;&gt; GPIO.output(12, 1)
  # or
->>> GPIO.output(12, True)
-
-</p>
-</blockquote>
+&gt;&gt;&gt; GPIO.output(12, True)
+</pre>
 
 <h5>To set an output low:</h5>
 
-<p>
->>> GPIO.output(12, GPIO.LOW)
-<blockquote>
-<p>
+<pre class="example">&gt;&gt;&gt; GPIO.output(12, GPIO.LOW)
  # or
->>> GPIO.output(12, 0)
+&gt;&gt;&gt; GPIO.output(12, 0)
  # or
->>> GPIO.output(12, False)
-
-</p>
-</blockquote>
+&gt;&gt;&gt; GPIO.output(12, False)
+</pre>
 
 <h5>To output to several channels at the same time:</h5>
 
-<p>
->>> chan_list = (11,12)
->>> GPIO.output(chan_list, GPIO.LOW) # all LOW
->>> GPIO.output(chan_list, (GPIO.HIGH,GPIO.LOW))  # first LOW, second HIGH
-
-</p>
+<pre class="example">&gt;&gt;&gt; chan_list = (11,12)
+&gt;&gt;&gt; GPIO.output(chan_list, GPIO.LOW) # all LOW
+&gt;&gt;&gt; GPIO.output(chan_list, (GPIO.HIGH,GPIO.LOW))  # first LOW, second HIGH
+</pre>
 
 <p>
 Note that you can read the current state of a channel set up as an output using the input() function. For example to toggle an output:
@@ -630,7 +620,7 @@ will return a value from: GPIO.IN, GPIO.OUT, GPIO.SPI, GPIO.I2C, GPIO.HARD_PWM, 
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-02-17
+          <td align="left">Update : 2020-03-02
           </td>
           <td align="center">
            <span class="foothome">

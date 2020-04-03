@@ -432,7 +432,7 @@ Ctrl + Mouse Wheel
 /Applications/Firefox.app/Contents/MacOS/firefox &amp;
 </pre>
 
-<h4>Firefox 强制刷新</h4>
+<h4>Firefox 等Browser强制刷新</h4>
 
 <p>
 Command + R
@@ -455,6 +455,33 @@ Shift + Command + R， 很直观，很好用。
 
 <pre class="example">defaults write com.apple.Finder AppleShowAllFiles YES
 </pre>
+
+<h4>Finder卡死重启</h4>
+
+<p>
+$ killall Finder
+
+</p>
+
+<h4>pmset</h4>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>pmset [touch</td><td>sleepnow</td><td>displaysleepnow</td><td>lock</td><td>boot]</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+如使屏幕关闭但主机不休眠：
+
+</p>
+
+<p>
+$ pmset displaysleepnow
+
+</p>
 
 <h4>SSH Remote Control Setting </h4>
 
@@ -619,7 +646,7 @@ alias pdf="open -a /Application/Preview.app"
 </p>
 
 <p>
-sudo mount_ntfs -o rw,nobrowse /dev/disk2s1 /Users/sam/Public/NTFS_USB_Disk/ 
+sudo mount_ntfs -o rw,nobrowse /dev/disk2s1 /Users/sam/Public/NTFS_USB_Disk/
 
 </p>
 
@@ -638,7 +665,7 @@ sudo mount_ntfs -o rw,nobrowse /dev/disk2s1 /Users/sam/Public/NTFS_USB_Disk/
 <h4>关闭、启动网卡</h4>
 
 <p>
-ipconfig en0 down 
+ipconfig en0 down
 
 </p>
 
@@ -657,7 +684,7 @@ netstat -nr
 <h4>lipo</h4>
 
 <p>
-个在 Mac OS X 中处理裁减通用程序（Universal Binaries）的工具
+一个在 Mac OS X 中处理裁减通用程序（Universal Binaries）的工具
 
 </p>
 
@@ -744,7 +771,45 @@ Free(可用空间): 表示这些内存中的数据是无效的，即内存剩余
 
 </p>
 
-<h3>XCode </h3>
+<h4>让通知快点消失</h4>
+
+<p>
+defaults write com.apple.notificationcenterui bannerTime 3
+
+</p>
+
+<h4>延长屏幕点亮时间</h4>
+
+<p>
+caffeinate -t 3600
+
+</p>
+
+<h4>隐藏文件夹</h4>
+
+<p>
+$ chflags hidden ~/Desktop/Hidden
+
+</p>
+
+<p>
+可以使用 nohidden 重新让该文件夹显示
+
+</p>
+
+<p>
+直接使用快捷键「Shift + Command + .」即可显示全部隐藏文件。
+
+</p>
+
+<h4>将桌面的文件全部隐藏起来</h4>
+
+<p>
+defaults write com.apple.finder <a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">CreateDesktop</a> -bool false; killall Finder
+
+</p>
+
+<h3>XCode</h3>
 
 <h4>Could not find info...</h4>
 
@@ -765,7 +830,7 @@ Free(可用空间): 表示这些内存中的数据是无效的，即内存剩余
 
 </p>
 
-<h4>Macspice </h4>
+<h4>Macspice</h4>
 
 <p>
 电子设计软件
@@ -794,7 +859,7 @@ save as an Application
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-02-17
+          <td align="left">Update : 2020-03-02
           </td>
           <td align="center">
            <span class="foothome">
