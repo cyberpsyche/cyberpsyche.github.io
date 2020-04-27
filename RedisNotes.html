@@ -72,6 +72,43 @@ Redis有16个逻辑数据库（db0-db15），每个逻辑数据库项目是隔�
 </li>
 </ul>
 
+<h2>Startup</h2>
+
+<p>
+$ redis-server /usr/local/etc/redis.conf
+
+</p>
+
+<p>
+redis.conf中可修改requirepass XXX 一行设置密码。
+
+</p>
+
+<p>
+可用以下命令连接管理
+
+</p>
+
+<p>
+$ redis-cli
+
+</p>
+
+<p>
+127.0.0.1:6379> auth XXX 输入password
+
+</p>
+
+<p>
+127.0.0.1:6379> config get requirepass 查看密码
+
+</p>
+
+<p>
+127.0.0.1:6379> config set requirepass XXX 动态设置密码
+
+</p>
+
 <h2>redis-py</h2>
 
 <h3>installment</h3>
@@ -1439,7 +1476,7 @@ v = redis_conn.bitcount('Zarten_2', 100, 1000)
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-02-17
+          <td align="left">Update : 2020-04-13
           </td>
           <td align="center">
            <span class="foothome">

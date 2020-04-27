@@ -298,6 +298,37 @@ Nginx.conf (注意加入的ssl项):
     }
 </pre>
 
+<h4>nginx 编译 openssl 问题解决</h4>
+
+<p>
+打开nginx源文件下的/usr/local/src/nginx-1.9.9/auto/lib/openssl/conf文件：
+
+</p>
+
+<p>
+找到这么一段代码：
+
+</p>
+
+<pre class="example">CORE_INCS=&quot;$CORE_INCS $OPENSSL/.openssl/include&quot;
+CORE_DEPS=&quot;$CORE_DEPS $OPENSSL/.openssl/include/openssl/ssl.h&quot;
+CORE_LIBS=&quot;$CORE_LIBS $OPENSSL/.openssl/lib/libssl.a&quot;
+CORE_LIBS=&quot;$CORE_LIBS $OPENSSL/.openssl/lib/libcrypto.a&quot;
+CORE_LIBS=&quot;$CORE_LIBS $NGX_LIBDL&quot;
+</pre>
+
+<p>
+修改成以下代码：
+
+</p>
+
+<pre class="example">CORE_INCS=&quot;$CORE_INCS $OPENSSL/include&quot;
+CORE_DEPS=&quot;$CORE_DEPS $OPENSSL/include/openssl/ssl.h&quot;
+CORE_LIBS=&quot;$CORE_LIBS $OPENSSL/lib/libssl.a&quot;
+CORE_LIBS=&quot;$CORE_LIBS $OPENSSL/lib/libcrypto.a&quot;
+CORE_LIBS=&quot;$CORE_LIBS $NGX_LIBDL&quot;
+</pre>
+
 <h4>gunicorn + supervisor</h4>
 
 <p>
@@ -383,7 +414,7 @@ See <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes">http://en.w
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-01-15
+          <td align="left">Update : 2020-04-13
           </td>
           <td align="center">
            <span class="foothome">

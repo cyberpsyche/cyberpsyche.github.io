@@ -854,6 +854,21 @@ cat chunk* &gt; a_whopping_big_file
 <pre class="example">mplayer moviename.avi -sub moviename.srt -font /usr/local/texlive/simsun.ttf -subcp cp936
 </pre>
 
+<h4>解压rpm包</h4>
+
+<p>
+rpm包是以cpio格式压缩的，解压命令：
+
+</p>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td>rpm2cpio xxx.rpm</td><td>cpio -div</td>
+</tr>
+</tbody>
+</table>
+
 <h4>抓取网页内面到标准输出</h4>
 
 <pre class="example">wget -O - http://www.google.com
@@ -1419,214 +1434,6 @@ net.ipv4.ip_local_port_range = 5000    65000
 <pre class="example">/sbin/sysctl -p
 </pre>
 
-<h3>ffmpeg</h3>
-
-<h4>修改视频帧率</h4>
-
-<p>
-$ ffmpeg -i input.avi -r 24 output.avi  // 强制把输出视频文件帧率改为 24 fps: -r 帧率
-
-</p>
-
-<h4>截图命令</h4>
-
-<p>
-截取一张352x240尺寸大小，格式为jpg的图片
-
-</p>
-
-<p>
-$ ffmpeg -i input_file -y -f image2 -t 0.001 -s 352x240 output.jpg 
-
-</p>
-
-<h4>在视频的第8.001秒出截取230x240的缩略图</h4>
-
-<p>
-ffmpeg -i input_file -y -f mjpeg -ss 8 -t 0.001 -s 320x240 output.jpg
-
-</p>
-
-<h4>把视频的前30帧转换成一个Animated Gif</h4>
-
-<p>
-ffmpeg -i input_file -vframes 30 -y -f gif output.gif
-
-</p>
-
-<h4>每隔一秒截一张图</h4>
-
-<p>
-ffmpeg -i out.mp4 -f image2 -vf fps=fps=1 out%d.png
-
-</p>
-
-<h4>每隔20秒截一张图</h4>
-
-<p>
-ffmpeg -i out.mp4 -f image2 -vf fps=fps=1/20 out%d.png
-
-</p>
-
-<h4>多张截图合并到一个文件里（2x3）每隔一千帧(秒数=1000/fps25)即40s截一张图</h4>
-
-<p>
-ffmpeg -i out.mp4 -frames 3 -vf "select=not(mod(n\,1000)),scale=320:240,tile=2x3" out.png
-
-</p>
-
-<h4>从视频中生成GIF图片</h4>
-
-<p>
-ffmpeg -i out.mp4 -t 10 -pix_fmt rgb24 out.gif
-
-</p>
-
-<h4>从视频截选指定长度的内容生成GIF图片</h4>
-
-<p>
-ffmpeg -ss 3 -t 5 -i input.mp4 -s 480*270 -f gif out.gif
-
-</p>
-
-<h4>转换视频为图片（每帧一张图）</h4>
-
-<p>
-ffmpeg -i out.mp4 out%4d.png
-
-</p>
-
-<h4>图片转换为视频</h4>
-
-<p>
-ffmpeg -f image2 -i out%4d.png -r 25 video.mp4
-
-</p>
-
-<p>
-ffmpeg –i video-frame-%0d.png -c:v libx264 -vf “fps=25, format=yuv420p” out.mp4
-
-</p>
-
-<h4>分离视频音频流</h4>
-
-<p>
-ffmpeg -i input_file -vcodec copy -an output_file_video    //分离视频流
-
-</p>
-
-<p>
-ffmpeg -i input_file -acodec copy -vn output_file_audio    //分离音频流
-
-</p>
-
-<h4>视频封装</h4>
-
-<p>
-ffmpeg -i video_file -i audio_file -vcoder copy -acodec copy output_file
-
-</p>
-
-<h4>视频剪切</h4>
-
-<p>
-ffmpeg -i test.avi -r 1 -f image2 image.jpeg //视频截图
-
-</p>
-
-<p>
-ffmpeg -i input.avi -ss 0:1:30 -t 0:0:20 -vcoder copy -acoder copy output.avi //剪切视频 -r 提取图像频率， -ss 开始时间， -t 持续时间
-
-</p>
-
-<h4>视频录制（流）</h4>
-
-<p>
-ffmpeg -i rtsp://hostname/test -vcoder copy out.avi
-
-</p>
-
-<h4>内容反转（reverse）</h4>
-
-<p>
-ffmpeg -i input-file.mp4 -vf reverse output.mp4  // For video only
-
-</p>
-
-<p>
-ffmpeg -i input-file.mp4 -vf reverse -af areverse output.mp4   // For audio and video
-
-</p>
-
-<h4>在osx系统下通过ffmpeg查看设备</h4>
-
-<p>
-ffmpeg -f avfoundation -list_devices true -i ""
-
-</p>
-
-<h4>osx下录摄像头</h4>
-
-<p>
-ffmpeg -f avfoundation -video_size 640x480 -framerate 30 -i 0:0 -vcodec libx264 -preset ultrafast -target pal-vcd ./hello.mpg
-
-</p>
-
-<p>
-ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i "0" -vcodec libx264 -preset ultrafast -acodec libfaac -f flv ~/test.flv
-
-</p>
-
-<h4>过滤、叠加并输出</h4>
-
-<table class="ewiki-table" border="2" cellpadding="5">
-<tbody>
-<tr>
-<td>ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i "0"  -i ~/test1.mp4 -vcodec libx264 -preset ultrafast -filter_complex "[0:v]colorkey=0x000000:0.2:1[out];[1:v][out]overlay=x=0:y=0" -f matroska -</td><td>ffplay -i -</td>
-</tr>
-<tr>
-<td>ffmpeg -f avfoundation -framerate 30 -video_size 1280x720 -i "0"  -i ~/k.jpeg -vcodec libx264 -preset ultrafast -filter_complex "[0:v]chromakey=0x70de7750:0.02:0.15[out];[1:v][out]overlay[myout]" -map "[myout]" -f matroska -</td><td>ffplay -i -</td>
-</tr>
-</tbody>
-</table>
-
-<h4>显示时高宽减半</h4>
-
-<p>
-ffplay ~/test.flv -vf scale=iw/2:ih/2
-
-</p>
-
-<h4>显示水平镜像效果</h4>
-
-<p>
-ffplay ~/test.flv -vf hflip
-
-</p>
-
-<h4>深色像素过滤</h4>
-
-<pre class="example">ffmpeg -i 1.mp4 -f gdigrab -framerate 25 -video_size 300x200 -i title=&quot;MyWindow&quot;
--filter_complex
-&quot;[1]split[m][a];
- [a]format=yuv444p,geq='if(gt(lum(X,Y),16),255,0)',hue=s=0[al];
- [m][al]alphamerge[ovr];
- [0][ovr]overlay=(main_w-overlay_w):main_h-overlay_h[v]&quot;
--map &quot;[v]&quot; -c:v libx264 -r 25 out.mp4
-</pre>
-
-<h4>视频推流</h4>
-
-<p>
-ffmpeg -f avfoundation -framerate 30 -i "1:0" -f avfoundation -framerate 30 -video_size 640x480 -i "0" -c:v libx264 -preset slow -filter_complex 'overlay=main_w-overlay_w-10:main_h-overlay_h-10' -acodec libmp3lame -ar 44100 -ac 1 -f flv rtmp://192.168.1.101:1935/rtmplive/room
-
-</p>
-
-<p>
-ffmpeg -f avfoundation -framerate 30 -video_size 640x480 -i  "0" -vcodec libx264 -preset ultrafast -acodec libfaac -f flv  rtmp://localhost:1935/zbcs/room
-
-</p>
-
 <h3>systemctl</h3>
 
 <pre class="example">systemctl status
@@ -1642,7 +1449,7 @@ systemctl restart &lt;app_name&gt;
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-03-02
+          <td align="left">Update : 2020-04-13
           </td>
           <td align="center">
            <span class="foothome">
