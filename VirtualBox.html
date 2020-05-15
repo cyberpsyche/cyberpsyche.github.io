@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>Programming Notes</title>
+    <title>Virtualbox 笔记</title>
     <meta name="generator" content="emacs-wiki.el" />
     <meta http-equiv="Content-Type"
           content="text/html; charset=utf-8" />
@@ -37,137 +37,111 @@ function hide() {
 </div>
   </head>
   <body>
-    <h1 id="top">Programming Notes</h1>
+    <h1 id="top">Virtualbox 笔记</h1>
 
     <!-- Page published by Emacs Wiki begins here -->
-<h2>Debug</h2>
-
-<h3>进行调试和查找内存泄漏的工具</h3>
+<h3>VDI, VHD, VMDK 之间的区别</h3>
 
 <p>
-memwatch
+VDI是virtual box 的原生格式
 
 </p>
 
 <p>
-efence
+VMDK是VMware给他开发的，在Sun xVM, QEMU, <a href="VirtualBox.html">VirtualBox</a>, SUSE Studio, .NET <a class="nonexistent" href="mailto:cyberpsyche[AT]gmail.com">DiscUtils</a> 也支持
 
 </p>
 
 <p>
-valgrind
+VHD是Microsoft Virtual PC的原生格式，在微软产品比较流行
 
 </p>
 
 <p>
-vtune
+以上三者都支持动态存储分配。VMDK还能把存储文件拆分成小于2GB，在你的文件系统的文件大小限制比较小的时候有用。
 
 </p>
 
-<p>
-strace
+<h3>挂载VDI、VHD等为硬盘</h3>
 
-</p>
+<ol>
+<li>Install osxfuse (the successor to macfuse)
+</li>
+<li>Install <a href="VirtualBox.html">VirtualBox</a>
+</li>
+<li>Download the vdfuse source code (vdfuse.c) from <a href="https://github.com/Thorsten-Sick/vdfuse">https://github.com/Thorsten-Sick/vdfuse</a> (currently at v83 - the original link is pegged to v80).
+</li>
+<li>Download the <a href="VirtualBox.html">VirtualBox</a> headers, but you have to get a version from 2012. I used the following command: svn co -r '{20120801}' <a href="http://www.virtualbox.org/svn/vbox/trunk/include/">http://www.virtualbox.org/svn/vbox/trunk/include/</a>
+</li>
+<li>makefile
+</li>
+</ol>
 
-<p>
-ltrace
-
-</p>
-
-<p>
-oprofile
-
-</p>
-
-<h3>Windows 下调试工具</h3>
-
-<p>
-boundschecker
-
-</p>
-
-<p>
-windbg
-
-</p>
-
-<p>
-purify
-
-</p>
-
-<h3>查看执行程序内的字符串内容</h3>
-
-<p>
-strings <prog>
-
-</p>
-
-<h2>Execute programs envirnoment</h2>
-
-<h3>.so Link</h3>
-
-<p>
-man ld.so
-
-</p>
-
-<h3>将二进制文件直接链接到可执行文件内</h3>
-
-<pre class="example">$ objcopy -I binary -O elf32-i386 -B i386 14_95_13.jpg image.o
-$ gcc image.o tt.o -o tt
-$ nm tt | grep 14_95
-0805d6c7 D _binary_14_95_13_jpg_end
-00014213 A _binary_14_95_13_jpg_size
-080494b4 D _binary_14_95_13_jpg_start
+<pre class="example">infile=vdfuse.c
+outfile=vdfuse
+incdir=&quot;/Users/sam/Projects/vdfuse/virtualbox/include&quot;
+INSTALL_DIR=&quot;/Applications/VirtualBox.app/Contents/MacOS&quot;
+CFLAGS=&quot;-pipe&quot;
+all:
+        gcc -arch x86_64 &quot;${infile}&quot; \
+        &quot;${INSTALL_DIR}&quot;/VBoxDD.dylib \
+        &quot;${INSTALL_DIR}&quot;/VBoxDDU.dylib \
+        &quot;${INSTALL_DIR}&quot;/VBoxVMM.dylib \
+        &quot;${INSTALL_DIR}&quot;/VBoxRT.dylib \
+        &quot;${INSTALL_DIR}&quot;/VBoxDD2.dylib \
+        -o &quot;${outfile}&quot; \
+        -I&quot;${incdir}&quot; -I&quot;/usr/local/include/osxfuse&quot; \
+        -Wl,-rpath,&quot;${INSTALL_DIR}&quot; \
+        -losxfuse_i64 \
+        -Wall ${CFLAGS}
 </pre>
 
-<h3>Linux random number</h3>
+<ol>
+<li>Mount the vdi/vhd disk
+</li>
+</ol>
 
-<pre class="example">#include &lt;stdlib.h&gt;
-#include &lt;stdio.h&gt;
-#include &lt;time.h&gt;
+<pre class="example">sudo ./vdfuse -tVDI -w -f/Path/To/VHD /Path/To/Mountpoint
+</pre>
 
-void main(){
-  int x ;
-  srand((unsigned)time(NULL));
+<ol>
+<li>Attach the virtual partition blockfiles
+</li>
+</ol>
 
-  for(x=0;x&lt;=20;x++)
-    printf(&quot;%i\t&quot;;,rand());
-}
+<pre class="example">hdiutil attach -imagekey diskimage-class=CRawDiskImage -nomount /Path/To/Mountpoint/PartitionN
+</pre>
+
+<ol>
+<li>Mount the virtual partition
+</li>
+</ol>
+
+<pre class="example">mount -t YourFS /dev/diskK /Path/To/ParitionMountPoint
+</pre>
+
+<ol>
+<li>Mount by other virtual machine
+</li>
+</ol>
+
+<p>
+生成vmdk文件
+
+</p>
+
+<pre class="example">VBoxManage internalcommands createrawvmdk -filename ~/dev-diskN.vmdk -rawdisk /dev/diskN
 </pre>
 
 <p>
-or 
-
-</p>
-
-<pre class="example">int Random(int i, int j) {
-    return i + rand() % (j-i+1);
-}
-</pre>
-
-<h3>Compile Objective-C sources on a Mac</h3>
-
-<pre class="example">gcc -o prog_name -framework Foundation prog.m
-</pre>
-
-<h3>引入动态库的方法</h3>
-
-<p>
-方法一： LD_LIBRARY_PATH 环境变量
-
-</p>
-
-<p>
-方法二： 在 /etc/ld.so.conf 中添加库的搜索路径。 添加后需要执行 /sbin/ldconfig 命令以更新 /etc/ld.so.cache 文件后才可生效。
+之后即可在virtual machine中挂载。
 </p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-04-13
+          <td align="left">Update : 2020-05-13
           </td>
           <td align="center">
            <span class="foothome">
