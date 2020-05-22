@@ -1043,7 +1043,7 @@ curl -u cyberpsyche:****** -d status=&quot;${status}&quot; http://twitter.com/st
 </pre>
 
 <p>
-使用方法为 "twitter 我想 说的 东东，whatever."
+>使用方法为 "twitter 我想 说的 东东，whatever."
 
 </p>
 
@@ -1059,6 +1059,16 @@ or
 
 <pre class="example">mkisofs -r -o name.iso /dir/name
 </pre>
+
+<h4>打包目录到iso文件</h4>
+
+<pre class="example">mkisofs -o aa.iso -J -R -V bb ccFloder
+</pre>
+
+<p>
+其中 aa.iso为需要打包成的iso文件名，-V后面的bb为指定光盘的卷册集ID，ccFloder为需要打包的文件夹名字。
+
+</p>
 
 <h4>bash_profile中的LSCOLORS设置</h4>
 
@@ -1447,7 +1457,7 @@ systemctl restart &lt;app_name&gt;
 <h4>定制启动光盘镜像</h4>
 
 <p>
-将ISO解压于某目录，由于是readonly, 故可复制到哪一目录，在其中作必要修改后重要压制ISO：
+将ISO解压于某目录，由于是readonly, 故可复制到那一目录，在其中作必要修改后重要压制ISO：
 
 </p>
 
@@ -1462,7 +1472,36 @@ systemctl restart &lt;app_name&gt;
 <pre class="example">isoinfo -d -i filename.iso
 </pre>
 
-<!-- Page published by Emacs Wiki ends here -->
+<h4>Ubuntu 下查看系统启动服务情况</h4>
+
+<p>
+# systemctl list-unit-files
+
+</p>
+
+<table class="ewiki-table" border="2" cellpadding="5">
+<tbody>
+<tr>
+<td># systemctl list-unit-files</td><td>grep enable</td>
+</tr>
+</tbody>
+</table>
+
+<h4>Ubuntu 下设置 系统启动服务</h4>
+
+<p>
+# systemctl disable nginx.service
+
+</p>
+
+<p>
+or
+
+</p>
+
+<p>
+# systemctl enable supervisor.service
+</p><!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">
