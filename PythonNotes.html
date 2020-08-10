@@ -1127,9 +1127,154 @@ time_str = time.strftime("%Y-%m-%dT%H:%M:%S", t)
 
 </p>
 
-<h4>json</h4>
+<h4>map</h4>
 
-<pre class="example">import json
+<p>
+给序列的每个元素应用一个函数，返回一个迭代器。
+
+</p>
+
+<pre class="example">l = [1,2,3,4]
+result = map(lambda x: x**2, l)
+list(result)
+</pre>
+
+<h4>reduce</h4>
+
+<p>
+reduce(function, iterable)
+
+</p>
+
+<p>
+使用function(x,y)函数，将序列缩减为1个元素结果
+
+</p>
+
+<pre class="example">l = [1,2,3,4]
+from functools import reduce
+reduce(lambda x,y: x+y, l)
+</pre>
+
+<h4>filter</h4>
+
+<p>
+filter(function, iterable)
+
+</p>
+
+<p>
+使用返回bool的function对序列过滤，返回满足条件的结果
+
+</p>
+
+<pre class="example">l = range(10)
+result = filter(lambda x: x%2==0, l)
+list(result)
+</pre>
+
+<h4>Counter</h4>
+
+<p>
+计数器，用于追踪值的出现次数。Counter类继承于dict类，故其可使用dict类里的方法。
+
+</p>
+
+<pre class="example">import collections
+counter = collections.Counter(['a','b', 'c','a','b','a'])
+counter
+</pre>
+
+<p>
+Output: Counter({'a':3, 'b':2, 'c':1})
+
+</p>
+
+<p>
+使用update可以往Counter中新增内容
+
+</p>
+
+<pre class="example">counter.update(['c','b','c','d','c'])
+counter
+</pre>
+
+<p>
+Output: Counter({'a':3, 'b':3, 'c':4, 'd':1})
+
+</p>
+
+<p>
+可像字典一样输出key/value
+
+</p>
+
+<pre class="example">for key,value in counter.items():
+    print(key, value)
+</pre>
+
+<p>
+可方便的输出最高频率的数据
+
+</p>
+
+<pre class="example">counter.most_common(3)
+</pre>
+
+<p>
+Output: [('c', 4), ('a', 3), ('b', 3)]
+
+</p>
+
+<h4>defaultdict</h4>
+
+<p>
+可省略初始化的dict。
+
+</p>
+
+<p>
+dict = defaultdict(factory_function)
+
+</p>
+
+<p>
+factory_function可以是str, int, list, set, 可省略初始化。
+
+</p>
+
+<pre class="example">from collections import defaultdict
+dint = defaultdict(int)
+dint['a'] += 3
+</pre>
+
+<h4>groupby</h4>
+
+<p>
+按照指定key进行数据分组： groupby(iterable, key=None)
+
+</p>
+
+<pre class="example">data = [
+    {'id':1, &quot;title&quot;:&quot;AAA&quot;, &quot;category&quot;:&quot;java&quot;},
+    {'id':2, &quot;title&quot;:&quot;BBB&quot;, &quot;category&quot;:&quot;python&quot;},
+    {'id':3, &quot;title&quot;:&quot;CCC&quot;, &quot;category&quot;:&quot;c++&quot;},
+    {'id':4, &quot;title&quot;:&quot;DDD&quot;, &quot;category&quot;:&quot;c++&quot;},
+    {'id':5, &quot;title&quot;:&quot;EEE&quot;, &quot;category&quot;:&quot;java&quot;},
+    {'id':6, &quot;title&quot;:&quot;FFF&quot;, &quot;category&quot;:&quot;python&quot;},
+    {'id':7, &quot;title&quot;:&quot;GGG&quot;, &quot;category&quot;:&quot;java&quot;},
+]
+
+from itertools import groupby
+data = sorted(data, key=lambda x:x[&quot;category&quot;]) # 先作排序
+result = groupby(data, key=lambda x:x[&quot;category&quot;])
+list(result)
+&lt;example&gt;
+
+*** json
+
+&lt;example&gt;
+import json
 json.loads() # 将json数据转化成dict数据
 json.dumps() # 将dict数据转化成json数据
 json.load() # 读取json文件数据，转成dict数据
@@ -1597,7 +1742,7 @@ BROKER_URL = 'amqp://sam:123456@localhost:5672/%2Fhollywood'
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-05-13
+          <td align="left">Update : 2020-06-10
           </td>
           <td align="center">
            <span class="foothome">
