@@ -3,7 +3,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <title>JavaScript </title>
+    <title>JavaScript</title>
     <meta name="generator" content="emacs-wiki.el" />
     <meta http-equiv="Content-Type"
           content="text/html; charset=utf-8" />
@@ -28,7 +28,7 @@ function hide() {
 </div>
 
 <div class="menuitem">
-  <a href="">work</a>
+  <a href="../workwiki/WelcomePage.html">work</a>
 </div>
 
 </div><!-- menu ends here -->
@@ -37,9 +37,11 @@ function hide() {
 </div>
   </head>
   <body>
-    <h1 id="top">JavaScript </h1>
+    <h1 id="top">JavaScript</h1>
 
     <!-- Page published by Emacs Wiki begins here -->
+<h2>Misc</h2>
+
 <h3>Google Apps</h3>
 
 <h4>code for ref "QRTS" in Google Maps via longitude and latitude</h4>
@@ -120,13 +122,180 @@ parseInt(numstring,   [radix])
 <p>
 var str="{a:1, b:2}";
 var json_obj=eval('('+str+')');
-</p><!-- Page published by Emacs Wiki ends here -->
+
+</p>
+
+<h2>Vue.js</h2>
+
+<p>
+Vue的核心是数据与视图的双向绑定。MVVM -> Model+View+View Model
+
+</p>
+
+<h3>Init</h3>
+
+<pre class="example">var app = new Vue({
+    el: '#app',
+    data: {
+        a: 'sam',
+        b: 'chen'
+    },
+    computed: {
+        fullname: function () {
+            return this.a + ' ' + this.b;
+        }
+    },
+    methods: {
+        myfunc: function () {
+            this.a = 'kris';
+        }
+    }
+})
+</pre>
+
+<h3>Directives</h3>
+
+<h4>v-html</h4>
+
+<pre class="example">&lt;span v-html=&quot;link&quot;&gt;&lt;/span&gt;
+</pre>
+
+<p>
+内联输出html标签代码。注意引用用户输入内容时要将<>转义，以防XSS攻击。
+
+</p>
+
+<h4>v-pre</h4>
+
+<pre class="example">&lt;span v-pre&gt;{{ It will not compile this section }}&lt;/span&gt;
+</pre>
+
+<p>
+可跳过元素或子元素的编译过程。
+
+</p>
+
+<h4>v-bind</h4>
+
+<pre class="example">&lt;img v-bind:src=&quot;imgUrl&quot;&gt;
+</pre>
+
+<p>
+v-bind 的语法糖为 :
+
+</p>
+
+<h4>v-on</h4>
+
+<pre class="example">&lt;button v-on:click=&quot;myfunc&quot;&gt; Button &lt;/button&gt;
+</pre>
+
+<p>
+v-on 的语法糖为 @
+
+</p>
+
+<h4>v-cloak</h4>
+
+<pre class="example">&lt;div id=&quot;app&quot; v-cloak&gt;
+    {{ message }}
+&lt;/div&gt;
+</pre>
+
+<p>
+v-cloak 不需要表达式，它会在Vue实例结束编译时从绑定的HTML元素上移除，经常和css的display: none;配合使用。用于解决加载页面时的闪动问题。
+
+</p>
+
+<p>
+CSS语句：
+
+</p>
+
+<pre class="example">[v-cloak] {
+    display: none;
+}
+</pre>
+
+<h4>v-once</h4>
+
+<p>
+其作用的元素或子元素只渲染一次，首次渲染后不再随数据重新渲染，可视为静态内容。v-once不需要表达式。 可用于优化性能。
+
+</p>
+
+<h4>v-if, v-else-if, v-else</h4>
+
+<p>
+可在Vue内置的<template>元素上使用条件指令，最终渲染的结果不会包含该元素。
+
+</p>
+
+<p>
+Vue在渲染时会复用已有元素。如不希望复用，可以使用 key 属性，key值必须唯一。
+
+</p>
+
+<h4>v-show</h4>
+
+<p>
+v-show 与 v-if 用法基本一致，只不过 v-show 是改变元素的CSS属性display，当表达式值为false时，元素会隐藏，DOM结构中的对应元素加载了内联样式 display: none;
+
+</p>
+
+<pre class="example">&lt;div id=&quot;app&quot;&gt;
+    &lt;p v-show=&quot;status === 1&quot;&gt; 当status为1时显示本行 &lt;/p&gt;
+&lt;/div&gt;
+</pre>
+
+<p>
+v-if 适合用于条件不经常改变的场景，因为其切换开销相对更大；而v-show适用于频繁切换条件。
+
+</p>
+
+<h4>v-for</h4>
+
+<pre class="example">&lt;div&gt;
+    &lt;ul&gt;
+        &lt;li v-for=&quot;book in books&quot;&gt;{{ book.name }}&lt;/li&gt;
+    &lt;/ul&gt;
+&lt;/div&gt;
+</pre>
+
+<p>
+遍历数组时，可加索引参数：
+
+</p>
+
+<p>
+<li v-for="(book, index) in books">{{ index }} - {{ book.name }}</li>
+
+</p>
+
+<p>
+遍历对象时，可加键名和索引参数：
+
+</p>
+
+<p>
+<li v-for="(value, key, index) in user_obj">{{ index }} - {{ key }}: {{ value }}</li>
+
+</p>
+
+<p>
+迭代整数
+
+</p>
+
+<p>
+<span v-for="n in 100">{{ n }}</span>
+<!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
       <hr />
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2016-05-23
+          <td align="left">Update : 2020-06-10
           </td>
           <td align="center">
            <span class="foothome">

@@ -227,8 +227,7 @@ Example:
 
 <h4>if 命令参数说明</h4>
 
-<p>
-–b 当file存在并且是块文件时返回真
+<pre class="example">–b 当file存在并且是块文件时返回真
 -c 当file存在并且是字符文件时返回真
 -d 当pathname存在并且是一个目录时返回真
 -e 当pathname指定的文件或目录存在时返回真
@@ -242,8 +241,7 @@ Example:
 -u 当由pathname指定的文件或目录存在并且设置了SUID位时返回真
 -w 当由pathname指定的文件或目录存在并且可执行时返回真。一个目录为了它的内容被访问必然是可执行的。
 -o 当由pathname指定的文件或目录存在并且被子当前进程的有效用户ID所指定的用户拥有时返回真。
-
-</p>
+</pre>
 
 <p>
 <a id="这里的-d"></a>参数判断$myPath是否存在:
@@ -1535,6 +1533,27 @@ or
 <pre class="example">apt-get install apt-file
 apt update
 apt-file search &lt;file-name&gt;
+</pre>
+
+<h3>脚本防重复执行</h3>
+
+<pre class="example">#!/bin/bash
+RUNDIR=`dirname $0`
+PIDFILE=&quot;${RUNDIR}/$0.pid&quot;
+
+if [ -s ${PIDFILE} ]; then
+   SPID=`cat ${PIDFILE}`
+   if [ -e /proc/${SPID}/status ]; then
+      echo &quot;脚本已经在运行，不重复运行，退出.&quot;
+      exit 1
+  fi
+  cat /dev/null &gt; ${PIDFILE}
+fi
+echo $$ &gt; ${PIDFILE}
+
+业务逻辑
+
+cat /dev/null &gt; ${PIDFILE}
 </pre>
 <!-- Page published by Emacs Wiki ends here -->
     <div class="navfoot">
