@@ -1368,6 +1368,13 @@ name:xufive, age:51
 [0, 1, 'a', 'b', 2, 3, 4, 5]
 </pre>
 
+<h4>python list flatten </h4>
+
+<pre class="example">&gt;&gt;&gt; a=array([[1,2],[3,4],[5,6]])
+&gt;&gt;&gt; [y for x in a for y in x]
+[1, 2, 3, 4, 5, 6]
+</pre>
+
 <h4>Python 3.X 里不包含 has_key() 函数，被 __contains__(key) 替代</h4>
 
 <pre class="example">&gt;&gt;&gt; dict3 = {'name':'z','Age':7,'class':'First'}
@@ -1431,6 +1438,113 @@ setup(ext_modules = cythonize([&quot;mytest.py&quot;]))
 
 <p>
 设置 PYTHONPATH 到 so 的目录。
+
+</p>
+
+<h4>python代码解密</h4>
+
+<p>
+# 安装 uncompyle 模块
+
+</p>
+
+<p>
+pip install uncompyle
+
+</p>
+
+<p>
+# 把 daemon_init.pyc 反编译成 daemon_init.py 文件
+
+</p>
+
+<p>
+uncompyle6 daemon_init.pyc > daemon_init.py
+
+</p>
+
+<p>
+# 把当前所有的 pyc 文件变异成 py 文件 前缀还是一样的
+
+</p>
+
+<p>
+uncompyle6 -o . <em>.pyc
+
+</p>
+
+<p>
+</em>** python -m
+
+</p>
+
+<p>
+python -m: run library module as a script（将模块当作脚本运行）
+
+</p>
+
+<p>
+当知道一个模块的名字，但不知道它的路径时，我们可以通过 -m 参数，在 shell 中将该模块当作脚本运行
+
+</p>
+
+<p>
+python -m module 等同于 python /path/to/module.py
+
+</p>
+
+<h4>dir()</h4>
+
+<pre class="example">&gt;&gt;&gt;dir()   #  获得当前模块的属性列表
+['__builtins__', '__doc__', '__name__', '__package__', 'arr', 'myslice']
+</pre>
+
+<h4>all() 与 any()</h4>
+
+<p>
+all() 函数用于判断给定的可迭代参数 iterable 中的所有元素是否都为 TRUE，如果是返回 True，否则返回 False。
+
+</p>
+
+<p>
+any() 函数用于判断给定的可迭代参数 iterable 中的所有元素是否有一个为 TRUE，如果是返回 True，否则返回 False。
+
+</p>
+
+<h4>__new__, __init__, __call__</h4>
+
+<p>
+Python 中的__new__和__init__的区别
+
+</p>
+
+<p>
+__new__是在实例创建之前被调用的，因为它的任务就是创建实例然后返回该实例对象，是个静态方法。第一个参数是cls
+
+</p>
+
+<p>
+__init__是当实例对象创建完成后被调用的，然后设置对象属性的一些初始值，通常用在初始化一个类实例的时候。是一个实例方法。第一个参数是self。
+
+</p>
+
+<p>
+__call__ ： 对象可call，注意不是类，是对象。
+
+</p>
+
+<p>
+__new__先被调用，__init__后被调用，__new__的返回值（实例）将传递给__init__方法的第一个参数，然后__init__给这个实例设置一些参数。 __init__ 只能返回 None 值，否则报错.
+
+</p>
+
+<p>
+__init__方法中除了self之外定义的参数，都将与__new__方法中除cls参数之外的参数是必须保持一致或者等效。
+
+</p>
+
+<p>
+__new__方法在类定义中不是必须写的，如果没定义，默认会调用object.__new__去创建一个对象。如果定义了，就是override,可以custom创建对象的行为。
 
 </p>
 
@@ -1742,7 +1856,7 @@ BROKER_URL = 'amqp://sam:123456@localhost:5672/%2Fhollywood'
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-06-10
+          <td align="left">Update : 2020-10-10
           </td>
           <td align="center">
            <span class="foothome">

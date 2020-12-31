@@ -430,6 +430,8 @@ or
 
 <h3>字符集</h3>
 
+<h4>设定字符集</h4>
+
 <p>
 设定postgresql整个集群的字符集：
 
@@ -454,6 +456,20 @@ or
 <pre class="example">=&gt; CREATE DATABASE dbname WITH ENCODING 'SQL_ASCII';
 </pre>
 
+<h4>设置psql客户端字符集</h4>
+
+<p>
+设置psql客户端字符集为GBK，方法有两种：
+
+</p>
+
+<ol>
+<li>是在psql中输入“\encoding GBK”
+</li>
+<li>是设置环境变量“export PGCLIENTENCODING=GBK”
+</li>
+</ol>
+
 <h3>表操作</h3>
 
 <h4>表改名</h4>
@@ -467,7 +483,7 @@ or
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-06-10
+          <td align="left">Update : 2020-10-10
           </td>
           <td align="center">
            <span class="foothome">
