@@ -859,13 +859,8 @@ rpm包是以cpio格式压缩的，解压命令：
 
 </p>
 
-<table class="ewiki-table" border="2" cellpadding="5">
-<tbody>
-<tr>
-<td>rpm2cpio xxx.rpm</td><td>cpio -div</td>
-</tr>
-</tbody>
-</table>
+<pre class="example">rpm2cpio xxx.rpm | cpio -div
+</pre>
 
 <h4>抓取网页内面到标准输出</h4>
 
@@ -883,6 +878,45 @@ rpm包是以cpio格式压缩的，解压命令：
 wget -c <a href="http://file.location.com/filename">http://file.location.com/filename</a>
 
 </p>
+
+<h4>获取数组信息</h4>
+
+<p>
+数组元素个数${#array[@]} 
+
+</p>
+
+<p>
+数组的所有元素${array[<em>]}
+
+</p>
+
+<p>
+字符串长度${#str}
+
+</p>
+
+<p>
+</em>** 编历目录
+
+</p>
+
+<pre class="example">function getdir(){
+    echo $1
+    for file in $1/*
+    do
+        if test -f $file
+        then
+            echo $file
+            arr=(${arr[*]} $file)
+        else
+            getdir $file
+        fi
+    done
+}
+getdir /wls
+echo ${arr[@]}
+</pre>
 
 <h4>端口扫描</h4>
 
@@ -1561,7 +1595,7 @@ cat /dev/null &gt; ${PIDFILE}
       <table width="100%" border="0" summary="Footer navigation">
         <col width="33%"/><col width="34%"/><col width="33%"/>
         <tr>
-          <td align="left">Update : 2020-06-10
+          <td align="left">Update : 2020-12-31
           </td>
           <td align="center">
            <span class="foothome">
